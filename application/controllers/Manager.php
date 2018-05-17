@@ -30,7 +30,7 @@ class Manager extends CI_Controller
     public function index()
     {
         if ($this->session->userdata($this->session->login_type.'_login') != 1)
-            redirect(base_url() . 'index.php?login', 'refresh');
+            redirect(base_url() . 'login', 'refresh');
     }
     
     /***ADMIN DASHBOARD***/

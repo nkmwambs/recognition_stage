@@ -9,23 +9,28 @@
         <!-- Language Selector -->			
            <li class="dropdown language-selector">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-close-others="true">
-                        	<i class="entypo-user"></i> <?php echo ucfirst($this->session->userdata('name')).' - '.ucfirst($this->session->userdata('login_type'));?>
+                        	<i class="entypo-user"></i> <?php echo ucfirst($this->session->userdata('name')).' - '.ucfirst($this->session->userdata('login_type'));?> <?php if($this->session->is_admin == 1) echo "(".get_phrase('administrator').")"; ?>
                     </a>
 
 				
 				<ul class="dropdown-menu <?php if ($text_align == 'right-to-left') echo 'pull-right'; else echo 'pull-left';?>">
 					<li>
-						<a href="<?php echo base_url();?>index.php?<?php echo $account_type;?>/manage_profile">
+						<a href="<?php echo base_url();?><?php echo $account_type;?>/manage_profile">
                         	<i class="entypo-info"></i>
 							<span><?php echo get_phrase('edit_profile');?></span>
 						</a>
 					</li>
+					
+										
+					<?php if($this->session->is_admin == 1){ ?>
+					
 					<li>
-						<a href="<?php echo base_url();?>index.php?<?php echo $account_type;?>/manage_profile">
-                        	<i class="entypo-key"></i>
-							<span><?php echo get_phrase('change_password');?></span>
+						<a href="<?php echo base_url();?>admin/manage_profile">
+                        	<i class="entypo-switch"></i>
+							<span><?php echo get_phrase('switch_user');?></span>
 						</a>
 					</li>
+					<?php } ?>
 				</ul>
 				
 				
@@ -65,7 +70,7 @@
 			<!--<li class="sep"></li>-->
 			
 			<li>
-				<a href="<?php echo base_url();?>index.php?login/logout">
+				<a href="<?php echo base_url();?>login/logout">
 					Log Out <i class="entypo-logout right"></i>
 				</a>
 			</li>

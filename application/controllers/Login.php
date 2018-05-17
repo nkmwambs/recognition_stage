@@ -29,7 +29,7 @@ class Login extends CI_Controller {
     public function index() {
 
         if ($this->session->userdata($this->session->login_type.'_login') == 1)  
-        	redirect(base_url() . 'index.php?'.$this->session->login_type.'/dashboard', 'refresh');
+        	redirect(base_url() . $this->session->login_type.'/dashboard', 'refresh');
 
         $this->load->view('backend/login');
     }
