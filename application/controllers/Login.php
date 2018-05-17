@@ -19,10 +19,11 @@ class Login extends CI_Controller {
         $this->load->database();
         $this->load->library('session');
         /* cache control */
-        $this->output->set_header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
-        $this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
-        $this->output->set_header('Pragma: no-cache');
-        $this->output->set_header("Expires: Mon, 26 Jul 2010 05:00:00 GMT");
+		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+		$this->output->set_header('Pragma: no-cache');
+		//$this->db->cache_on();
+		//$this->output->cache(60);
+		$this->db->cache_delete_all();
     }
 
     //Default function, redirects to logged in user area
@@ -56,7 +57,7 @@ class Login extends CI_Controller {
 
     //Validating login from ajax request
     function validate_login($email = '', $password = '') {
-        $credential = array('email' => $email);
+        $credential = array('email' => $email,"auth"=>1,"password"=>md5($password));
 
 
         // Checking login credential for admin
