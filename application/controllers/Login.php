@@ -29,8 +29,8 @@ class Login extends CI_Controller {
     //Default function, redirects to logged in user area
     public function index() {
 
-        if ($this->session->userdata($this->session->login_type.'_login') == 1)  
-        	redirect(base_url() . $this->session->login_type.'/dashboard', 'refresh');
+        if ($this->session->userdata('user_login') == 1)  
+        	redirect(base_url() . 'dashboard', 'refresh');
 
         $this->load->view('backend/login');
     }
@@ -65,15 +65,14 @@ class Login extends CI_Controller {
         if ($query->num_rows() > 0) {
 			
 		    $row = $query->row();
-			$level = $this->db->get_where("level",array("level_id"=>$row->level_id))->row()->name;
+			$role = $this->db->get_where("role",array("role_id"=>$row->role_id))->row()->name;
 			
-		    $this->session->set_userdata($level.'_login', '1');
-		    $this->session->set_userdata($level.'_id', $row->user_id);
+		    $this->session->set_userdata('user_login', '1');
 		    $this->session->set_userdata('login_user_id', $row->user_id);
 		    $this->session->set_userdata('name', $row->firstname);
-		    $this->session->set_userdata('login_type', $level);
-			$this->session->set_userdata('is_admin', $row->admin);
-								
+			$this->session->set_userdata('login_type', $role);	
+			$this->session->set_userdata('profile_id', $row->profile_id);	
+							
             return 'success';
         }
 

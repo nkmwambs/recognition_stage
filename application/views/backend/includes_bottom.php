@@ -1,9 +1,4 @@
 	
-    
-    
-    
-
-	<link rel="stylesheet" href="<?php echo base_url();?>assets/js/datatables/responsive/css/datatables.responsive.css">
 	<link rel="stylesheet" href="<?php echo base_url();?>assets/js/select2/select2-bootstrap.css">
 	<link rel="stylesheet" href="<?php echo base_url();?>assets/js/select2/select2.css">
 	<link rel="stylesheet" href="<?php echo base_url();?>assets/js/selectboxit/jquery.selectBoxIt.css">
@@ -11,7 +6,6 @@
    	<!-- Bottom Scripts -->
 	<script src="<?php echo base_url();?>assets/js/gsap/main-gsap.js"></script>
 	<script src="<?php echo base_url();?>assets/js/jquery-ui/js/jquery-ui-1.10.3.minimal.min.js"></script>
-	<script src="<?php echo base_url();?>assets/js/bootstrap.js"></script>
 	<script src="<?php echo base_url();?>assets/js/joinable.js"></script>
 	<script src="<?php echo base_url();?>assets/js/resizeable.js"></script>
 	<script src="<?php echo base_url();?>assets/js/neon-api.js"></script>
@@ -20,13 +14,7 @@
 	<script src="<?php echo base_url();?>assets/js/fullcalendar/fullcalendar.min.js"></script>
     <script src="<?php echo base_url();?>assets/js/bootstrap-datepicker.js"></script>
     <script src="<?php echo base_url();?>assets/js/fileinput.js"></script>
-    
-    <script src="<?php echo base_url();?>assets/js/jquery.dataTables.min.js"></script>
-	<script src="<?php echo base_url();?>assets/js/datatables/TableTools.min.js"></script>
-	<script src="<?php echo base_url();?>assets/js/dataTables.bootstrap.js"></script>
-	<script src="<?php echo base_url();?>assets/js/datatables/jquery.dataTables.columnFilter.js"></script>
-	<script src="<?php echo base_url();?>assets/js/datatables/lodash.min.js"></script>
-	<script src="<?php echo base_url();?>assets/js/datatables/responsive/js/datatables.responsive.js"></script>
+   
     <script src="<?php echo base_url();?>assets/js/select2/select2.min.js"></script>
     <script src="<?php echo base_url();?>assets/js/selectboxit/jquery.selectBoxIt.min.js"></script>
     
@@ -48,6 +36,9 @@
 	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 	
+	<!-- Bootstrap Switch -->
+	<script src="<?php echo base_url();?>assets/js/bootstrap-switch.min.js"></script>
+	
 		<!-- Monkey Modal Dialog  CSS / JS-->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.35.2/css/bootstrap-dialog.min.css">
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.35.2/js/bootstrap-dialog.min.js"></script>
@@ -61,11 +52,26 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/dropzone.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/dropzone.css">
 	
-	<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
-	<script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
-	
+<!-- Include Date Range Picker -->
+<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />	
 
-	
+<!-- Bootstrap Date-Picker Plugin -->
+  <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+
+<!--Table Header Fixer-->
+<script src="<?php echo base_url();?>assets/js/tableHeadFixer.js"></script>
+
+<!--Print This JS-->
+<script src="<?php echo base_url();?>assets/js/printThis.js"></script>
+
+<!--my extension-->
+<script src="<?php echo base_url();?>assets/js/myExtension.js"></script>
+
+<script src="<?=base_url();?>assets/js/jquery.multi-select.js"></script>
 
 <!-- SHOW TOASTR NOTIFIVATION -->
 <?php if ($this->session->flashdata('flash_message') != ""):?>
@@ -84,11 +90,11 @@
 	{
 		
 
-		var datatable = $("#table_export").dataTable();
+		//var datatable = $("#table_export").dataTable();
 		
-		$(".dataTables_wrapper select").select2({
-			minimumResultsForSearch: -1
-		});
+		//$(".dataTables_wrapper select").select2({
+			//minimumResultsForSearch: -1
+		//});
 		
 		$('.modal-dialog').draggable();
 		
@@ -98,6 +104,7 @@
 		    minWidth: 300
 		});
 		
-	});
+		
+	}); 
 		
 </script>

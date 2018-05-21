@@ -9,23 +9,23 @@
         <!-- Language Selector -->			
            <li class="dropdown language-selector">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-close-others="true">
-                        	<i class="entypo-user"></i> <?php echo ucfirst($this->session->userdata('name')).' - '.ucfirst($this->session->userdata('login_type'));?> <?php if($this->session->is_admin == 1) echo "(".get_phrase('administrator').")"; ?>
+                        	<i class="entypo-user"></i> <?php echo ucfirst($this->session->userdata('name')).' - '.ucfirst($this->session->userdata('login_type'));?> (<?php echo $this->crud_model->get_type_name_by_id("profile", $this->session->profile_id);?>) 
                     </a>
 
 				
 				<ul class="dropdown-menu <?php if ($text_align == 'right-to-left') echo 'pull-right'; else echo 'pull-left';?>">
 					<li>
-						<a href="<?php echo base_url();?><?php echo $account_type;?>/manage_profile">
+						<a href="<?php echo base_url();?>account/manage_profile">
                         	<i class="entypo-info"></i>
 							<span><?php echo get_phrase('edit_profile');?></span>
 						</a>
 					</li>
 					
 										
-					<?php if($this->session->is_admin == 1){ ?>
+					<?php if( $this->crud_model->user_privilege($this->session->profile_id,"switch_user") ){ ?>
 					
 					<li>
-						<a href="<?php echo base_url();?>admin/manage_profile">
+						<a href="<?php echo base_url();?>account/manage_profile">
                         	<i class="entypo-switch"></i>
 							<span><?php echo get_phrase('switch_user');?></span>
 						</a>
@@ -54,8 +54,8 @@
                                 if($field == 'phrase_id' || $field == 'phrase')continue;
                                 ?>
                                     <li class="<?php if($this->session->userdata('current_language') == $field)echo 'active';?>">
-                                        <a href="<?php echo base_url();?>index.php?multilanguage/select_language/<?php echo $field;?>">
-                                            <img src="assets/images/flag/<?php echo $field;?>.png" style="width:16px; height:16px;" />	
+                                        <a href="<?php echo base_url();?>multilanguage/select_language/<?php echo $field;?>">
+                                            <img src="<?php echo base_url();?>assets/images/flag/<?php echo $field;?>.png" style="width:16px; height:16px;" />	
 												 <span><?php echo ucfirst($field);?></span>
                                         </a>
                                     </li>
