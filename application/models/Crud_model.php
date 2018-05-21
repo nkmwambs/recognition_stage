@@ -34,6 +34,7 @@ class Crud_model extends CI_Model {
 		return $result;
 	}
 	
+	
 	/** PREVILEDGES **/
 	
 	public function get_entitlement_by_profile_id($profile_id=""){

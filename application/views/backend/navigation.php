@@ -51,7 +51,7 @@
             </a>
             <ul>
             	
-	            <li class="<?php if ($page_name == 'manage_surveys') echo 'active'; ?> ">
+	            <li class="manage_surveys <?php if ($page_name == 'manage_surveys') echo 'active'; ?> ">
 	               <a href="<?php echo base_url("surveys/manage_surveys"); ?>" class="ajax-content">
 	                   <span><i class="entypo-tools"></i> <?php echo get_phrase('manage_surveys'); ?></span>
 	                    </a>
@@ -64,7 +64,7 @@
 	                    </a>
 	            </li>
 	            
-	            <li class="<?php if ($page_name == 'survey_results') echo 'active'; ?> ">
+	            <li class="survey_results <?php if ($page_name == 'survey_results') echo 'active'; ?> ">
 	                    <a href="<?php echo base_url("surveys/survey_results"); ?>" class="ajax-content">
 	                        <span><i class="entypo-doc-text"></i> <?php echo get_phrase('survey_results'); ?></span>
 	                    </a>
@@ -85,13 +85,7 @@
         
         <!-- SETTINGS -->
         
-        <?php if($this->crud_model->user_privilege($this->session->profile_id,"manage_settings") &&
-        			($this->crud_model->user_privilege($this->session->profile_id,"system_settings") || 
-						$this->crud_model->user_privilege($this->session->profile_id,"sms_settings") ||
-								$this->crud_model->user_privilege($this->session->profile_id,"manage_language"))):
-		?>
-        
-        <li class="<?php
+        <li class="manage_settings <?php
         if ($page_name == 'system_settings' ||
                 $page_name == 'manage_language' ||
                     $page_name == 'sms_settings')
@@ -102,36 +96,33 @@
                 <span><?php echo get_phrase('settings'); ?></span>
             </a>
             <ul>
-            	<?php if($this->crud_model->user_privilege($this->session->profile_id,"system_settings")):?>
-	                <li class="<?php if ($page_name == 'system_settings') echo 'active'; ?> ">
+
+	                <li class="system_settings <?php if ($page_name == 'system_settings') echo 'active'; ?> ">
 	                    <a href="<?php echo base_url("settings/system_settings"); ?>" class="ajax-content">
 	                        <span><i class="entypo-cog"></i> <?php echo get_phrase('general_settings'); ?></span>
 	                    </a>
 	                </li>
-                <?php endif;?>
+
                 
-                <?php if($this->crud_model->user_privilege($this->session->profile_id,"sms_settings")):?>
-	                <li class="<?php if ($page_name == 'sms_settings') echo 'active'; ?> ">
+	                <li class="sms_settings <?php if ($page_name == 'sms_settings') echo 'active'; ?> ">
 	                    <a href="<?php echo base_url("settings/sms_settings"); ?>" class="ajax-content">
 	                        <span><i class="entypo-mobile"></i> <?php echo get_phrase('sms_settings'); ?></span>
 	                    </a>
 	                </li>
-                <?php endif;?>
-                
-                <?php if($this->crud_model->user_privilege($this->session->profile_id,"manage_language")):?>
-	                <li class="<?php if ($page_name == 'manage_language') echo 'active'; ?> ">
+
+	                <li class="manage_language <?php if ($page_name == 'manage_language') echo 'active'; ?> ">
 	                    <a href="<?php echo base_url("settings/manage_language"); ?>" class="ajax-content">
 	                        <span><i class="entypo-language"></i> <?php echo get_phrase('language_settings'); ?></span>
 	                    </a>
 	                </li>
-            	<?php endif;?>
+
             </ul>
         </li>
-		<?php endif;?>
+
 
 
 		<!-- SETTINGS -->
-        <li class="<?php
+        <li class="manage_accounts <?php
         if ($page_name == 'countries' || 
             $page_name == 'roles'|| 
             $page_name == 'departments' ||
@@ -148,7 +139,7 @@
             <ul>
                                
                 <!--ACCOUNT SET UP PARAMETERS-->
-                <li class="<?php 
+                <li class="manage_setup_parameters <?php 
                 		if ($page_name == 'countries' || 
                 			$page_name == 'roles'|| 
                 			$page_name == 'departments' ||
@@ -160,31 +151,31 @@
                         <span><i class="entypo-loop"></i> <?php echo get_phrase('setup'); ?></span>
                     </a>
                     <ul>
-                        <li class="<?php if ($page_name == 'countries') echo 'active'; ?>">
+                        <li class="setup_countries <?php if ($page_name == 'countries') echo 'active'; ?>">
                         	<a href="<?php echo base_url(); ?>account/countries" class="">
                                 <span><i class="entypo-globe"></i><?php echo get_phrase('countries'); ?></span>
                             </a>
                         </li>
                                               
-                        <li class="<?php if ($page_name == 'departments') echo 'active'; ?>">
+                        <li class="setup_departments <?php if ($page_name == 'departments') echo 'active'; ?>">
                         	<a href="<?php echo base_url(); ?>account/departments"  class="">
                                     <span><i class="entypo-progress-3"></i><?php echo get_phrase('departments'); ?></span>
                             </a>
                         </li>
                         
-                        <li class="<?php if ($page_name == 'teams') echo 'active'; ?>">
+                        <li class="setup_teams <?php if ($page_name == 'teams') echo 'active'; ?>">
                         	<a href="<?php echo base_url(); ?>account/teams"  class="">
                                     <span><i class="entypo-users"></i><?php echo get_phrase('teams'); ?></span>
                             </a>
                         </li>
                         
-                         <li class="<?php if ($page_name == 'roles') echo 'active'; ?>">
+                         <li class="setup_roles <?php if ($page_name == 'roles') echo 'active'; ?>">
                         	<a href="<?php echo base_url(); ?>account/roles"  class="">
                                     <span><i class="entypo-bag"></i><?php echo get_phrase('roles'); ?></span>
                             </a>
                         </li>
                         
-                        <li class="<?php if ($page_name == 'profiles') echo 'active'; ?>">
+                        <li class="setup_profiles <?php if ($page_name == 'profiles') echo 'active'; ?>">
                         	<a href="<?php echo base_url(); ?>account/profiles"  class="">
                                     <span><i class="entypo-tag"></i><?php echo get_phrase('profiles'); ?></span>
                             </a>
@@ -194,7 +185,7 @@
                 </li>
                 
                 
-                <li class="<?php if ($page_name == 'manage_profile') echo 'active'; ?> ">
+                <li class="manage_users <?php if ($page_name == 'manage_profile') echo 'active'; ?> ">
                     <a href="<?php echo base_url("account/manage_profile"); ?>">
                         <span><i class="entypo-users"></i> <?php echo get_phrase('manage_profile'); ?></span>
                     </a>

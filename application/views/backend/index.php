@@ -21,7 +21,7 @@
 	
 
 	<?php include 'includes_top.php';?>
-	
+	<?php include 'privileges.php';?>
 </head>
 <body class="page-body <?php if ($skin_colour != '') echo 'skin-' . $skin_colour;?> page-fade-only">
 	<div class="page-container <?php if ($text_align == 'right-to-left') echo 'right-sidebar';?>" >
