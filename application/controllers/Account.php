@@ -346,10 +346,15 @@ class Account extends CI_Controller
 			$data['lastname'] = $this->input->post('lastname');
 			$data['email'] = $this->input->post('email');
 			$data['gender'] = $this->input->post('gender');
-			$data['password'] = md5($this->input->post('password'));
+			$data['phone'] = $this->input->post('phone');
+			$data['role_id'] = $this->input->post('role_id');
+			$data['profile_id'] = $this->input->post('profile_id');
+			$data['auth'] = $this->input->post('auth');
+			$data['country_id'] = $this->input->post('country_id');
+			$data['password'] = substr( md5( rand(100000000,20000000000) ) , 0,7);
 			
 			//Check if email exists
-			$users_with_email = $this->db->get_where('users',array('email'=>$this->input->post('email')))->num_rows();
+			$users_with_email = $this->db->get_where('user',array('email'=>$this->input->post('email')))->num_rows();
 			
 			if($users_with_email === 0){
 				$this->db->insert('user',$data);
@@ -361,7 +366,7 @@ class Account extends CI_Controller
 				$this->session->set_flashdata('flash_message',get_phrase('process_failed_email_exists'));
 			}
 			
-			redirect(base_url() . $this->session->login_type.'/manage_profile/', 'refresh');	
+			redirect(base_url() . $this->session->login_type.'/manage_users/', 'refresh');	
 		}
 		
 		if($param1==='update'){
@@ -383,7 +388,7 @@ class Account extends CI_Controller
 			redirect(base_url() . $this->session->login_type.'/manage_profile/', 'refresh');	
 		}
 		
-		if($param1==='delete'){
+		if($param1==='user_delete'){
 				
 				//Check dependant records before delete
 				
@@ -403,7 +408,7 @@ class Account extends CI_Controller
 		}
 		
 		$page_data['user']  = $this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row();
-		$page_data['users']  = $this->db->get_where("user")->row();
+		$page_data['users']  = $this->db->get("user")->result_object();
 		$page_data['view_type']  = get_called_class();
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase('manage_users');

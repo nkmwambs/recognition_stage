@@ -48,6 +48,6 @@
 	</div>
     <?php include 'modal.php';?>
     <?php include 'includes_bottom.php';?>
-    <!-- <script src="<?=base_url();?>assets/js/jquery-ci.js"></script> -->
+    <script src="<?=base_url();?>assets/js/jquery-ci.js"></script>
 </body>
 </html>

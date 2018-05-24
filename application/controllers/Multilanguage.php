@@ -33,6 +33,7 @@ class Multilanguage extends CI_Controller
 	function select_language($language = 'english')
 	{
 		$this->session->set_userdata('current_language', $language);
+		$this->session->set_userdata('current_language_changed', true);
 		redirect(base_url(), 'refresh');
 	}
 	

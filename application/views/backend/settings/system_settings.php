@@ -1,7 +1,7 @@
 <hr />
 
     <div class="row">
-    <?php echo form_open(base_url() . 'index.php?admin/system_settings/do_update' , 
+    <?php echo form_open(base_url() . 'settings/system_settings/do_update' , 
       array('class' => 'form-horizontal form-groups-bordered validate','target'=>'_top'));?>
         <div class="col-md-6">
             
@@ -47,21 +47,6 @@
                       </div>
                   </div>
                     
-                  <div class="form-group">
-                      <label  class="col-sm-3 control-label"><?php echo get_phrase('paypal_email');?></label>
-                      <div class="col-sm-9">
-                          <input type="text" class="form-control" name="paypal_email" 
-                              value="<?php echo $this->db->get_where('settings' , array('type' =>'paypal_email'))->row()->description;?>">
-                      </div>
-                  </div>
-                    
-                  <div class="form-group">
-                      <label  class="col-sm-3 control-label"><?php echo get_phrase('currency');?></label>
-                      <div class="col-sm-9">
-                          <input type="text" class="form-control" name="currency" 
-                              value="<?php echo $this->db->get_where('settings' , array('type' =>'currency'))->row()->description;?>">
-                      </div>
-                  </div>
                     
                   <div class="form-group">
                       <label  class="col-sm-3 control-label"><?php echo get_phrase('system_email');?></label>
@@ -173,7 +158,7 @@
                         <article class="album">
                             <header>
                                 <a href="#" id="default">
-                                    <img src="assets/images/skins/default.png"
+                                    <img src="<?=base_url();?>assets/images/skins/default.png"
                                     <?php if ($skin == 'default') echo 'style="background-color: black; opacity: 0.3;"';?> />
                                 </a>
                                 <a href="#" class="album-options" id="default">
@@ -188,7 +173,7 @@
                         <article class="album">
                             <header>
                                 <a href="#" id="black">
-                                    <img src="assets/images/skins/black.png" 
+                                    <img src="<?=base_url();?>assets/images/skins/black.png" 
                                       <?php if ($skin == 'black') echo 'style="background-color: black; opacity: 0.3;"';?> />
                                 </a>
                                 <a href="#" class="album-options" id="black">
@@ -202,7 +187,7 @@
                         <article class="album">
                             <header>
                                 <a href="#" id="blue">
-                                    <img src="assets/images/skins/blue.png"
+                                    <img src="<?=base_url();?>assets/images/skins/blue.png"
                                     <?php if ($skin == 'blue') echo 'style="background-color: black; opacity: 0.3;"';?> />
                                 </a>
                                 <a href="#" class="album-options" id="blue">
@@ -216,7 +201,7 @@
                         <article class="album">
                             <header>
                                 <a href="#" id="cafe">
-                                    <img src="assets/images/skins/cafe.png"
+                                    <img src="<?=base_url();?>assets/images/skins/cafe.png"
                                     <?php if ($skin == 'cafe') echo 'style="background-color: black; opacity: 0.3;"';?> />
                                 </a>
                                 <a href="#" class="album-options" id="cafe">
@@ -230,7 +215,7 @@
                         <article class="album">
                             <header>
                                 <a href="#" id="green">
-                                    <img src="assets/images/skins/green.png"
+                                    <img src="<?=base_url();?>assets/images/skins/green.png"
                                     <?php if ($skin == 'green') echo 'style="background-color: black; opacity: 0.3;"';?> />
                                 </a>
                                 <a href="#" class="album-options" id="green">
@@ -244,7 +229,7 @@
                         <article class="album">
                             <header>
                                 <a href="#" id="purple">
-                                    <img src="assets/images/skins/purple.png"
+                                    <img src="<?=base_url();?>assets/images/skins/purple.png"
                                     <?php if ($skin == 'purple') echo 'style="background-color: black; opacity: 0.3;"';?> />
                                 </a>
                                 <a href="#" class="album-options" id="purple">
@@ -258,7 +243,7 @@
                         <article class="album">
                             <header>
                                 <a href="#" id="red">
-                                    <img src="assets/images/skins/red.png"
+                                    <img src="<?=base_url();?>assets/images/skins/red.png"
                                     <?php if ($skin == 'red') echo 'style="background-color: black; opacity: 0.3;"';?> />
                                 </a>
                                 <a href="#" class="album-options" id="red">
@@ -272,7 +257,7 @@
                         <article class="album">
                             <header>
                                 <a href="#" id="white">
-                                    <img src="assets/images/skins/white.png"
+                                    <img src="<?=base_url();?>assets/images/skins/white.png"
                                     <?php if ($skin == 'white') echo 'style="background-color: black; opacity: 0.3;"';?> />
                                 </a>
                                 <a href="#" class="album-options" id="white">
@@ -286,7 +271,7 @@
                         <article class="album">
                             <header>
                                 <a href="#" id="yellow">
-                                    <img src="assets/images/skins/yellow.png"
+                                    <img src="<?=base_url();?>assets/images/skins/yellow.png"
                                     <?php if ($skin == 'yellow') echo 'style="background-color: black; opacity: 0.3;"';?> />
                                 </a>
                                 <a href="#" class="album-options" id="yellow">
@@ -307,7 +292,7 @@
             
             </div>
 
-            <?php echo form_open(base_url() . 'index.php?admin/system_settings/upload_logo' , array(
+            <?php echo form_open(base_url() . 'settings/system_settings/upload_logo' , array(
             'class' => 'form-horizontal form-groups-bordered validate','target'=>'_top' , 'enctype' => 'multipart/form-data'));?>
 
               <div class="panel panel-primary" >
@@ -364,8 +349,8 @@
     $(".gallery-env").on('click', 'a', function () {
         skin = this.id;
         $.ajax({
-            url: '<?php echo base_url();?>index.php?admin/system_settings/change_skin/'+ skin,
-            success: window.location = '<?php echo base_url();?>index.php?admin/system_settings/'
+            url: '<?php echo base_url();?>settings/system_settings/change_skin/'+ skin,
+            success: window.location = '<?php echo base_url();?>settings/system_settings/'
         });
 });
 </script>

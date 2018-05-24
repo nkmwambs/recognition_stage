@@ -68,7 +68,7 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
-<link rel="shortcut icon" href="<?php echo base_url();?>assets/images/favicon.png">
+<link rel="shortcut icon" href="<?php echo base_url();?>assets/images/favicon.ico">
 <link rel="stylesheet" href="<?php echo base_url();?>assets/css/font-icons/font-awesome/css/font-awesome.min.css">
 
 <link rel="stylesheet" href="<?php echo base_url();?>assets/js/vertical-timeline/css/component.css">

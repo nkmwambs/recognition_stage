@@ -44,7 +44,7 @@
 								</div>
 							</div>
 							
-							 <div class="form-group">
+							 <div class="form-group <?php if($this->session->profile_id == $profile->profile_id) echo "self_assign_privilege";?>">
 	                            <div class="col-sm-offset-3 col-sm-5">
 	                                <div class="btn btn-info btn-icon submit"><i class="fa fa-save"></i><?php echo get_phrase('save');?></div>
 	                            </div>

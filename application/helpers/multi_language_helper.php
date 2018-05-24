@@ -25,7 +25,10 @@ if ( ! function_exists('get_phrase'))
 			$current_language	=	'english';
 			$CI->session->set_userdata('current_language' , $current_language);
 		}
-
+		
+		if($CI->session->current_language_changed === true){
+			$current_language	=	$CI->session->current_language;
+		}
 
 		/** insert blank phrases initially and populating the language db ***/
 		$check_phrase	=	$CI->db->get_where('language' , array('phrase' => $phrase))->row()->phrase;

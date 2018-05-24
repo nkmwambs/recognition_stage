@@ -76,7 +76,7 @@
         
         <!-- MESSAGES -->
         <li class="<?php if ($page_name == 'messages') echo 'active'; ?> ">
-            <a href="<?php echo base_url();?>messages">
+            <a href="<?php echo base_url();?>messages/message">
                 <i class="entypo-mail"></i>
                 <span><?php echo get_phrase('messages'); ?></span>
             </a>
@@ -128,7 +128,7 @@
             $page_name == 'departments' ||
             $page_name == 'teams' ||
 			$page_name == 'profiles' ||
-			$page_name == 'manage_profile')
+			$page_name == 'manage_users')
 			
             echo 'opened active';
         ?> ">
@@ -185,9 +185,9 @@
                 </li>
                 
                 
-                <li class="manage_users <?php if ($page_name == 'manage_profile') echo 'active'; ?> ">
-                    <a href="<?php echo base_url("account/manage_profile"); ?>">
-                        <span><i class="entypo-users"></i> <?php echo get_phrase('manage_profile'); ?></span>
+                <li class="manage_users <?php if ($page_name == 'manage_users') echo 'active'; ?> ">
+                    <a href="<?php echo base_url("account/manage_users"); ?>">
+                        <span><i class="entypo-users"></i> <?php echo get_phrase('manage_users'); ?></span>
                     </a>
                 </li>
                          
