@@ -11,27 +11,35 @@
     }
 }
 
-.modal-header,.modal-footer {
-    padding:9px 15px;
-    border-bottom:1px solid #eee;
-    background-color: #F5F5F5;
-    -webkit-border-top-left-radius: 5px;
-    -webkit-border-top-right-radius: 5px;
-    -moz-border-radius-topleft: 5px;
-    -moz-border-radius-topright: 5px;
-     border-top-left-radius: 5px;
-     border-top-right-radius: 5px;
- }
+.modal-dialog {
+  min-width: 80%;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.modal-content {
+	height: 60%;
+    max-height: 60%;
+    height: auto;
+    border-radius: 0;
+   
+}
+
+.modal-body {
+	 overflow-y:auto;
+	 height: 540px;
+}
  </style>
  
  <script type="text/javascript">
-	function showAjaxModal(url,header="")
+	function showAjaxModal(url)
 	{
 		// SHOWING AJAX PRELOADER IMAGE
 		jQuery('#modal_ajax .modal-body').html('<div style="text-align:center;margin-top:200px;"><img src="<?php echo base_url();?>uploads/preloader.gif" /></div>');
 		
 		// LOADING THE AJAX MODAL
-		jQuery('#modal_ajax').modal('show', {backdrop: 'static',keyboard: false});
+		jQuery('#modal_ajax').modal('show', {backdrop: 'true'});
 		
 		// SHOW AJAX RESPONSE ON REQUEST SUCCESS
 		$.ajax({
@@ -39,32 +47,22 @@
 			success: function(response)
 			{
 				jQuery('#modal_ajax .modal-body').html(response);
-				if(header===""){
-					jQuery('#modal_ajax .modal-title').html('<?=$system_name;?>');
-				}else{
-					jQuery('#modal_ajax .modal-title').html(header);
-				}
-				
 			}
 		});
-		
-		 $('.modal-dialog').draggable({
-		    handle: ".modal-header"
-		  });
 	}
 	</script>
     
     <!-- (Ajax Modal)-->
-    <div class="modal fade" id="modal_ajax">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content" style="height: auto;">
+    <div class="modal fade" id="modal_ajax" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
                 
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title"></h4>
+                    <h4 class="modal-title"><?php echo $system_name;?></h4>
                 </div>
                 
-                <div class="modal-body" id="pop_modal_body" style="height:500px; overflow:auto;">
+                <div class="modal-body" id="pop_modal_body" style="">
                 
                     
                     
@@ -93,7 +91,7 @@
 		jQuery('#modal-5').modal('show', {backdrop: 'static'});
 		document.getElementById('perform_link').setAttribute('href' , url);
 	}
-	function confirm_dialog(url,ajax_location_class="page-content"){
+	function confirm_dialog(url,reload=false){
 			BootstrapDialog.confirm('<?php echo get_phrase("Are_you_sure_you_want_to_perform_this_action?");?>', function(result){
             if(!result) {
 		                 BootstrapDialog.show({
@@ -115,11 +113,13 @@
 								
 								 BootstrapDialog.show({
 				                 	title:'Alert',
-						            message: "Process Completed"
+						            message: response
 						        });
-
-						       $("."+ajax_location_class).html(response);
-
+						        
+						        if(reload===true){
+						        	window.location.reload();
+						        }
+				        
 							}
 						}
 					);
@@ -149,7 +149,7 @@
     </div>
     
     <!-- (Confirm Modal)-->
-    <div class="modal fade" style="position: absolute;top:0px;bottom:0px;;" id="modal-5"> 
+    <div class="modal fade" style="position: absolute;top:0px;bottom:0px;" id="modal-5"> 
         <div class="modal-dialog">
             <div class="modal-content" style="margin-top:100px;">
                 
@@ -166,6 +166,4 @@
             </div>
         </div>
     </div>
-    
- 
     

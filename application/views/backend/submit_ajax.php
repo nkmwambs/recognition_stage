@@ -1,4 +1,5 @@
-$(".submit").click(function(ev){ 
+<script>
+	$(".submit").click(function(ev){ 
 		var action  = $(this).closest("form").attr("action");
 		var data = $(this).closest("form").serializeArray();
 		$(".inner-progress").html('');
@@ -13,7 +14,7 @@ $(".submit").click(function(ev){
 				$(".inner-progress").html('');
 				jQuery('#modal_ajax').modal('hide');		
 				$(".page-content").html(response);
-		
+				alert(<?=$msg;?>);
 			},
 			error:function(){
 				
@@ -24,3 +25,5 @@ $(".submit").click(function(ev){
 	});	
 	
 	
+
+</script>

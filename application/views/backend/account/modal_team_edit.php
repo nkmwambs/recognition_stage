@@ -24,7 +24,7 @@ foreach ( $edit_data as $row):
                                 </div>
                             </div>
                             
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('country');?></label>
                                 <div class="col-sm-5">
                                     <select class="form-control" name="country_id">
@@ -37,7 +37,34 @@ foreach ( $edit_data as $row):
                                     	<?php endforeach;?>
                                     </select>
                                 </div>
+                            </div> -->
+                            
+                            
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"><?php echo get_phrase('country');?></label>
+                                <div class="col-sm-5">
+                                	 <?php if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") !== 'vote' ){?>
+                                    <select class="form-control select2" name="country_id">
+                                    	<option><?=get_phrase("select");?></option>
+                                    	<?php
+                                    		$countries = $this->crud_model->get_results_by_id("country");
+											
+											foreach($countries as $country):
+                                    	?>
+                                    		<option value="<?=$country->country_id;?>" <?php if($row->country_id === $country->country_id) echo "selected";?> ><?=$country->name;?></option>
+                                    	<?php
+                                    		endforeach;
+                                    	?>
+                                    </select>
+                                    <?php }else{?>
+                                    	<input type="text" readonly="readonly" class="form-control" value="<?=$this->crud_model->get_type_name_by_id("country",$row->country_id);?>" />
+                                    		<input type="hidden"  value="<?=$row->country_id;?>" name="country_id"  />
+                                    <?php }?>	
+                                </div>
                             </div>
+                            
+                            
+                            
                             
                             <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('description');?></label>

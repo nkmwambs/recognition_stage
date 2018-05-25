@@ -3,16 +3,19 @@
 	$entitlements = $this->db->get("entitlement")->result_object();
 	
 	foreach($entitlements as $entitlement):
+?>
 	
-	echo ".".$entitlement->name."{display:none;}";
+	.<?=$entitlement->name;?>{display:none;}
 
+<?php 
 	endforeach;
 
 	foreach($entitlements as $entitlement):
-		if($this->crud_model->user_privilege($this->session->profile_id,$entitlement->name)){
-
-			echo ".".$entitlement->name."{display:block;}";
+		if($this->crud_model->user_privilege($this->session->profile_id,$entitlement->name)):
+?>
+			.<?=$entitlement->name;?>{display:block;}
 	 	
+<?php 
 			
 			if($entitlement->derivative_id !== 0){
 				$first_parent = $this->db->get_where("entitlement",array("entitlement_id"=>$entitlement->derivative_id))->row();
@@ -28,19 +31,13 @@
 							$third_parent = $this->db->get_where("entitlement",array("entitlement_id"=>$second_parent->derivative_id))->row();
 							
 								echo ".".$third_parent->name."{display:block;}";
-								
-								if($third_parent->derivative_id !== 0){
-									$fourth_parent = $this->db->get_where("entitlement",array("entitlement_id"=>$third_parent->derivative_id))->row();
-								
-										echo ".".$fourth_parent->name."{display:block;}";		
-								}
 							
 						}
 				}
 			}
 			
 			
-		}
+		endif;
 	endforeach;
 ?> 
 

@@ -1,4 +1,20 @@
+<?php
+//echo $this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type");
+// $user_id = $this->session->login_user_id;
+// 
+// $this->crud_model->country_scope_where($user_id); 
+// 
+// $scope_users = $this->db->get("user")->result_object(); 
+// 
+// print_r($scope_users);
+// 
+// echo $this->crud_model->get_field_value("scope","user_id",$user_id,"type");
+?>
+
 <div class="row">
+	<div class="row">
+		<div class="col-sm-12 inner-progress"></div>
+	</div>
 	<div class="col-md-12">
     
     	<!------CONTROL TABS START------>
@@ -105,11 +121,13 @@
 			
 			          <!--Manage Users-->
             <div class="tab-pane box active" id="users" style="padding: 5px">
-            	<a href="javascript:;" onclick="showAjaxModal('<?php echo base_url();?>modal/popup/modal_user_add/');" 
+            	<div class="add_user">
+            		<a href="javascript:;" onclick="showAjaxModal('<?php echo base_url();?>modal/popup/modal_user_add/');" 
 					class="btn btn-primary pull-right">
 						<i class="entypo-plus-circled"></i>
 							<?php echo get_phrase('add_user');?>
-					</a> 
+					</a>
+				</div> 
 				<br><hr>
 				
 				<table class="table table-striped datatable" id="table_export">
@@ -137,35 +155,44 @@
 			                                    </button>
 			                                    <ul class="dropdown-menu dropdown-default pull-left" role="menu">
 			                                        
-			                                        <!-- USER EDITING  -->
 			                                        <li>
+			                                            <a href="#" onclick="showAjaxModal('<?php echo base_url();?>modal/popup/modal_view_account/<?php echo $user->user_id;?>');">
+			                                                <i class="entypo-eye"></i>
+			                                                    <?php echo get_phrase('view');?>
+			                                                </a>
+			                                        </li>
+			                                        <li class="divider"></li>
+			                                        
+			                                        <!-- USER EDITING  -->
+			                                        <li class="update_user">
 			                                            <a href="#" onclick="showAjaxModal('<?php echo base_url();?>modal/popup/modal_user_edit/<?php echo $user->user_id;?>');">
 			                                                <i class="entypo-pencil"></i>
 			                                                    <?php echo get_phrase('edit');?>
 			                                                </a>
 			                                        </li>
-			                                        <li class="divider"></li>
+			                                        <li class="divider update_user"></li>
 			                                        
-			                                         <li>
-			                                            <a href="#" onclick="showAjaxModal('<?php echo base_url();?>modal/popup/modal_scope_edit/<?php echo $user->user_id;?>');">
+			                                         <li class="change_scope">
+			                                            <a href="#" onclick="showAjaxModal('<?php echo base_url();?>modal/popup/modal_scope_assignment/<?php echo $user->user_id;?>');">
 			                                                <i class="entypo-level-down"></i>
 			                                                    <?php echo get_phrase('change_scope');?>
 			                                                </a>
 			                                        </li>
-			                                        <li class="divider"></li>
+			                                        <li class="divider change_scope"></li>
 			                                        
+			                                         			                                        
 			                                        <!-- SUSPEND USER  -->
-			                                        <li>
-			                                            <a href="#" onclick="confirm_dialog('<?php echo base_url();?>account/manage_users/user_delete/<?php echo $user->user_id;?>');">
+			                                        <li class="suspend_user">
+			                                            <a  href="#" onclick="confirm_dialog('<?php echo base_url();?>account/manage_users/user_suspend/<?php echo $user->user_id;?>');">
 			                                                <i class="entypo-cancel"></i>
 			                                                    <?php echo get_phrase('suspend');?>
 			                                                </a>
 			                                        </li>
 			                                        
-			                                        <li class="divider"></li>
+			                                        <li class="divider suspend_user"></li>
 			                                        		                                        
 			                                        <!-- USER DELETION  -->
-			                                        <li>
+			                                        <li class="delete_user" >
 			                                            <a href="#" onclick="confirm_dialog('<?php echo base_url();?>account/manage_users/user_delete/<?php echo $user->user_id;?>');">
 			                                                <i class="entypo-trash"></i>
 			                                                    <?php echo get_phrase('delete');?>

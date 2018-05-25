@@ -35,7 +35,7 @@ class Modal extends CI_Controller {
 		$this->load->view( 'backend/'.$account_type.'/'.$page_name.'.php' ,$page_data);
 		
 		echo '<script src="'.base_url().'assets/js/neon-custom-ajax.js"></script>';
-		echo '<script src="'.base_url().'assets/js/jquery-ci.js"></script>';
+		echo '<script src="'.base_url().'assets/js/ci-custom-ajax.js"></script>';
 	}
 }
 

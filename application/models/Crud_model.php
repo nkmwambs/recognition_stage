@@ -24,6 +24,16 @@ class Crud_model extends CI_Model {
     }
 	
 	
+	function get_field_value($type, $search_field = '', $search_value = 'name',$show_field) {
+        //return $this->db->get_where($type, array($type . '_id' => $type_id))->row()->$field;
+        if($this->db->get_where($type, array($search_field => $search_value))->num_rows() > 0 ){
+        	return $this->db->get_where($type, array($search_field => $search_value))->row()->$show_field;
+        }else{
+        	return NULL;
+        }
+    }
+	
+	
 	public function get_results_by_id($type, $type_id = ''){
 		$result = $this->db->get($type)->result_object();
 		
@@ -34,8 +44,54 @@ class Crud_model extends CI_Model {
 		return $result;
 	}
 	
+	public function get_results_by_related_id($type, $id_field,$id,$all=false){
 	
-	/** PREVILEDGES **/
+		$result = $this->db->get_where($type,array( $id_field=>$id))->row();
+		if($all === true){
+			$result = $this->db->get_where($type,array($id_field=>$id))->result_object();	
+		}
+		return $result;
+	}
+	
+	/** PREVILEDGES **/	
+	
+	
+	
+	function country_scope_where($user_id=""){
+		$scope = $this->db->get_where("scope",array("user_id"=>$user_id))->row();//$this->crud_model->get_results_by_related_id("scope","user_id",$user_id);
+		
+		$countries = $this->crud_model->get_results_by_related_id("scope_country","scope_id",$scope->scope_id,true);
+		
+		$user_country_id = $this->db->get_where("user",array("user_id"=>$user_id))->row()->country_id;
+		
+		$country_ids = array();
+		
+		foreach($countries as $country){
+			$country_ids[] = $country->country_id;
+		}
+		
+		$scope_cond = '(country_id = '.$user_country_id;
+		$cnt = 1;
+		foreach($country_ids as $country_id){
+			// $this->db->where(array("country_id"=>$country_id));
+			if($cnt === count($countries)){
+				$scope_cond  .= " country_id = ".$country_id.")";
+			}elseif($cnt === 1 && $cnt !== count($countries)){
+				$scope_cond  .= " or country_id = ".$country_id." or ";	
+			}else{
+				$scope_cond  .= " country_id = ".$country_id." or ";
+			}
+			
+			$cnt++;
+		}
+		
+		$scope_cond .= '';
+		
+		$this->db->where($scope_cond);
+		
+	}
+	
+
 	
 	public function get_entitlement_by_profile_id($profile_id=""){
 		

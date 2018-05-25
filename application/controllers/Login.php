@@ -72,7 +72,7 @@ class Login extends CI_Controller {
 		    $this->session->set_userdata('name', $row->firstname);
 			$this->session->set_userdata('login_type', $role);	
 			$this->session->set_userdata('profile_id', $row->profile_id);	
-							
+			$this->session->set_userdata('country_id', $row->country_id);				
             return 'success';
         }
 

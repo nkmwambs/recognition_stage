@@ -297,6 +297,10 @@ class Account extends CI_Controller
 			}
 			
 			$page_data['teams'] = $this->db->get("team")->result_object();
+			if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
+				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
+				$page_data['teams']  = $this->db->get_where("team",array("country_id"=>$logged_user_country_id))->result_object();
+			}
 			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
 			exit;
 		}
@@ -314,6 +318,10 @@ class Account extends CI_Controller
 			}
 			
 			$page_data['teams'] = $this->db->get("team")->result_object();
+			if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
+				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
+				$page_data['teams']  = $this->db->get_where("team",array("country_id"=>$logged_user_country_id))->result_object();
+			}
 			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
 			exit;
 		}
@@ -323,12 +331,22 @@ class Account extends CI_Controller
 			$this->db->delete("team");
 			
 			$page_data['teams'] = $this->db->get("team")->result_object();
+			if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
+				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
+				$page_data['teams']  = $this->db->get_where("team",array("country_id"=>$logged_user_country_id))->result_object();
+			}
 			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
 			exit;
 		}
 		
-		
 		$page_data['teams'] = $this->db->get("team")->result_object();
+		
+		if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
+				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
+				$page_data['teams']  = $this->db->get_where("team",array("country_id"=>$logged_user_country_id))->result_object();
+		}
+		
+		
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['view_type']  = get_called_class();
         $page_data['page_title'] = get_phrase(__FUNCTION__);
@@ -336,10 +354,23 @@ class Account extends CI_Controller
 	}
 
 
+	
+
+
   	/** MANEGE USER INFORMATION **/
 	public function manage_users($param1="",$param2="",$param3=""){
 		if ($this->session->userdata('user_login') != 1)
             redirect(base_url(), 'refresh');
+		
+		$page_data['user']  = $this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row();
+			$page_data['users']  = $this->db->get("user")->result_object();
+		
+			if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
+				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
+				$page_data['users']  = $this->db->get_where("user",array("country_id"=>$logged_user_country_id))->result_object();
+			}
+		
+		$page_data['msg'] = get_phrase("success");
 		
 		if($param1==='add_user'){
 			$data['firstname'] = $this->input->post('firstname');
@@ -349,7 +380,7 @@ class Account extends CI_Controller
 			$data['phone'] = $this->input->post('phone');
 			$data['role_id'] = $this->input->post('role_id');
 			$data['profile_id'] = $this->input->post('profile_id');
-			$data['auth'] = $this->input->post('auth');
+			$data['auth'] = "1";
 			$data['country_id'] = $this->input->post('country_id');
 			$data['password'] = substr( md5( rand(100000000,20000000000) ) , 0,7);
 			
@@ -359,17 +390,27 @@ class Account extends CI_Controller
 			if($users_with_email === 0){
 				$this->db->insert('user',$data);
 	
-				$this->session->set_flashdata('flash_message',get_phrase('user_created_successfully'));
-					
-			}else{
+				//$this->session->set_flashdata('flash_message',get_phrase('user_created_successfully'));
 				
-				$this->session->set_flashdata('flash_message',get_phrase('process_failed_email_exists'));
+				/** Send an Email to the user on success with logi instructions here**/
+					
 			}
 			
-			redirect(base_url() . $this->session->login_type.'/manage_users/', 'refresh');	
+			// else{
+				// $this->session->set_flashdata('flash_message',get_phrase('process_failed_email_exists'));
+			// }
+			$page_data['message'] = get_phrase("success");
+			$page_data['user']  = $this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row();
+			$page_data['users']  = $this->db->get("user")->result_object();
+			if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
+				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
+				$page_data['users']  = $this->db->get_where("user",array("country_id"=>$logged_user_country_id))->result_object();
+			}
+			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
+			exit;	
 		}
 		
-		if($param1==='update'){
+		if($param1==='edit_user'){
 			
 			$this->db->where(array('user_id'=>$param2));
 			
@@ -377,41 +418,131 @@ class Account extends CI_Controller
 			$data['lastname'] = $this->input->post('lastname');
 			$data['email'] = $this->input->post('email');
 			$data['gender'] = $this->input->post('gender');
-			if($this->input->post('password')!==""){
-				$data['password'] = md5($this->input->post('password'));
-			}
-			
+			$data['phone'] = $this->input->post('phone');
+			$data['role_id'] = $this->input->post('role_id');
+			$data['profile_id'] = $this->input->post('profile_id');
+			$data['country_id'] = $this->input->post('country_id');		
+				
 			$this->db->update('user',$data);
 			
-			$this->session->set_flashdata('flash_message',get_phrase('profile_updated'));
-			
-			redirect(base_url() . $this->session->login_type.'/manage_profile/', 'refresh');	
+			$page_data['user']  = $this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row();
+			$page_data['users']  = $this->db->get("user")->result_object();
+			if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
+				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
+				$page_data['users']  = $this->db->get_where("user",array("country_id"=>$logged_user_country_id))->result_object();
+			}
+			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);	
+			exit;
 		}
+		
+		
+		if($param1==="assign_scope"){
+			
+			if($this->db->get_where("scope",array("user_id"=>$param2))->num_rows() > 0){
+				
+				$scope_id = $this->db->get_where("scope",array("user_id"=>$param2))->row()->scope_id;
+				
+				//Delete scope countries
+								
+				$this->db->where(array("scope_id"=>$scope_id));
+				$this->db->delete("scope_country");
+				
+				//Update Scope Record	
+				$this->db->where(array("scope_id"=>$scope_id));
+				
+				$data0["two_way"] = $this->input->post("two_way");
+				$data0["strict"] = $this->input->post("strict");
+				$data0['user_id'] = $param2;
+				$data0['type'] = $this->input->post("type");
+				$this->db->update("scope",$data0);
+				
+				//Insert Countries
+				
+				$countries  = $this->input->post("country_id");
+			
+				foreach($countries as $country){
+					$data['country_id'] = $country;
+					$data['scope_id'] = $scope_id;
+					
+					$this->db->insert("scope_country",$data);		
+				}	
+			}else{
+					
+				$data["two_way"] = $this->input->post("two_way");
+				$data["strict"] = $this->input->post("strict");
+				$data['user_id'] = $param2;
+				$data['type'] = $this->input->post("type");
+										
+				$this->db->insert("scope",$data);
+				
+				$scope_id = $this->db->insert_id();
+				
+				$countries  = $this->input->post("country_id");
+				
+				foreach($countries as $country){
+					$data2['country_id'] = $country;
+					$data2['scope_id'] = $scope_id;
+					
+					$this->db->insert("scope_country",$data2);	
+				}
+				
+			}
+
+			
+			$page_data['message']  = get_phrase("success");
+			$page_data['user']  = $this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row();
+			$page_data['users']  = $this->db->get("user")->result_object();
+			if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
+				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
+				$page_data['users']  = $this->db->get_where("user",array("country_id"=>$logged_user_country_id))->result_object();
+			}
+			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);	
+			exit;
+		}
+
+		
+		if($param1==='user_suspend'){
+					
+				$data['auth'] = "0";
+				$this->db->where(array('user_id'=>$param2));
+				
+				$this->db->update('user',$data);
+	
+				
+				$page_data['user']  = $this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row();
+				$page_data['users']  = $this->db->get("user")->result_object();
+				if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
+					$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
+					$page_data['users']  = $this->db->get_where("user",array("country_id"=>$logged_user_country_id))->result_object();
+				}
+				echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);	
+				exit;
+		}
+		
 		
 		if($param1==='user_delete'){
 				
-				//Check dependant records before delete
+				/**Consider checking on dependants here**/
 				
-				$depandants_check = $this->dependants_records($param3);
+				$this->db->where(array('user_id'=>$param2));
 				
-				if($depandants_check === 0){
-					$this->db->where(array('user_id'=>$param3));
+				$this->db->delete('user');
+	
 				
-					$this->db->delete('user');
-					
-					$this->session->set_flashdata('flash_message',get_phrase('user_deleted'));
-				}else{
-					$this->session->set_flashdata('flash_message',get_phrase('user_with_linkage_cannot_delete'));	
+				$page_data['user']  = $this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row();
+				$page_data['users']  = $this->db->get("user")->result_object();
+				if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
+					$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
+					$page_data['users']  = $this->db->get_where("user",array("country_id"=>$logged_user_country_id))->result_object();
 				}
-				
-				redirect(base_url() . $this->session->login_type.'/manage_profile/', 'refresh');
+				echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);	
+				exit;
 		}
 		
-		$page_data['user']  = $this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row();
-		$page_data['users']  = $this->db->get("user")->result_object();
+		
 		$page_data['view_type']  = get_called_class();
 		$page_data['page_name']  = __FUNCTION__;
-        $page_data['page_title'] = get_phrase('manage_users');
+        $page_data['page_title'] = get_phrase(__FUNCTION__);
         $this->load->view('backend/index', $page_data);
 	}
 
