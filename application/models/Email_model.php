@@ -10,10 +10,12 @@ class Email_model extends CI_Model {
 	function account_opening_email($account_type = '' , $email = '')
 	{
 		$system_name	=	$this->db->get_where('settings' , array('type' => 'system_name'))->row()->description;
+		$query			=	$this->db->get_where(users , array('email' => $email));	
 		
-		$email_msg		=	"Welcome to ".$system_name."<br />";
+		$email_msg		=	"Dear ".$query->row()->firstname.",<br />";	
+		$email_msg		.=	"Welcome to ".$system_name."<br />";
 		$email_msg		.=	"Your account type : ".$account_type."<br />";
-		$email_msg		.=	"Your login password : ".$this->db->get_where($account_type , array('email' => $email))->row()->password."<br />";
+		$email_msg		.=	"Your login password : ".$this->db->get_where("user" , array('email' => $email))->row()->password."<br />";
 		$email_msg		.=	"Login Here : ".base_url()."<br />";
 		
 		$email_sub		=	"Account opening email";
@@ -28,7 +30,7 @@ class Email_model extends CI_Model {
 		if($query->num_rows() > 0)
 		{
 			
-			$email_msg	=	"Your account type is : ".$account_type."<br />";
+			$email_msg	=	"Dear ".$query->row()->firstname.",<br />";
 			$email_msg	.=	"Your password is : ".$new_password."<br />";
 			
 			$email_sub	=	"Password reset request";
@@ -70,7 +72,7 @@ class Email_model extends CI_Model {
 		$this->email->to($to);
 		$this->email->subject($sub);
 		
-		$msg	=	$msg."<br /><br /><br /><br /><br /><br /><br /><hr /><center><a href=\"http://codecanyon.net/item/fps-school-management-system-pro/6087521?ref=joyontaroy\">&copy; 2013 FPS School Management System Pro</a></center>";
+		$msg	=	$msg."<br /><br /><br /><br /><br /><br /><br /><hr /><center><a href=\"https://www.compassion-africa.org\">&copy; 2018 ".get_phrase("AFR_staff_recognition_system")."</a></center>";
 		$this->email->message($msg);
 		
 		$this->email->send();

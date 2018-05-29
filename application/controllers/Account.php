@@ -382,17 +382,21 @@ class Account extends CI_Controller
 			$data['profile_id'] = $this->input->post('profile_id');
 			$data['auth'] = "1";
 			$data['country_id'] = $this->input->post('country_id');
-			$data['password'] = substr( md5( rand(100000000,20000000000) ) , 0,7);
+			$data['password'] = md5(substr( md5( rand(100000000,20000000000) ) , 0,7));
 			
 			//Check if email exists
 			$users_with_email = $this->db->get_where('user',array('email'=>$this->input->post('email')))->num_rows();
 			
 			if($users_with_email === 0){
 				$this->db->insert('user',$data);
-	
+				
+				//$insert_id = $this->db->insert_id();	
 				//$this->session->set_flashdata('flash_message',get_phrase('user_created_successfully'));
 				
-				/** Send an Email to the user on success with logi instructions here**/
+				/** Send an Email to the user on success with login instructions here**/
+				
+				$account_type = $this->crud_model->get_type_name_by_id("profile",$this->input->post('profile_id')); 
+				$this->email_model->account_opening_email($account_type,$this->input->post('email'));
 					
 			}
 			

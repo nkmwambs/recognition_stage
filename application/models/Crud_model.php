@@ -55,6 +55,29 @@ class Crud_model extends CI_Model {
 	
 	/** PREVILEDGES **/	
 	
+	function scope_countries($user_id="",$show_your_country= false){
+		$scope = $this->db->get_where("scope",array("user_id"=>$user_id))->row();		
+	
+		$user_country_id = $this->db->get_where("user",array("user_id"=>$user_id))->row()->country_id;
+	
+		$country_ids = array();
+			
+		if($show_your_country === true){
+			$country_ids[] = $user_country_id;
+		}
+		
+		if($this->db->get_where("scope",array("user_id"=>$user_id))->num_rows() > 0){
+			$result = $this->db->get_where("scope_country",array("scope_id"=>$scope->scope_id));
+			$countries = $result->result_object();
+			
+			foreach($countries as $country){
+				$country_ids[] = $country->country_id;
+			}
+			
+		}	
+				
+		return $country_ids;
+	}
 	
 	
 	function country_scope_where($user_id=""){
@@ -87,8 +110,7 @@ class Crud_model extends CI_Model {
 		
 		$scope_cond .= '';
 		
-		$this->db->where($scope_cond);
-		
+		return $this->db->where($scope_cond);
 	}
 	
 
@@ -96,6 +118,20 @@ class Crud_model extends CI_Model {
 	public function get_entitlement_by_profile_id($profile_id=""){
 		
 		return $this->db->get_where("access",array("profile_id"=>$profile_id))->result_object();
+		
+	}
+	
+	public function check_profile_privilege($profile_id,$privilege=""){
+		
+		$entitlements = $this->get_entitlement_by_profile_id($profile_id);
+		
+		$new_array = array();
+		
+		foreach($entitlements as $entitlement){
+			$new_array[] = $this->db->get_where("entitlement",array("entitlement_id"=>$entitlement->entitlement_id))->row()->name;
+		}
+		
+		return in_array($privilege, $new_array) == "1"?true:false;
 		
 	}
     
@@ -127,7 +163,6 @@ class Crud_model extends CI_Model {
         force_download($file_name . '.sql', $backup);
     }
 	
-	/** COUNTRIES **/
 	
 
 

@@ -40,21 +40,46 @@
         
         
         <!-- SURVEYS -->
-        <li class="<?php
-        if ($page_name == 'manage_surveys' ||
-                $page_name == 'nominate')
-                  echo 'opened active';
-        ?> ">
+        <li class="<?php if ($page_name == 'survey_results' ||  $page_name == 'nominate' || $page_name == 'manage_surveys' || $page_name == 'category_groups' || $page_name == 'categories'|| $page_name == 'survey_setting' || $page_name == 'mail_templates') echo 'opened active';?>">
             <a href="#">
                 <i class="entypo-layout"></i>
                 <span><?php echo get_phrase('surveys'); ?></span>
             </a>
             <ul>
             	
-	            <li class="manage_surveys <?php if ($page_name == 'manage_surveys') echo 'active'; ?> ">
-	               <a href="<?php echo base_url("surveys/manage_surveys"); ?>" class="ajax-content">
+	            <li class="manage_surveys <?php if ($page_name == 'category_groups' || $page_name == 'categories'|| $page_name == 'survey_setting' || $page_name == 'mail_templates') echo 'opened active';?>">
+	               <a href="#" class="ajax-content">
 	                   <span><i class="entypo-tools"></i> <?php echo get_phrase('manage_surveys'); ?></span>
 	                    </a>
+	                    
+	                    
+	                    <ul>
+	                        <li class="manage_grouping <?php if ($page_name == 'category_groups') echo 'active'; ?>">
+	                        	<a href="<?php echo base_url(); ?>surveys/category_groups" class="">
+	                                <span><i class="entypo-logo-db"></i><?php echo get_phrase('category_groups'); ?></span>
+	                            </a>
+	                        </li>
+	                        
+	                        <li class="manage_category <?php if ($page_name == 'categories') echo 'active'; ?>">
+	                        	<a href="<?php echo base_url(); ?>surveys/categories" class="">
+	                                <span><i class="entypo-layout"></i><?php echo get_phrase('categories'); ?></span>
+	                            </a>
+	                        </li>
+	                        
+	                        <li class="survey_settings <?php if ($page_name == 'survey_setting') echo 'active'; ?>">
+	                        	<a href="<?php echo base_url(); ?>surveys/survey_setting" class="">
+	                                <span><i class="entypo-cog"></i><?php echo get_phrase('survey_setting'); ?></span>
+	                            </a>
+	                        </li>
+	                        
+	                        <li class="setup_countries <?php if ($page_name == 'mail_templates') echo 'active'; ?>">
+	                        	<a href="<?php echo base_url(); ?>surveys/mail_templates" class="">
+	                                <span><i class="entypo-popup"></i><?php echo get_phrase('mail_templates'); ?></span>
+	                            </a>
+	                        </li>
+	                        
+                        </ul>
+	                    
 	            </li>
                 
 
