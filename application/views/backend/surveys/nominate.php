@@ -1,7 +1,10 @@
 <?php
 
-//print_r($user_scope);
+$scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
+
 ?>
+
+
 <div class="row">
 
 	<div class="col-sm-8">
@@ -47,7 +50,9 @@
 					</div>
 				</div>	
 		<?php			
-				}else{	
+				}else{
+					
+					//print_r($groupings);	
 		?>
 		
 			<!-- Show nomination table if a vote has not been submitted -->
@@ -57,9 +62,9 @@
 							
 						</thead>
 						<tbody>
-							<?php foreach($groupings as $grouping){?>
+							<?php foreach($groupings as $grouping_id=>$categories){?>
 									<tr>
-										<td colspan="5" style="background-color:#F5F5F5;font-weight: bolder;text-align: center;"><?=$grouping->name;?></td>
+										<td colspan="5" style="background-color:#F5F5F5;font-weight: bolder;text-align: center;"><?=$this->crud_model->get_type_name_by_id("grouping",$grouping_id);?></td>
 									</tr>
 									<tr style="font-style: italic;">
 										<td><?=get_phrase("category");?></td>
@@ -70,55 +75,156 @@
 									</tr>
 									
 									<?php 
-										$this->db->where(array("grouping_id"=>$grouping->grouping_id));
-										$this->db->where(array("status"=>"1"));
-										if($contribution === "1"){
-											$this->db->where(array("assignment"=>$contribution));
-										}
-										
-		
-										$categories = $this->db->get("category")->result_object();
-										
+										/** Populate nominating Units Select form control. Derived from the static table Unit**/
 										foreach($categories as $category){
-											$unit_table_name = $this->db->get_where("unit",array("unit_id"=>$category->unit))->row()->name;
+											$category = (object)$category;
+											$unit_table_name_object = $this->db->get_where("unit",array("unit_id"=>$category->unit));
+											$unit_table_name = $unit_table_name_object->row()->name;
+											
+											/** Set country scope filter if a user has scope set **/
+											
+											if($scope->num_rows() >0 ){
+												$cond = $this->crud_model->country_scope_where($this->session->login_user_id,$scope->row()->type);
+											}
+											
+																						
+											/** Add Unit filter controls here - Start **/	
+											
+											if($unit_table_name === "user"){
+												/** User Filters Set here
+												 * 
+												 * Users cannot nominate themselves
+												 * Cannot vote inactive users
+												 * Users can only nominate users in the country and those assigned to the countries with Scope type of Both or Vote and Two Way set to Yes
+												 * Users can nominate other country staff if have a scope of either Two Way set as yes or no and Type set as Voting.  
+												 * 
+												 * **/
+												 
+												 /** 
+												  * Prevent listing self to the unit list and Inactive Users
+												  * Filter users from other countries with the current user country within their scope and of type not equal to admin and scope two way set as yes 
+												  * Show scoped users only for categories with visibility set as All i.e. 1 
+												  * **/
+												  
+												 /** Set Manager User List here **/
+												if($category->assignment == '2' && $unit_table_name === "user"){
+													/** Only show staff that are managed by the current user for categories that require managers contribution **/
+													$this->db->where(array("manager_id"=>$this->session->login_user_id));
+												}else{
+													/** List all staff for the country and those with scope to the country for voting **/
+													 $cond2 = "user_id != ".$user->user_id." AND auth = 1"; 
+													if($category->visibility === '1'){
+														if($this->crud_model->users_with_country_scope_for_voting($user->country_id) !==""){
+															$cond2 = $this->crud_model->users_with_country_scope_for_voting($user->country_id)." or user_id != ".$user->user_id." AND auth = 1";	
+														}
+														
+													}
+															 
+													 $this->db->where($cond2);
+												}
+												  
+												
+												 
+												 												 
+												 /** Prevent listing users from other countries if the current logged user have no scope set**/
+												 
+												 if($scope->num_rows() > 0){
+												 	/** Check if the Scope allows Voting i.e. Not Admin type. Allow voting other country staff if scope type is not admin **/
+												 	if($scope->row()->type == "admin"){
+												 		$this->db->where(array("country_id"=>$user->country_id));
+												 	}else{
+												 		/** Filter in all countries the current user has a voting scope for but for categories with all countries visibility**/
+												 		if($category->visibility === '1'){
+												 			$this->db->where($cond);
+												 		}else{
+												 			$this->db->where(array("country_id"=>$user->country_id));
+												 		}
+												 		
+												 	}
 													
-											$units = $this->db->get($unit_table_name)->result_object();
+												 }else{
+												 	$this->db->where(array("country_id"=>$user->country_id));
+												 }
+												 
+												
+											}	
+											
+											if($unit_table_name === "team"){
+												/** Team Filters Set here
+												 * A user can only nominate a team from his or her residence country
+												 * A user is not allowed to nominate teams the belong to
+												 * 
+												 * **/
+												 
+												 
+												 /** Only list the current users country teams **/
+												 	$cond4 = " country_id = ".$user->country_id;
+													if($this->crud_model->user_teams_to_vote($user->user_id) !==""){
+														$cond4 = $this->crud_model->user_teams_to_vote($user->user_id);	
+													}
+													
+														 
+												 	$this->db->where($cond4);
+												 
+												
+											}
+											
+											if($unit_table_name === "department"){
+												/** Deaprtment Filters Set here**/
+												
+											}
+											
+											if($unit_table_name === "country"){
+												/** Country Filters Set here**/
+												
+											}
+											
+											
+											 /** Add Unit filter controls here - End **/
+											 
+											 
+											 
+											 
+																													
+											$units = $this->db->get($unit_table_name)->result_object();										
+											
+											$options ='<select class="form-control select2 nominate '.$unit_table_name.'">';
+											
+											$options .='<option value="">'.get_phrase("nominate_".$unit_table_name).'</option>';												
+												foreach($units as $unit){
+													$options_html = ""; 
+														if($unit_table_name === "user"){
+															$options_html = $unit->firstname.' '.$unit->lastname.' ['.$this->crud_model->get_type_name_by_id("country",$unit->country_id).']';
+														}else{
+															$options_html = $unit->name;
+														}			
+													$val = $unit_table_name;													
+													$options .= '<option value="">'.$options_html.'</option>';
+															
+												}
+												
+											$options .="</select>";
+											
 									?>
+										
 										<tr>
 											<td><?=$category->name;?></td>
 											<td><?=$this->crud_model->get_type_name_by_id("contribution",$category->assignment);?></td>
 											<td><?=$this->crud_model->get_type_name_by_id("country",$category->visibility);?></td>
 											<td><?=ucfirst($unit_table_name);?></td>
-											<td>
-													<select class="form-control select2">
-														<option><?=get_phrase('nominate');?></option>
-														<?php foreach($units as $unit){
-															if($unit_table_name == 'user'){
-														?>
-															<option value=""><?=$unit->firstname;?> <?=$unit->lastname;?></option>
-														<?php		
-															}else{
-																
-														?>
-															<option value=""><?=$unit->name;?></option>
-														<?php		
-															}	
-														?>
-															
-														<?php }?>	
-													</select>
-												
-											</td>
+											<td><?=$options;?></td>
 										</tr>
-									<?php }?>
+									<?php 
+										}
+									?>
 									
 							<?php }?>
 							
 							<tr>
-								<td colspan="5" style="text-align: center;"><a href="<?=base_url();?>surveys/nominate/submit_vote/<?=$this->session->login_user_id;?>" class="btn btn-success btn-icon"><i class="fa fa-star"></i><?=get_phrase("submit");?></a></td>
+								<td colspan="5" style="text-align: center;"><a id="submit_vote" href="<?=base_url();?>surveys/nominate/submit_vote/<?=$this->session->login_user_id;?>" class="btn btn-success btn-icon"><i class="fa fa-star"></i><?=get_phrase("submit");?></a></td>
 							</tr>
 						</tbody>
-					</table>
+					</table> 
 		<?php
 				}
 			}
@@ -144,7 +250,7 @@
 		<div class="row">
 			<div style="text-decoration: underline;" class="col-sm-12"><?=get_phrase("scope");?>:</div>
 			<?php 
-				$scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
+				
 				
 				if($scope->num_rows() > 0 ){
 			?>
@@ -172,3 +278,22 @@
 		<hr/>
 	</div>	
 </div>
+
+<script>
+	$("#submit_vote").click(function(ev){
+		
+		alert("Hello");
+		ev.preventDefault();
+	});
+	
+	
+	$(".nominate").change(function(ev){
+		
+		alert($(this).val());
+		
+		ev.preventDefault();
+	});
+	
+	
+	
+</script>
