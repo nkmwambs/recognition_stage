@@ -2,8 +2,11 @@
 
 $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 
-?>
+//if(isset($results)){
+	//print_r($results);
+//}
 
+?>
 
 <div class="row">
 
@@ -188,21 +191,62 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 																													
 											$units = $this->db->get($unit_table_name)->result_object();										
 											
-											$options ='<select class="form-control select2 nominate '.$unit_table_name.'">';
+											$options ='<select class="form-control nominate" id="'.$category->category_id.'">';
 											
-											$options .='<option value="">'.get_phrase("nominate_".$unit_table_name).'</option>';												
-												foreach($units as $unit){
-													$options_html = ""; 
-														if($unit_table_name === "user"){
-															$options_html = $unit->firstname.' '.$unit->lastname.' ['.$this->crud_model->get_type_name_by_id("country",$unit->country_id).']';
-														}else{
-															$options_html = $unit->name;
-														}			
-													$val = $unit_table_name;													
-													$options .= '<option value="">'.$options_html.'</option>';
-															
-												}
+											$options .='<option value="">'.get_phrase("nominate_".$unit_table_name).'</option>';
+											if(count($results) > 0){
 												
+												
+																								
+													foreach($units as $unit){
+														$options_html = ""; 
+															if($unit_table_name === "user"){
+																$options_html = $unit->firstname.' '.$unit->lastname.' ['.$this->crud_model->get_type_name_by_id("country",$unit->country_id).']';
+															}else{
+																$options_html = $unit->name;
+															}			
+														$val = $unit_table_name;			
+														$id = $unit_table_name.'_id';
+														$show_choice = "";
+														$selected = "";
+														foreach($results as $result){
+															if($category->category_id === $result->category_id){
+																$unit_trace = $this->db->get_where("unit",array("unit_id"=>$result->nominated_unit))->row()->name;
+																
+																if($unit_trace === $unit_table_name){
+																	$show_choice = $this->db->get_where($unit_table_name,array($id=>$result->nominee_id))->row()->$id;
+																	
+																}
+															
+															}
+														}
+														
+														
+														if($show_choice === $unit->$id){
+															$selected ="selected='selected'";
+														}
+														
+														$options .= '<option value="'.$unit->$id.'" '.$selected.'>'.$options_html.'</option>';
+																							
+																
+													}
+												}else{
+													
+													foreach($units as $unit){
+														$options_html = ""; 
+															if($unit_table_name === "user"){
+																$options_html = $unit->firstname.' '.$unit->lastname.' ['.$this->crud_model->get_type_name_by_id("country",$unit->country_id).']';
+															}else{
+																$options_html = $unit->name;
+															}			
+														$val = $unit_table_name;			
+														$id = $unit_table_name.'_id';
+														
+														$options .= '<option value="'.$unit->$id.'">'.$options_html.'</option>';
+																								
+																
+													}
+												}	
 											$options .="</select>";
 											
 									?>
@@ -288,12 +332,26 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 	
 	
 	$(".nominate").change(function(ev){
+		var category_id = $(this).attr('id');
+		var nominee_id = $(this).val();
+		var user_id = '<?=$this->session->login_user_id;?>';
 		
-		alert($(this).val());
+		var url = "<?=base_url();?>surveys/post_nomination_choice/" + category_id + '/' + nominee_id + '/' + user_id;
+		
+		
+		$.ajax({
+			url:url,
+			success:function(response){
+				//alert(response);
+				$(this).css("border","1px green solid");
+			},
+			error:function(){
+				
+			}
+		});
 		
 		ev.preventDefault();
 	});
-	
 	
 	
 </script>

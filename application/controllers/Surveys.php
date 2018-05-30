@@ -328,17 +328,43 @@ class Surveys extends CI_Controller
 				}
 			}
 		}
-		
+
+		$page_data['results']  = array();
+		if($this->db->get_where("result",array("user_id"=>$this->session->login_user_id,"status"=>'0'))->num_rows() > 0){
+			$current_survey = $this->db->get_where("result",array("user_id"=>$this->session->login_user_id,"status"=>'0'))->row();
+			$page_data['results'] = $this->db->get_where("tabulate",array("result_id"=>$current_survey->result_id))->result_object();
+		}		
 		
 		$page_data['groupings'] =(OBJECT) $grouped_categories;
 		$page_data['user'] = $user;
 		$page_data['role'] = $role;
 		$page_data['contribution'] = $contribution;
-		//$page_data['groupings'] = (OBJECT)$refined_grouping;
 		$page_data['view_type']  = get_called_class();
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase(__FUNCTION__);
         $this->load->view('backend/index', $page_data);
+	}
+
+	function post_nomination_choice($category_id="",$nominee_id="",$voting_user_id=""){
+		//echo $category_id;
+		$result = $this->db->get_where("result",array("user_id"=>$voting_user_id,"status"=>0))->row();
+		$category = $this->db->get_where("category",array("category_id"=>$category_id))->row();
+		
+		$data['result_id'] = $result->result_id;
+		$data['category_id'] = $category_id;
+		$data['nominated_unit'] = $category->unit;
+		$data['nominee_id'] = $nominee_id;
+		$data['created_by'] = $voting_user_id;
+		$data['created_date'] = date("Y-m-d h:i:s");
+		$data['last_modified_by'] = $voting_user_id;
+
+		if($this->db->get_where("tabulate",array("result_id"=>$result->result_id,"category_id"=>$category_id))->num_rows() === 0){
+			$this->db->insert("tabulate",$data);
+			
+		}else{
+			$this->db->where(array("result_id"=>$result->result_id,"category_id"=>$category_id));
+			$this->db->update("tabulate",$data);
+		}
 	}
 	
 	public function survey_results(){
