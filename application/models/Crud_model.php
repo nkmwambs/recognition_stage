@@ -61,7 +61,7 @@ class Crud_model extends CI_Model {
 		$user_country_id = $this->db->get_where("user",array("user_id"=>$user_id))->row()->country_id;
 	
 		$country_ids = array();
-			
+		$country_ids[0] = "1";	
 		if($show_your_country === true){
 			$country_ids[] = $user_country_id;
 		}
@@ -80,37 +80,33 @@ class Crud_model extends CI_Model {
 	}
 	
 	
-	function country_scope_where($user_id=""){
-		$scope = $this->db->get_where("scope",array("user_id"=>$user_id))->row();//$this->crud_model->get_results_by_related_id("scope","user_id",$user_id);
+	function country_scope_where($user_id="",$scope_type = "vote"){
+
+		$country_ids =  array();		
+		if($scope_type === "admin"){
+			 $country_ids[0] = $this->db->get_where("user",array("user_id"=>$user_id))->row()->country_id;
+		}else{
 		
-		$countries = $this->crud_model->get_results_by_related_id("scope_country","scope_id",$scope->scope_id,true);
-		
-		$user_country_id = $this->db->get_where("user",array("user_id"=>$user_id))->row()->country_id;
-		
-		$country_ids = array();
-		
-		foreach($countries as $country){
-			$country_ids[] = $country->country_id;
+		$country_ids = $this->crud_model->scope_countries($user_id,true);
 		}
-		
-		$scope_cond = '(country_id = '.$user_country_id;
-		$cnt = 1;
-		foreach($country_ids as $country_id){
-			// $this->db->where(array("country_id"=>$country_id));
-			if($cnt === count($countries)){
-				$scope_cond  .= " country_id = ".$country_id.")";
-			}elseif($cnt === 1 && $cnt !== count($countries)){
-				$scope_cond  .= " or country_id = ".$country_id." or ";	
-			}else{
-				$scope_cond  .= " country_id = ".$country_id." or ";
+			$scope_cond = '(';
+			$cnt = 1;
+				foreach($country_ids as $country_id){
+					// $this->db->where(array("country_id"=>$country_id));
+					if($cnt === count($country_ids)){
+						$scope_cond  .= "country_id = ".$country_id.")";
+					}elseif($cnt === 1 && $cnt !== count($country_ids)){
+						$scope_cond  .= "country_id = ".$country_id." or ";	
+					}else{
+						$scope_cond  .= "country_id = ".$country_id." or ";
+					}
+																
+				$cnt++;
 			}
-			
-			$cnt++;
-		}
-		
-		$scope_cond .= '';
-		
-		return $this->db->where($scope_cond);
+															
+		 $scope_cond .= '';
+		return $scope_cond;													
+		//return $this->db->where($scope_cond);
 	}
 	
 
@@ -134,7 +130,124 @@ class Crud_model extends CI_Model {
 		return in_array($privilege, $new_array) == "1"?true:false;
 		
 	}
-    
+	
+	function user_teams_to_vote($user_id=""){
+		$scope_cond = "";
+		$user_country = $this->db->get_where("user",array("user_id"=>$user_id))->row()->country_id;
+		
+		$team_ids = array();
+		
+		if($this->db->get_where("teamset",array("user_id"=>$user_id))->num_rows() > 0){
+		
+			$country_teams = $this->db->get_where("team",array("country_id"=>$user_country));
+			
+			if($country_teams->num_rows() > 0){
+				
+				foreach($country_teams->result_object() as $team){
+					
+					if($this->db->get_where("teamset",array("user_id"=>$user_id,"team_id"=>$team->team_id))->num_rows() === 0){
+						$team_ids[] = $team->team_id;
+					}
+				}
+				
+				
+			}
+			
+			
+			$scope_cond .= '(';
+			$cnt = 1;
+				foreach($team_ids as $team_id){
+					// $this->db->where(array("country_id"=>$country_id));
+					if($cnt === count($team_ids)){
+						$scope_cond  .= "team_id = ".$team_id.")";
+					}elseif($cnt === 1 && $cnt !== count($team_ids)){
+						$scope_cond  .= "team_id = ".$team_id." or ";	
+					}else{
+						$scope_cond  .= "team_id = ".$team_id." or ";
+					}
+																
+				$cnt++;
+			}
+															
+		 $scope_cond .= '';
+			
+		}
+		return $scope_cond;	
+	} 
+	
+	function users_with_country_scope_for_voting($country_id=""){
+		$scope_countries = $this->db->get_where("scope_country",array("country_id"=>$country_id));
+		
+		$user_ids = array();
+		$scope_cond = "";
+		if($scope_countries->num_rows() > 0){
+			foreach($scope_countries->result_object() as $scope_country){
+				if($this->db->get_where("scope",array("scope_id"=>$scope_country->scope_id,"two_way"=>1,"type<>"=>"admin"))->num_rows() > 0){
+					$user_ids[]  = $this->db->get_where("scope",array("scope_id"=>$scope_country->scope_id,"two_way"=>1,"type<>"=>"admin"))->row()->user_id;
+					
+				}
+				
+			}
+		
+		
+		
+		$scope_cond .= '(';
+			$cnt = 1;
+				foreach($user_ids as $user_id){
+					// $this->db->where(array("country_id"=>$country_id));
+					if($cnt === count($user_ids)){
+						$scope_cond  .= "user_id = ".$user_id.")";
+					}elseif($cnt === 1 && $cnt !== count($user_ids)){
+						$scope_cond  .= "user_id = ".$user_id." or ";	
+					}else{
+						$scope_cond  .= "user_id = ".$user_id." or ";
+					}
+																
+				$cnt++;
+			}
+															
+		 $scope_cond .= '';
+		}
+	
+		return $scope_cond;
+	} 
+	
+	/**Categories**/
+
+	function categories_in_grouping($grouping_id="",$user_id="",$contribution=""){
+		$user_country_id = $this->db->get_where("user",array("user_id"=>$user_id))->row()->country_id;
+		$country_visibility = array("1",$user_country_id);
+		
+		$show_categories = array();
+		
+		if($contribution === '1'){	
+			$categories = $this->db->get_where("category",array("grouping_id"=>$grouping_id,"status"=>'1',"assignment"=>$contribution)); 
+			
+			 if($categories->num_rows() > 0){
+				 foreach($country_visibility as $country_id){
+					 $category_visibility = $this->db->get_where("category",array("grouping_id"=>$grouping_id,"status"=>"1","assignment"=>$contribution,"visibility"=>$country_id));
+					 //if($category_visibility->num_rows() > 0){
+					 	if(($category_visibility->num_rows() > 0 && $category_visibility->row()->unit != 3) || ($category_visibility->num_rows() > 0 && $category_visibility->row()->unit == 3 && $this->db->get_where("team",array("country_id"=>$user_country_id))->num_rows() > 0)){
+						$show_categories[] = (array)$category_visibility->row();
+					 }
+				 }
+			 }
+		}else{
+			$categories = $this->db->get_where("category",array("grouping_id"=>$grouping_id,"status"=>'1')); 
+			
+			 if($categories->num_rows() > 0){
+				 foreach($country_visibility as $country_id){
+					 $category_visibility = $this->db->get_where("category",array("grouping_id"=>$grouping_id,"status"=>"1","visibility"=>$country_id));
+					 if(count($country_visibility) > 0 && $category_visibility->num_rows() > 0){
+						$show_categories[] = (array)$category_visibility->row();
+					 }
+				 }
+			 }
+		}
+		return (OBJECT)$show_categories;
+	}
+	
+	    
     ////////BACKUP RESTORE/////////
     function create_backup($type) {
         $this->load->dbutil();

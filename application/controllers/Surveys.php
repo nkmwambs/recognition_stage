@@ -315,22 +315,26 @@ class Surveys extends CI_Controller
 		
 		$groupings =  $this->db->get_where("grouping",array("status"=>'1'))->result_object();
 		
-		$refined_grouping = array();
-		
+		$grouped_categories = array();
+
+		$user_scope = $this->crud_model->scope_countries($this->session->login_user_id,true);
+ 				
 		foreach($groupings as $grouping){
-			$category = $this->db->get_where("category",array("grouping_id"=>$grouping->grouping_id,"assignment"=>$contribution));
+			$categories = $this->crud_model->categories_in_grouping($grouping->grouping_id,$this->session->login_user_id,$contribution);
 			
-			if($category->num_rows() > 0){
-				$refined_grouping[] = $grouping;
+			if(sizeof($categories) > 0){
+				foreach($categories as $category){
+					$grouped_categories[$grouping->grouping_id][] = $category;
+				}
 			}
 		}
 		
 		
-		$page_data['user_scope'] = $this->crud_model->scope_countries($this->session->login_user_id,true);
+		$page_data['groupings'] =(OBJECT) $grouped_categories;
 		$page_data['user'] = $user;
 		$page_data['role'] = $role;
 		$page_data['contribution'] = $contribution;
-		$page_data['groupings'] = (OBJECT)$refined_grouping;
+		//$page_data['groupings'] = (OBJECT)$refined_grouping;
 		$page_data['view_type']  = get_called_class();
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase(__FUNCTION__);
