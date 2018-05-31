@@ -49,6 +49,11 @@ $user = $this->db->get_where("user",array("user_id"=>$param2))->row();
 					</tr>
 					
 					<tr>
+						<td><?=get_phrase("employee_number");?></td>
+						<td><?=$user->employee_id;?></td>
+					</tr>
+					
+					<tr>
 						<td><?=get_phrase("role");?></td>
 						<td><?=$this->crud_model->get_type_name_by_id("role",$user->role_id);?></td>
 					</tr>

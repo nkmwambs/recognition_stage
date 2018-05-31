@@ -89,11 +89,11 @@
 	                    </a>
 	            </li>
 	            
-	            <li class="survey_results <?php if ($page_name == 'survey_results') echo 'active'; ?> ">
+	            <!-- <li class="survey_results <?php if ($page_name == 'survey_results') echo 'active'; ?> ">
 	                    <a href="<?php echo base_url("surveys/survey_results"); ?>" class="ajax-content">
 	                        <span><i class="entypo-doc-text"></i> <?php echo get_phrase('survey_results'); ?></span>
 	                    </a>
-	            </li>
+	            </li> -->
                 
             </ul>
         </li>

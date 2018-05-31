@@ -299,7 +299,7 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 				if($scope->num_rows() > 0 ){
 			?>
 			<div class="col-sm-6"><span style="font-weight: bold;"><?=get_phrase("two_way");?>:</span> <?=$scope->row()->two_way == "1"?get_phrase("yes"):get_phrase("no");?></div>
-			<div class="col-sm-6"><span style="font-weight: bold;"><?=get_phrase("strict");?>:</span> <?=$scope->row()->strict == "1"?get_phrase("yes"):get_phrase("no");;?></div>
+			<!-- <div class="col-sm-6"><span style="font-weight: bold;"><?=get_phrase("strict");?>:</span> <?=$scope->row()->strict == "1"?get_phrase("yes"):get_phrase("no");;?></div> -->
 			<div class="col-sm-6"><span style="font-weight: bold;"><?=get_phrase("type");?>: </span> <?=ucfirst($scope->row()->type);?></div>
 				
 			<div class="col-sm-12"><span style="font-weight: bold;"><?=get_phrase("countries");?>:</span> 

@@ -51,6 +51,14 @@
                             </div>
                             
                             
+                              <div class="form-group">
+                                <label class="col-sm-3 control-label"><?php echo get_phrase('employee_number');?></label>
+                                <div class="col-sm-5">
+                                    <input type="text"  class="form-control"  name="employee_id" required="required" placeholder="<?=get_phrase("employee_numner");?>"/>
+                                </div>
+                            </div>
+                            
+                            
                             <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('country');?></label>
                                 <div class="col-sm-5">
@@ -92,6 +100,16 @@
                                     	<?php
                                     		endforeach;
                                     	?>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                             <div class="form-group">
+                                <label class="col-sm-3 control-label"><?php echo get_phrase('manager');?></label>
+                                <div class="col-sm-5">
+                                    <select class="form-control select2" name="">
+                                    	<option><?=get_phrase("select");?></option>
+                                    	
                                     </select>
                                 </div>
                             </div>

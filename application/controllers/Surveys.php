@@ -100,7 +100,7 @@ class Surveys extends CI_Controller
 		$crud->set_table('category');
 		
 		/** Set required fields **/
-		$crud->required_fields(array("name","visibility","grouping_id","assignment","unit","status"));
+		$crud->required_fields(array("name","description","visibility","grouping_id","assignment","unit","status"));
 		
 		/** Related Tables to Category **/
 		$crud->set_relation('visibility','country','name');
@@ -128,8 +128,8 @@ class Surveys extends CI_Controller
 		
 		/** Hide fields from add and edit forms**/
 		$crud->fields('name','grouping_id','visibility','assignment','status','created_by','created_date','last_modified_by');
-		$crud->add_fields('name','grouping_id','visibility','assignment','unit','status');
-		$crud->edit_fields('name','grouping_id','visibility','assignment','unit','status');
+		$crud->add_fields('name','description','grouping_id','visibility','assignment','unit','status');
+		$crud->edit_fields('name','description','grouping_id','visibility','assignment','unit','status');
 		
 		/** Assign Privileges **/
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_category")) $crud->unset_add();
@@ -174,7 +174,7 @@ class Surveys extends CI_Controller
 		$crud = new grocery_CRUD();
 		
 		/**Set theme to Flexigrid**/
-		$crud->set_theme('Flexigrid');//Flexigrid
+		$crud->set_theme('datatables');//Flexigrid
 		
 		
 		/** Grid Subject **/
@@ -183,6 +183,7 @@ class Surveys extends CI_Controller
 		/**Select Category Table**/
 		$crud->set_table('survey');
 		
+				
 		/** Related Tables to Category **/
 		$crud->set_relation('country_id','country','name');
 		$crud->set_relation('created_by','user','firstname');
@@ -196,7 +197,7 @@ class Surveys extends CI_Controller
 		$crud->columns(array('start_date','end_date','country_id','status'));
 		
 		/** Show add/edit fields**/
-		$crud->fields(array('start_date','end_date','country_id','status'));
+		$crud->fields(array('start_date','end_date','status'));
 		
 		
 		/** Set required fields **/
@@ -214,6 +215,8 @@ class Surveys extends CI_Controller
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_survey")) $crud->unset_add();
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_survey")) $crud->unset_edit();	
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_survey")) $crud->unset_delete();
+		if($this->crud_model->check_profile_privilege($this->session->profile_id,"survey_results")) $crud->add_action(get_phrase('results'), '', '', 'ui-icon-plus',array($this,'show_nomination_results'));
+		
 		
 		$output = $crud->render();	
 		$page_data['view_type']  = get_called_class();
@@ -221,6 +224,10 @@ class Surveys extends CI_Controller
         $page_data['page_title'] = get_phrase(__FUNCTION__);
 		$output = array_merge($page_data,(array)$output);
         $this->load->view('backend/index', $output);
+	}
+
+	function show_nomination_results($primary_key , $row){
+		return base_url().'surveys/survey_results/'.$primary_key;
 	}
 	
 	function check_survey_existence($post_array){
@@ -367,10 +374,22 @@ class Surveys extends CI_Controller
 		}
 	}
 	
-	public function survey_results(){
+	public function survey_results($param1="",$param2="",$param3=""){
 		if ($this->session->userdata('user_login') != 1)
             redirect(base_url(), 'refresh');
 		
+		if($param1=="") redirect(base_url().'surveys/survey_setting', 'refresh');
+		$survey = array();
+		$survey_arr = $this->db->get_where("survey",array("survey_id"=>$param1));
+		$results = array();
+		if($survey_arr->num_rows() > 0){
+			$survey = $survey_arr->row();
+			$this->db->join("tabulate","tabulate.result_id=result.result_id");
+			$results = $this->db->get_where("result",array("survey_id"=>$survey->survey_id))->result_object();
+		}
+		
+		$page_data['results']  =  $results;
+		$page_data['survey']  =  $survey;
 		$page_data['view_type']  = get_called_class();
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase(__FUNCTION__);

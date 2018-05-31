@@ -64,7 +64,7 @@
 	                            </div>
 	                        </div> 
 	                        
-	                        <div class="form-group">
+	                        <!-- <div class="form-group">
 								<label class="control-label col-sm-3"><?=get_phrase("strict");?></label>
 	                            <div class="col-sm-9">
 	                            	<select class="form-control" name="strict">
@@ -73,7 +73,7 @@
 	                            		<option value="1" <?php if($scope->strict === "1") {echo "selected";};?> > <?=get_phrase("yes");?> </option>
 	                            	</select>
 	                            </div>
-	                        </div>   
+	                        </div> -->   
 	                        
 	                        <div class="form-group">
 								<label class="control-label col-sm-3"><?=get_phrase("type");?></label>

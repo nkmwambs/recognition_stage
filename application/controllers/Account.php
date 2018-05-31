@@ -42,53 +42,68 @@ class Account extends CI_Controller
 		if ($this->session->userdata('user_login') != 1)
             redirect(base_url() . 'login', 'refresh');
 		
-		$page_data['msg'] = get_phrase("success");
+			/**Instatiate CRUD**/
+		$crud = new grocery_CRUD();
+		
+		/**Set theme to Flexigrid**/
+		$crud->set_theme('Flexigrid');//Flexigrid
 		
 		
-		if($param1==="country_add"){
-			$data["name"] = $this->input->post("name");
-			
-			if($this->db->get_where("country",array("name"=>$this->input->post("name")))->num_rows() > 0){
-				$page_data["msg"] = get_phrase("failed");
-			}else{
-				$this->db->insert("country",$data);
-			}
-			
-			$page_data['countries'] = $this->db->get("country")->result_object();
-			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
-			exit;
-		}
-
-		if($param1==="country_edit"){
-			$data["name"] = $this->input->post("name");
-			
-			if($this->db->get_where("country",array("name"=>$this->input->post("name")))->num_rows() > 1){
-				$page_data["msg"] = get_phrase("failed");
-			}else{
-				$this->db->where(array("country_id"=>$param2));
-				$this->db->update("country",$data);
-			}
-			
-			$page_data['countries'] = $this->db->get("country")->result_object();
-			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
-			exit;
-		}
-
-		if($param1==="country_delete"){
-			$this->db->where(array("country_id"=>$param2));
-			$this->db->delete("country");
-			
-			$page_data['countries'] = $this->db->get("country")->result_object();
-			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
-			exit;
-		}
-
+		/** Grid Subject **/
+		$crud->set_subject(get_phrase('countries'));
 		
-		$page_data['countries'] = $this->db->get("country")->result_object();
-        $page_data['page_name']  = __FUNCTION__;
-        $page_data['view_type']  = get_called_class();
+		/**Select Category Table**/
+		$crud->set_table('country');
+		
+		/** Set required fields **/
+		$crud->required_fields(array("name"));
+		
+				/**Select Fields to Show in the Grid **/
+		$crud->columns('name');
+		
+	
+		/**Callbacks**/
+		$crud->callback_after_insert(array($this,'insert_country_audit_parameters'));
+		$crud->callback_after_update(array($this,'update_country_audit_parameters'));
+		
+		/** Hide fields from add and edit forms**/
+		$crud->add_fields('name');
+		$crud->edit_fields('name');
+		
+		/** Assign Privileges **/
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_country")) $crud->unset_add();
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_country")) $crud->unset_edit();	
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_country")) $crud->unset_delete();
+				
+		//$crud->add_action('More', '', 'demo/action_more','ui-icon-plus');
+		
+		$output = $crud->render();	
+		$page_data['view_type']  = get_called_class();
+		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase(__FUNCTION__);
-		$this->load->view('backend/index', $page_data);
+		$output = array_merge($page_data,(array)$output);
+        $this->load->view('backend/index', $output);
+	}
+
+
+	public function insert_country_audit_parameters($post_array,$primary_key){
+		$post_array['created_by'] = $this->session->login_user_id;
+		$post_array['created_date'] = date('Y-m-d h:i:s');
+		$post_array['last_modified_by'] = $this->session->login_user_id;
+		
+		$this->db->where(array("category_id"=>$primary_key));
+		$this->db->update("country",$post_array);
+		
+		return true;
+	}
+	
+	public function update_country_audit_parameters($post_array,$primary_key){
+			
+		$data['last_modified_by'] = $this->session->login_user_id;
+		
+		$this->db->update('country',$data,array('category_id' =>$primary_key));
+		
+		return true;
 	}
     
     public function departments($param1="",$param2="",$param3=""){
@@ -96,53 +111,68 @@ class Account extends CI_Controller
             redirect(base_url() . 'login', 'refresh');
 		
 		
-		$page_data['msg'] = get_phrase("success");
+			/**Instatiate CRUD**/
+		$crud = new grocery_CRUD();
+		
+		/**Set theme to Flexigrid**/
+		$crud->set_theme('Flexigrid');//Flexigrid
 		
 		
-		if($param1==="department_add"){
-			$data["name"] = $this->input->post("name");
-			
-			if($this->db->get_where("department",array("name"=>$this->input->post("name")))->num_rows() > 0){
-				$page_data["msg"] = get_phrase("failed");
-			}else{
-				$this->db->insert("department",$data);
-			}
-			
-			$page_data['departments'] = $this->db->get("department")->result_object();
-			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
-			exit;
-		}
-
-		if($param1==="department_edit"){
-			$data["name"] = $this->input->post("name");
-			
-			if($this->db->get_where("department",array("name"=>$this->input->post("name")))->num_rows() > 1){
-				$page_data["msg"] = get_phrase("failed");
-			}else{
-				$this->db->where(array("department_id"=>$param2));
-				$this->db->update("department",$data);
-			}
-			
-			$page_data['departments'] = $this->db->get("department")->result_object();
-			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
-			exit;
-		}
-
-		if($param1==="department_delete"){
-			$this->db->where(array("department_id"=>$param2));
-			$this->db->delete("department");
-			
-			$page_data['departments'] = $this->db->get("department")->result_object();
-			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
-			exit;
-		}
+		/** Grid Subject **/
+		$crud->set_subject(get_phrase('departments'));
 		
-		$page_data['departments'] = $this->db->get("department")->result_object();
+		/**Select Category Table**/
+		$crud->set_table('department');
+		
+		/** Set required fields **/
+		$crud->required_fields(array("name"));
+		
+				/**Select Fields to Show in the Grid **/
+		$crud->columns('name');
+		
+	
+		/**Callbacks**/
+		$crud->callback_after_insert(array($this,'insert_department_audit_parameters'));
+		$crud->callback_after_update(array($this,'update_department_audit_parameters'));
+		
+		/** Hide fields from add and edit forms**/
+		$crud->add_fields('name');
+		$crud->edit_fields('name');
+		
+		/** Assign Privileges **/
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_department")) $crud->unset_add();
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_department")) $crud->unset_edit();	
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_department")) $crud->unset_delete();
+				
+		//$crud->add_action('More', '', 'demo/action_more','ui-icon-plus');
+		
+		$output = $crud->render();	
+		$page_data['view_type']  = get_called_class();
 		$page_data['page_name']  = __FUNCTION__;
-        $page_data['view_type']  = get_called_class();
         $page_data['page_title'] = get_phrase(__FUNCTION__);
-		$this->load->view('backend/index', $page_data);
+		$output = array_merge($page_data,(array)$output);
+        $this->load->view('backend/index', $output);
 	}   
+	
+	public function insert_department_audit_parameters($post_array,$primary_key){
+		$post_array['created_by'] = $this->session->login_user_id;
+		$post_array['created_date'] = date('Y-m-d h:i:s');
+		$post_array['last_modified_by'] = $this->session->login_user_id;
+		
+		$this->db->where(array("category_id"=>$primary_key));
+		$this->db->update("department",$post_array);
+		
+		return true;
+	}
+	
+	public function update_department_audit_parameters($post_array,$primary_key){
+			
+		$data['last_modified_by'] = $this->session->login_user_id;
+		
+		$this->db->update('department',$data,array('category_id' =>$primary_key));
+		
+		return true;
+	}
 	
 	public function profiles($param1="",$param2="",$param3=""){
 		if ($this->session->userdata('user_login') != 1)
@@ -222,139 +252,154 @@ class Account extends CI_Controller
 	}
 	
 	public function roles($param1="",$param2="",$param3=""){
-		if ($this->session->userdata('user_login') != 1)
+	  	if ($this->session->userdata('user_login') != 1)
             redirect(base_url() . 'login', 'refresh');
 		
-		$page_data['msg'] = get_phrase("success");
+		
+			/**Instatiate CRUD**/
+		$crud = new grocery_CRUD();
+		
+		/**Set theme to Flexigrid**/
+		$crud->set_theme('Flexigrid');//Flexigrid
 		
 		
-		if($param1==="role_add"){
-			$data["name"] = $this->input->post("name");
-			$data["contribution"] = $this->input->post("contribution");
-			$data["department_id"] = $this->input->post("department_id");
-			
-			if($this->db->get_where("role",array("name"=>$this->input->post("name"),"role_id"=>$this->input->post("role_id")))->num_rows() > 0){
-				$page_data["msg"] = get_phrase("failed");
-			}else{
-				$this->db->insert("role",$data);
-			}
-			
-			$page_data['roles'] = $this->db->get("role")->result_object();
-			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
-			exit;
-		}
-
-		if($param1==="role_edit"){
-			$data["name"] = $this->input->post("name");
-			$data["contribution"] = $this->input->post("contribution");
-			$data["department_id"] = $this->input->post("department_id");
-			
-			if($this->db->get_where("role",array("name"=>$this->input->post("name"),"role_id"=>$this->input->post("role_id")))->num_rows() > 1){
-				$page_data["msg"] = get_phrase("failed");
-			}else{
-				$this->db->where(array("role_id"=>$param2));
-				$this->db->update("role",$data);
-			}
-			
-			$page_data['roles'] = $this->db->get("role")->result_object();
-			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
-			exit;
-		}
-
-		if($param1==="role_delete"){
-			$this->db->where(array("role_id"=>$param2));
-			$this->db->delete("role");
-			
-			$page_data['roles'] = $this->db->get("role")->result_object();
-			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
-			exit;
-		}
+		/** Grid Subject **/
+		$crud->set_subject(get_phrase('roles'));
 		
+		/**Select Category Table**/
+		$crud->set_table('role');
 		
-		$page_data['roles'] = $this->db->get("role")->result_object();
+		/** Set required fields **/
+		$crud->required_fields(array("name","contribution_id","department"));
+		
+		/** Related Tables to Category **/
+		$crud->set_relation('contribution','contribution','name');
+		$crud->set_relation('department_id','department','name');
+		
+		/**Select Fields to Show in the Grid **/
+		$crud->columns(array("name","contribution","department_id"));
+		
+		/**Give columns user friendly labels**/
+		$crud->display_as('contribution_id',get_phrase('contribution'))
+				->display_as('department_id',get_phrase('department'));
+		
+		/**Callbacks**/
+		$crud->callback_after_insert(array($this,'insert_role_audit_parameters'));
+		$crud->callback_after_update(array($this,'update_role_audit_parameters'));
+		
+		/** Hide fields from add and edit forms**/
+		$crud->add_fields(array("name","contribution","department_id"));
+		$crud->edit_fields(array("name","contribution","department_id"));
+		
+		/** Assign Privileges **/
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_role")) $crud->unset_add();
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_role")) $crud->unset_edit();	
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_role")) $crud->unset_delete();
+				
+		//$crud->add_action('More', '', 'demo/action_more','ui-icon-plus');
+		
+		$output = $crud->render();	
+		$page_data['view_type']  = get_called_class();
 		$page_data['page_name']  = __FUNCTION__;
-        $page_data['view_type']  = get_called_class();
         $page_data['page_title'] = get_phrase(__FUNCTION__);
-		$this->load->view('backend/index', $page_data);
+		$output = array_merge($page_data,(array)$output);
+        $this->load->view('backend/index', $output);
+	}
+
+public function insert_role_audit_parameters($post_array,$primary_key){
+		$post_array['created_by'] = $this->session->login_user_id;
+		$post_array['created_date'] = date('Y-m-d h:i:s');
+		$post_array['last_modified_by'] = $this->session->login_user_id;
+		
+		$this->db->where(array("category_id"=>$primary_key));
+		$this->db->update("role",$post_array);
+		
+		return true;
+	}
+	
+	public function update_role_audit_parameters($post_array,$primary_key){
+			
+		$data['last_modified_by'] = $this->session->login_user_id;
+		
+		$this->db->update('role',$data,array('category_id' =>$primary_key));
+		
+		return true;
 	}
 
 	public function teams($param1="",$param2="",$param3=""){
-		if ($this->session->userdata('user_login') != 1)
+	    	if ($this->session->userdata('user_login') != 1)
             redirect(base_url() . 'login', 'refresh');
 		
-				$page_data['msg'] = get_phrase("success");
+		
+			/**Instatiate CRUD**/
+		$crud = new grocery_CRUD();
+		
+		/**Set theme to Flexigrid**/
+		$crud->set_theme('Flexigrid');//Flexigrid
 		
 		
-		if($param1==="team_add"){
-			$data["name"] = $this->input->post("name");
-			$data["country_id"] = $this->input->post("country_id");
-			$data["description"] = $this->input->post("description");
-			
-			if($this->db->get_where("team",array("name"=>$this->input->post("name"),"country_id"=>$this->input->post("country_id")))->num_rows() > 0){
-				$page_data["msg"] = get_phrase("failed");
-			}else{
-				$this->db->insert("team",$data);
-			}
-			
-			$page_data['teams'] = $this->db->get("team")->result_object();
-			if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
-				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
-				$page_data['teams']  = $this->db->get_where("team",array("country_id"=>$logged_user_country_id))->result_object();
-			}
-			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
-			exit;
-		}
+		/** Grid Subject **/
+		$crud->set_subject(get_phrase('teams'));
+		
+		/**Select Category Table**/
+		$crud->set_table('team');
+		
+		/** Set required fields **/
+		$crud->required_fields(array("name","country_id","description"));
+		
+		/** Related Tables to Category **/
+		$crud->set_relation('country_id','country','name');
+		
+		/**Select Fields to Show in the Grid **/
+		$crud->columns(array("name","country_id","description"));
+		
+		/**Give columns user friendly labels**/
+		$crud->display_as('country_id',get_phrase('country'));
 
-		if($param1==="team_edit"){
-			$data["name"] = $this->input->post("name");
-			$data["country_id"] = $this->input->post("country_id");
-			$data["description"] = $this->input->post("description");
-			
-			if($this->db->get_where("team",array("name"=>$this->input->post("name"),"country_id"=>$this->input->post("country_id")))->num_rows() > 1){
-				$page_data["msg"] = get_phrase("failed");
-			}else{
-				$this->db->where(array("team_id"=>$param2));
-				$this->db->update("team",$data);
-			}
-			
-			$page_data['teams'] = $this->db->get("team")->result_object();
-			if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
-				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
-				$page_data['teams']  = $this->db->get_where("team",array("country_id"=>$logged_user_country_id))->result_object();
-			}
-			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
-			exit;
-		}
-
-		if($param1==="team_delete"){
-			$this->db->where(array("team_id"=>$param2));
-			$this->db->delete("team");
-			
-			$page_data['teams'] = $this->db->get("team")->result_object();
-			if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
-				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
-				$page_data['teams']  = $this->db->get_where("team",array("country_id"=>$logged_user_country_id))->result_object();
-			}
-			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
-			exit;
-		}
 		
-		$page_data['teams'] = $this->db->get("team")->result_object();
+		/**Callbacks**/
+		$crud->callback_after_insert(array($this,'insert_team_audit_parameters'));
+		$crud->callback_after_update(array($this,'update_team_audit_parameters'));
 		
-		if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
-				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
-				$page_data['teams']  = $this->db->get_where("team",array("country_id"=>$logged_user_country_id))->result_object();
-		}
+		/** Hide fields from add and edit forms**/
+		$crud->add_fields(array("name","country_id","description"));
+		$crud->edit_fields(array("name","country_id","description"));
 		
+		/** Assign Privileges **/
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_team")) $crud->unset_add();
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_team")) $crud->unset_edit();	
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_team")) $crud->unset_delete();
+				
+		//$crud->add_action('More', '', 'demo/action_more','ui-icon-plus');
 		
+		$output = $crud->render();	
+		$page_data['view_type']  = get_called_class();
 		$page_data['page_name']  = __FUNCTION__;
-        $page_data['view_type']  = get_called_class();
         $page_data['page_title'] = get_phrase(__FUNCTION__);
-		$this->load->view('backend/index', $page_data);
+		$output = array_merge($page_data,(array)$output);
+        $this->load->view('backend/index', $output);
 	}
 
 
+public function insert_team_audit_parameters($post_array,$primary_key){
+		$post_array['created_by'] = $this->session->login_user_id;
+		$post_array['created_date'] = date('Y-m-d h:i:s');
+		$post_array['last_modified_by'] = $this->session->login_user_id;
+		
+		$this->db->where(array("category_id"=>$primary_key));
+		$this->db->update("team",$post_array);
+		
+		return true;
+	}
 	
+	public function update_team_audit_parameters($post_array,$primary_key){
+			
+		$data['last_modified_by'] = $this->session->login_user_id;
+		
+		$this->db->update('team',$data,array('category_id' =>$primary_key));
+		
+		return true;
+	}	
 
 
   	/** MANEGE USER INFORMATION **/
@@ -378,6 +423,7 @@ class Account extends CI_Controller
 			$data['email'] = $this->input->post('email');
 			$data['gender'] = $this->input->post('gender');
 			$data['phone'] = $this->input->post('phone');
+			$data['employee_id'] = $this->input->post('employee_id');
 			$data['role_id'] = $this->input->post('role_id');
 			$data['profile_id'] = $this->input->post('profile_id');
 			$data['auth'] = "1";
@@ -423,6 +469,7 @@ class Account extends CI_Controller
 			$data['email'] = $this->input->post('email');
 			$data['gender'] = $this->input->post('gender');
 			$data['phone'] = $this->input->post('phone');
+			$data['employee_id'] = $this->input->post('employee_id');
 			$data['role_id'] = $this->input->post('role_id');
 			$data['profile_id'] = $this->input->post('profile_id');
 			$data['country_id'] = $this->input->post('country_id');		
@@ -455,7 +502,7 @@ class Account extends CI_Controller
 				$this->db->where(array("scope_id"=>$scope_id));
 				
 				$data0["two_way"] = $this->input->post("two_way");
-				$data0["strict"] = $this->input->post("strict");
+				//$data0["strict"] = $this->input->post("strict");
 				$data0['user_id'] = $param2;
 				$data0['type'] = $this->input->post("type");
 				$this->db->update("scope",$data0);
@@ -473,7 +520,7 @@ class Account extends CI_Controller
 			}else{
 					
 				$data["two_way"] = $this->input->post("two_way");
-				$data["strict"] = $this->input->post("strict");
+				//$data["strict"] = $this->input->post("strict");
 				$data['user_id'] = $param2;
 				$data['type'] = $this->input->post("type");
 										
