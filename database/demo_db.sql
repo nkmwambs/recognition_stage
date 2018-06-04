@@ -123,30 +123,38 @@ INSERT INTO `ci_sessions` (`id`, `ip_address`, `timestamp`, `data`) VALUES
 ('0b478effbba974826335dff5558c2e8c2a4a5188',	'127.0.0.1',	1527710270,	'__ci_last_regenerate|i:1527710270;user_login|s:1:\"1\";login_user_id|s:1:\"3\";name|s:3:\"Ann\";login_type|s:23:\"Partnership Facilitator\";profile_id|s:1:\"8\";country_id|s:2:\"31\";view_type|s:7:\"Surveys\";'),
 ('0e4efabde0ac1ca73d2872d81862df60dfd1011a',	'::1',	1527750011,	'__ci_last_regenerate|i:1527749981;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Account\";'),
 ('11effb26f2ee3e4227123582e69981f43f384ce2',	'127.0.0.1',	1527775155,	'__ci_last_regenerate|i:1527775105;view_type|s:7:\"Account\";user_login|s:1:\"1\";login_user_id|s:1:\"3\";name|s:3:\"Ann\";login_type|s:23:\"Partnership Facilitator\";profile_id|s:1:\"8\";country_id|s:2:\"31\";'),
+('13624d5f623adbdfde09fd82c413d13a6dbda1fe',	'::1',	1528107278,	'__ci_last_regenerate|i:1528107272;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('13c192fd68862a6f317965a747c3305bbd5b87a5',	'::1',	1527709826,	'__ci_last_regenerate|i:1527709537;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
+('1ac36e7f2ed2f3b90084b659c42b5472e3089af9',	'::1',	1527792375,	'__ci_last_regenerate|i:1527792124;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('1c4fee8fe926e1313e0964d86920bacf5a0841a6',	'::1',	1527719309,	'__ci_last_regenerate|i:1527719105;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('1da25657f2b154fec0174afd47cd42f4ab8444e4',	'::1',	1527755912,	'__ci_last_regenerate|i:1527755613;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('1e49c994cca8ecc6e175ed0e6ccf3dfb8baa07bb',	'::1',	1527749657,	'__ci_last_regenerate|i:1527749493;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Account\";'),
 ('23ee6c4520a666ef340e040d5446cb9785b287db',	'::1',	1527711640,	'__ci_last_regenerate|i:1527711546;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('25dc14ecc64584fb91142e80c442931cafd4ce3d',	'::1',	1527710101,	'__ci_last_regenerate|i:1527709858;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('25dec8da81948264e7f4db2b263d976b17e7a3cb',	'127.0.0.1',	1527711658,	'__ci_last_regenerate|i:1527711646;user_login|s:1:\"1\";login_user_id|s:2:\"11\";name|s:5:\"Velma\";login_type|s:23:\"Partnership Facilitator\";profile_id|s:1:\"4\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
+('26f363b10506bee95c351754b71c20f3cb32d860',	'::1',	1528104804,	'__ci_last_regenerate|i:1528104648;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('27c26357b07d03602638f09d70b1d26ff8d15dfd',	'::1',	1527724026,	'__ci_last_regenerate|i:1527723999;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('284a7e380d4c6aaaa716bdfc9b34047a30b186ba',	'127.0.0.1',	1527756559,	'__ci_last_regenerate|i:1527756337;user_login|s:1:\"1\";login_user_id|s:1:\"2\";name|s:5:\"James\";login_type|s:19:\"Manager Of Training\";profile_id|s:1:\"3\";country_id|s:2:\"25\";view_type|s:7:\"Account\";'),
 ('28b58ed64137c55139268b97e2a5043e9bff3a79',	'::1',	1527725220,	'__ci_last_regenerate|i:1527725000;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('29c248cd43fafa89ac1ccca5f14cbc3a9af5eb76',	'::1',	1527723284,	'__ci_last_regenerate|i:1527723018;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('2d1192cdf941aab92b9ddb376b9c318efa9db1a1',	'127.0.0.1',	1527757116,	'__ci_last_regenerate|i:1527757083;user_login|s:1:\"1\";login_user_id|s:1:\"3\";name|s:3:\"Ann\";login_type|s:23:\"Partnership Facilitator\";profile_id|s:1:\"8\";country_id|s:2:\"31\";view_type|s:7:\"Surveys\";'),
+('2d21a6877c21562541a938b34444c11b579fa6ed',	'::1',	1528108420,	'__ci_last_regenerate|i:1528108122;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('3398694590127785760095069eecaee39e402f9b',	'::1',	1527712095,	'__ci_last_regenerate|i:1527711878;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:8:\"Messages\";'),
+('34903bef89dbd4690e6e8b4573f4b6513605983d',	'::1',	1528108957,	'__ci_last_regenerate|i:1528108770;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('36e580a1cc09ef8deb8268a40d6c83c5158b6cc8',	'::1',	1527721381,	'__ci_last_regenerate|i:1527721120;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('3ccf575e2b30b7d60f5354f10e823b6493b57e72',	'::1',	1527712315,	'__ci_last_regenerate|i:1527712257;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('3e460a7c2c3de1fdc3a37d360c7ffc91bff67c1f',	'::1',	1527777305,	'__ci_last_regenerate|i:1527777219;view_type|s:7:\"Account\";user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";'),
 ('3faf6c6ea3ac863ce12cbe84986f48ddbf96ab89',	'::1',	1527716660,	'__ci_last_regenerate|i:1527716469;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('44674286720f0f5275e58f08dda99916b21b1d4f',	'::1',	1527754254,	'__ci_last_regenerate|i:1527754169;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Account\";'),
+('462e44d07c3ae1e193ae3bf8988cf222bf06e070',	'::1',	1528105758,	'__ci_last_regenerate|i:1528105553;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
+('49562144ea1c4d545f03256ecd0c91ef35b66373',	'::1',	1528105313,	'__ci_last_regenerate|i:1528105079;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('4ba4a80d0f841f6b292a592e01667417b9fc5abc',	'::1',	1527702865,	'__ci_last_regenerate|i:1527702602;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('4be36cffae80b986220ead1a92a84c15707ef3ed',	'127.0.0.1',	1527706391,	'__ci_last_regenerate|i:1527706106;user_login|s:1:\"1\";login_user_id|s:1:\"3\";name|s:3:\"Ann\";login_type|s:23:\"Partnership Facilitator\";profile_id|s:1:\"8\";country_id|s:2:\"31\";view_type|s:7:\"Surveys\";'),
 ('4c5472fc40542ece9b4fe8cbd063c6652c6444e7',	'::1',	1527707085,	'__ci_last_regenerate|i:1527706489;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Account\";'),
 ('4f10ba072c39872aeaa34e75228400107418e8c7',	'::1',	1527714003,	'__ci_last_regenerate|i:1527713786;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('4f50b38e2e9775d3a8d3c5e1c92a70442ebdff75',	'::1',	1527754767,	'__ci_last_regenerate|i:1527754649;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('4fa834dfdcba5cfd8880bfe2baaf9d042511b46c',	'127.0.0.1',	1527708777,	'__ci_last_regenerate|i:1527708511;user_login|s:1:\"1\";login_user_id|s:1:\"3\";name|s:3:\"Ann\";login_type|s:23:\"Partnership Facilitator\";profile_id|s:1:\"8\";country_id|s:2:\"31\";view_type|s:7:\"Surveys\";'),
+('50ae0f4eb54e3446b19520468c30ad012782d444',	'::1',	1528106210,	'__ci_last_regenerate|i:1528105930;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('512e7c469ae15c3424cb27781912396bb7c10bd8',	'127.0.0.1',	1527776393,	'__ci_last_regenerate|i:1527775650;view_type|s:7:\"Account\";user_login|s:1:\"1\";login_user_id|s:1:\"3\";name|s:3:\"Ann\";login_type|s:23:\"Partnership Facilitator\";profile_id|s:1:\"8\";country_id|s:2:\"31\";'),
 ('514c45dded3dca2f9aab08f14eaf7749464f175e',	'127.0.0.1',	1527723160,	'__ci_last_regenerate|i:1527723140;user_login|s:1:\"1\";login_user_id|s:2:\"10\";name|s:8:\"Patricia\";login_type|s:3:\"ITS\";profile_id|s:1:\"4\";country_id|s:2:\"28\";view_type|s:7:\"Surveys\";'),
 ('57bcc1b0843a4f93f250f434e6e1e96ee39f910e',	'::1',	1527715572,	'__ci_last_regenerate|i:1527715298;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
@@ -169,6 +177,8 @@ INSERT INTO `ci_sessions` (`id`, `ip_address`, `timestamp`, `data`) VALUES
 ('7939e03e7245aa9bfaf793c0adc7b7100ab9e794',	'::1',	1527756977,	'__ci_last_regenerate|i:1527756738;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Account\";'),
 ('7bbf88da8cde3dd88db95c8e5ef11718590e8ad5',	'127.0.0.1',	1527708283,	'__ci_last_regenerate|i:1527708058;user_login|s:1:\"1\";login_user_id|s:1:\"3\";name|s:3:\"Ann\";login_type|s:23:\"Partnership Facilitator\";profile_id|s:1:\"8\";country_id|s:2:\"31\";view_type|s:7:\"Surveys\";'),
 ('7c26ca7760c6b06d6bf8d15695362badae20f2ef',	'::1',	1527706291,	'__ci_last_regenerate|i:1527706088;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
+('80ac33ded02a197ab8381e25eebdc6daa9edc97e',	'::1',	1528106824,	'__ci_last_regenerate|i:1528106823;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
+('81bf68f5d3a706cd9cebf60e89eb4456c88f5c97',	'::1',	1528106330,	'__ci_last_regenerate|i:1528106324;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('857f94a6f27ab928d18de420e7401bbe3afe1ab6',	'::1',	1527720900,	'__ci_last_regenerate|i:1527720655;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('859ce8f664ad2c29b0f95394cf7e3461d22b4502',	'::1',	1527769089,	'__ci_last_regenerate|i:1527768915;view_type|s:7:\"Account\";user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";'),
 ('88180b6c20bfabc18c334ee51d5a7935dc8c20e5',	'::1',	1527717366,	'__ci_last_regenerate|i:1527717342;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
@@ -177,19 +187,23 @@ INSERT INTO `ci_sessions` (`id`, `ip_address`, `timestamp`, `data`) VALUES
 ('9026b0af1d6d0075f26c251f86935a91b2d269d6',	'::1',	1527776496,	'__ci_last_regenerate|i:1527776359;view_type|s:7:\"Account\";user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";'),
 ('933e624fca3fb9442857ca2a206a5122fb2bc25d',	'127.0.0.1',	1527719381,	'__ci_last_regenerate|i:1527719337;user_login|s:1:\"1\";login_user_id|s:1:\"2\";name|s:5:\"James\";login_type|s:19:\"Manager Of Training\";profile_id|s:1:\"3\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('9883ecea225ad3095368fd9ee88fad1e8b82ffbb',	'::1',	1527719810,	'__ci_last_regenerate|i:1527719554;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
+('98a3c72b20f84e70f631498bdac5e7177f84730e',	'::1',	1527790551,	'__ci_last_regenerate|i:1527790357;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:8:\"settings\";'),
 ('9ca43711db85ce97e04e5cbd39a9f55b77b591e5',	'::1',	1527724914,	'__ci_last_regenerate|i:1527724644;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('a3923dddcd34e2127fabe983eeeca08f8a668f39',	'::1',	1527708333,	'__ci_last_regenerate|i:1527708082;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
+('a4f14b45fa9f246558b2b7e4cee6ae8170e9aa4f',	'::1',	1528108763,	'__ci_last_regenerate|i:1528108464;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('a61cfce7837ff3d2e7a401cfef6aa63768fd7cf6',	'::1',	1527710451,	'__ci_last_regenerate|i:1527710179;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('a92cb7ed91bd844760720be3f62f4c2fdc3ce228',	'::1',	1527723939,	'__ci_last_regenerate|i:1527723673;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('ab3f37941f86787817d0cb0f9f2bf6398fe6d50a',	'::1',	1527703283,	'__ci_last_regenerate|i:1527702999;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('b118ad2403496c47a1defa6b4446af6deedb4b97',	'::1',	1527775977,	'__ci_last_regenerate|i:1527775977;view_type|s:7:\"Account\";user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";'),
 ('b457cb04a65745fc4b47d613dc4afad04b25b94e',	'127.0.0.1',	1527721608,	'__ci_last_regenerate|i:1527719938;user_login|s:1:\"1\";login_user_id|s:1:\"9\";name|s:5:\"Evans\";login_type|s:23:\"Partnership Facilitator\";profile_id|s:1:\"8\";country_id|s:2:\"25\";view_type|s:7:\"Account\";'),
+('b469961ba41f0d6482dc68eee3299135e24bb08a',	'::1',	1528107833,	'__ci_last_regenerate|i:1528107578;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('b7692b602fa5c63cdb29d4fccb1eb2185044c690',	'::1',	1527755613,	'__ci_last_regenerate|i:1527755110;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('b7c5733afb99c4461364581494f0eea7b26d33ee',	'::1',	1527777171,	'__ci_last_regenerate|i:1527776890;view_type|s:7:\"Account\";user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";'),
 ('bc30f5cab1afa934ca82e77d17430fcc379a36ac',	'::1',	1527717339,	'__ci_last_regenerate|i:1527716988;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('bdd1cd171151a9d0e98ed9ffa99c7c50077f5f19',	'127.0.0.1',	1527704422,	'__ci_last_regenerate|i:1527704422;user_login|s:1:\"1\";login_user_id|s:2:\"10\";name|s:8:\"Patricia\";login_type|s:3:\"ITS\";profile_id|s:1:\"4\";country_id|s:2:\"28\";view_type|s:7:\"Surveys\";'),
 ('bf10298c603bc99d1d73892c5af276016f293c3f',	'::1',	1527723630,	'__ci_last_regenerate|i:1527723350;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('c23a96dc1444bab938454d4c6dccc6bc43e39070',	'127.0.0.1',	1527709751,	'__ci_last_regenerate|i:1527709635;user_login|s:1:\"1\";login_user_id|s:1:\"3\";name|s:3:\"Ann\";login_type|s:23:\"Partnership Facilitator\";profile_id|s:1:\"8\";country_id|s:2:\"31\";view_type|s:7:\"Surveys\";'),
+('c3df4e72fe6c7d47bc45b08b8f182d8ae6355907',	'::1',	1527790913,	'__ci_last_regenerate|i:1527790859;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('c986e9042776f20ffc5b977be61e0568a4fd34dc',	'::1',	1527704709,	'__ci_last_regenerate|i:1527704414;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Surveys\";'),
 ('cdc3cf29d80e5f0e0e945565b803622648df6e24',	'::1',	1527707851,	'__ci_last_regenerate|i:1527707767;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Account\";'),
 ('d13582829368b10769ce8612c6addad17b67bcb6',	'::1',	1527748926,	'__ci_last_regenerate|i:1527748635;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"Account\";'),
@@ -602,7 +616,9 @@ INSERT INTO `language` (`phrase_id`, `phrase`, `english`, `spanish`, `french`, `
 (255,	'delete_department',	'',	'',	'',	NULL),
 (256,	'edit_team',	'',	'',	'',	NULL),
 (257,	'delete_team',	'',	'',	'',	NULL),
-(258,	'delete_role',	'',	'',	'',	NULL);
+(258,	'delete_role',	'',	'',	'',	NULL),
+(259,	'comment_here',	'',	'',	'',	NULL),
+(260,	'comment',	'',	'',	'',	NULL);
 
 DROP TABLE IF EXISTS `message`;
 CREATE TABLE `message` (
@@ -748,7 +764,7 @@ INSERT INTO `settings` (`settings_id`, `type`, `description`) VALUES
 (11,	'clickatell_user',	''),
 (12,	'clickatell_password',	''),
 (13,	'clickatell_api_id',	''),
-(14,	'skin_colour',	'green'),
+(14,	'skin_colour',	'default'),
 (15,	'twilio_account_sid',	''),
 (16,	'twilio_auth_token',	''),
 (17,	'twilio_sender_phone_number',	'');
@@ -777,6 +793,7 @@ CREATE TABLE `tabulate` (
   `category_id` int(100) NOT NULL,
   `nominated_unit` tinyint(4) NOT NULL,
   `nominee_id` int(100) NOT NULL,
+  `comment` longtext NOT NULL,
   `created_date` datetime NOT NULL,
   `created_by` int(100) NOT NULL,
   `last_modified_by` int(100) NOT NULL,
@@ -784,9 +801,12 @@ CREATE TABLE `tabulate` (
   PRIMARY KEY (`tabulate_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `tabulate` (`tabulate_id`, `result_id`, `category_id`, `nominated_unit`, `nominee_id`, `created_date`, `created_by`, `last_modified_by`, `last_modified_date`) VALUES
-(18,	9,	4,	3,	9,	'2018-05-31 10:57:39',	3,	3,	'2018-05-31 08:57:39'),
-(19,	9,	11,	4,	2,	'2018-05-31 10:58:36',	3,	3,	'2018-05-31 08:58:36');
+INSERT INTO `tabulate` (`tabulate_id`, `result_id`, `category_id`, `nominated_unit`, `nominee_id`, `comment`, `created_date`, `created_by`, `last_modified_by`, `last_modified_date`) VALUES
+(18,	9,	4,	3,	9,	'',	'2018-05-31 10:57:39',	3,	3,	'2018-05-31 08:57:39'),
+(19,	9,	11,	4,	2,	'',	'2018-05-31 10:58:36',	3,	3,	'2018-05-31 08:58:36'),
+(20,	14,	4,	3,	6,	'The most organized team',	'2018-05-31 08:21:49',	1,	1,	'2018-06-04 10:19:49'),
+(21,	14,	11,	4,	9,	'A very committed staff',	'2018-06-04 12:42:13',	1,	1,	'2018-06-04 10:42:13'),
+(22,	14,	12,	4,	9,	'',	'2018-06-04 12:42:23',	1,	1,	'2018-06-04 10:42:23');
 
 DROP TABLE IF EXISTS `team`;
 CREATE TABLE `team` (
@@ -862,4 +882,4 @@ INSERT INTO `user` (`user_id`, `firstname`, `lastname`, `email`, `password`, `ge
 (10,	'Patricia',	'Mghendi',	'EMghendi@ke.ci.org',	'956d2d5467ed373328ee2d165a51c399',	'female',	'9782845675',	'',	8,	4,	0,	1,	28),
 (11,	'Velma',	'Odhiambo',	'VOdhiambo@ke.ci.org',	'956d2d5467ed373328ee2d165a51c399',	'female',	'88756785',	'',	3,	4,	2,	1,	25);
 
--- 2018-05-31 14:50:11
+-- 2018-06-04 10:47:54

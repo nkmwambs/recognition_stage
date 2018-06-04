@@ -107,9 +107,17 @@
                              <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('manager');?></label>
                                 <div class="col-sm-5">
-                                    <select class="form-control select2" name="">
+                                    <select class="form-control select2" name="manager_id">
                                     	<option><?=get_phrase("select");?></option>
-                                    	
+                                    	<?php 
+                                    		$this->db->join("role","role.role_id=user.role_id");
+											$this->db->where(array("contribution"=>"2"));
+                                    		$managers = $this->db->get("user")->result_object();
+                                    		
+											foreach($managers as $manager){	
+                                    	?>
+                                    		<option value="<?=$manager->user_id;?>"><?=$manager->firstname." ".$manager->lastname;?></option>	
+                                    	<?php }?>
                                     </select>
                                 </div>
                             </div>
