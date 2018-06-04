@@ -21,7 +21,7 @@ class Account extends CI_Controller
         $this->load->library('session');
 		
 		/** System Feature Session Tag **/
-		$this->session->set_userdata('view_type', get_called_class());
+		$this->session->set_userdata('view_type', "account");
 		
        /*cache control*/
 		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
@@ -45,8 +45,8 @@ class Account extends CI_Controller
 			/**Instatiate CRUD**/
 		$crud = new grocery_CRUD();
 		
-		/**Set theme to Flexigrid**/
-		$crud->set_theme('Flexigrid');//Flexigrid
+		/**Set theme to flexigrid**/
+		$crud->set_theme('flexigrid');//flexigrid
 		
 		
 		/** Grid Subject **/
@@ -78,7 +78,7 @@ class Account extends CI_Controller
 		//$crud->add_action('More', '', 'demo/action_more','ui-icon-plus');
 		
 		$output = $crud->render();	
-		$page_data['view_type']  = get_called_class();
+		$page_data['view_type']  = "account";
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase(__FUNCTION__);
 		$output = array_merge($page_data,(array)$output);
@@ -114,8 +114,8 @@ class Account extends CI_Controller
 			/**Instatiate CRUD**/
 		$crud = new grocery_CRUD();
 		
-		/**Set theme to Flexigrid**/
-		$crud->set_theme('Flexigrid');//Flexigrid
+		/**Set theme to flexigrid**/
+		$crud->set_theme('flexigrid');//flexigrid
 		
 		
 		/** Grid Subject **/
@@ -147,7 +147,7 @@ class Account extends CI_Controller
 		//$crud->add_action('More', '', 'demo/action_more','ui-icon-plus');
 		
 		$output = $crud->render();	
-		$page_data['view_type']  = get_called_class();
+		$page_data['view_type']  = "account";
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase(__FUNCTION__);
 		$output = array_merge($page_data,(array)$output);
@@ -178,77 +178,38 @@ class Account extends CI_Controller
 		if ($this->session->userdata('user_login') != 1)
 	            redirect(base_url() . 'login', 'refresh');
 			
-			$page_data['msg'] = get_phrase("success");
-			
-			
-			if($param1==="profile_add"){
-				$data["name"] = $this->input->post("name");
-				$data["description"] = $this->input->post("description");
-				
-				if($this->db->get_where("profile",array("name"=>$this->input->post("name")))->num_rows() > 0){
-					$page_data["msg"] = get_phrase("failed");
-				}else{
-					$this->db->insert("profile",$data);
-				}
-				
-				$page_data['profiles'] = $this->db->get("profile")->result_object();
-				echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
-				exit;
-			}
+					/**Instatiate CRUD**/
+		$crud = new grocery_CRUD();
+		
+		/**Set theme to flexigrid**/
+		$crud->set_theme('flexigrid');//flexigrid
+		
+		
+		/** Grid Subject **/
+		$crud->set_subject(get_phrase('profiles'));
+		
+		/**Select Category Table**/
+		$crud->set_table('profile');
+		
+		/** Required Fields **/
+		$crud->required_fields(array("name","description","privileges"));
+		
+		/** Set relationship n_n **/
+		$crud->set_relation_n_n(get_phrase("privileges"), 'access', 'entitlement', 'profile_id', 'entitlement_id', 'name','access_id');
 	
-			if($param1==="profile_edit"){
-				$data["name"] = $this->input->post("name");
-				$data["description"] = $this->input->post("description");
-
-				
-				if($this->db->get_where("profile",array("name"=>$this->input->post("name")))->num_rows() > 1){
-					$page_data["msg"] = get_phrase("failed");
-				}else{
-					$this->db->where(array("profile_id"=>$param2));
-					$this->db->update("profile",$data);
-				}
-				
-				$page_data['profiles'] = $this->db->get("profile")->result_object();
-				echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
-				exit;
-			}
 	
-			if($param1==="profile_delete"){
-				$this->db->where(array("profile_id"=>$param2));
-				$this->db->delete("profile");
-				
-				$page_data['profiles'] = $this->db->get("profile")->result_object();
-				echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
-				exit;
-			}
-			
-			if($param1==="assign_privileges"){
-				$privileges = $this->input->post("privilege_id");
-				
-				if($this->db->get_where("access",array("profile_id"=>$param2))->num_rows()>0){
-					$this->db->where(array("profile_id"=>$param2));
-					$this->db->delete("access");
-				}
-				
-				
-				foreach($privileges as $privilege):
-					$data['entitlement_id'] = $privilege;
-					$data['profile_id'] = $param2;
-					
-					$this->db->insert("access",$data);
-				endforeach;
-				
-				$page_data['profiles'] = $this->db->get("profile")->result_object();
-				echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
-				exit;
-			}
-			
-			
-			$page_data['profiles'] = $this->db->get("profile")->result_object();
-			$page_data['page_name']  = __FUNCTION__;
-	        $page_data['view_type']  = get_called_class();
-	        $page_data['page_title'] = get_phrase(__FUNCTION__);
-			$this->load->view('backend/index', $page_data);
+			/** Assign Privileges **/
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_profile")) $crud->unset_add();
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_profile")) $crud->unset_edit();	
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_profile")) $crud->unset_delete();
+	
+		
+		$output = $crud->render();	
+		$page_data['view_type']  = "account";
+		$page_data['page_name']  = __FUNCTION__;
+        $page_data['page_title'] = get_phrase(__FUNCTION__);
+		$output = array_merge($page_data,(array)$output);
+        $this->load->view('backend/index', $output);
 	}
 	
 	public function roles($param1="",$param2="",$param3=""){
@@ -259,8 +220,8 @@ class Account extends CI_Controller
 			/**Instatiate CRUD**/
 		$crud = new grocery_CRUD();
 		
-		/**Set theme to Flexigrid**/
-		$crud->set_theme('Flexigrid');//Flexigrid
+		/**Set theme to flexigrid**/
+		$crud->set_theme('flexigrid');//flexigrid
 		
 		
 		/** Grid Subject **/
@@ -299,7 +260,7 @@ class Account extends CI_Controller
 		//$crud->add_action('More', '', 'demo/action_more','ui-icon-plus');
 		
 		$output = $crud->render();	
-		$page_data['view_type']  = get_called_class();
+		$page_data['view_type']  = "account";
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase(__FUNCTION__);
 		$output = array_merge($page_data,(array)$output);
@@ -334,8 +295,8 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 			/**Instatiate CRUD**/
 		$crud = new grocery_CRUD();
 		
-		/**Set theme to Flexigrid**/
-		$crud->set_theme('Flexigrid');//Flexigrid
+		/**Set theme to flexigrid**/
+		$crud->set_theme('flexigrid');//flexigrid
 		
 		
 		/** Grid Subject **/
@@ -373,7 +334,7 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 		//$crud->add_action('More', '', 'demo/action_more','ui-icon-plus');
 		
 		$output = $crud->render();	
-		$page_data['view_type']  = get_called_class();
+		$page_data['view_type']  = "account";
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase(__FUNCTION__);
 		$output = array_merge($page_data,(array)$output);
@@ -457,7 +418,7 @@ public function insert_team_audit_parameters($post_array,$primary_key){
 				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
 				$page_data['users']  = $this->db->get_where("user",array("country_id"=>$logged_user_country_id))->result_object();
 			}
-			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);
+			echo $this->load->view('backend/'."account"."/".__FUNCTION__, $page_data,true);
 			exit;	
 		}
 		
@@ -484,7 +445,7 @@ public function insert_team_audit_parameters($post_array,$primary_key){
 				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
 				$page_data['users']  = $this->db->get_where("user",array("country_id"=>$logged_user_country_id))->result_object();
 			}
-			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);	
+			echo $this->load->view('backend/'."account"."/".__FUNCTION__, $page_data,true);	
 			exit;
 		}
 		
@@ -549,7 +510,7 @@ public function insert_team_audit_parameters($post_array,$primary_key){
 				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
 				$page_data['users']  = $this->db->get_where("user",array("country_id"=>$logged_user_country_id))->result_object();
 			}
-			echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);	
+			echo $this->load->view('backend/'."account"."/".__FUNCTION__, $page_data,true);	
 			exit;
 		}
 
@@ -568,7 +529,7 @@ public function insert_team_audit_parameters($post_array,$primary_key){
 					$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
 					$page_data['users']  = $this->db->get_where("user",array("country_id"=>$logged_user_country_id))->result_object();
 				}
-				echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);	
+				echo $this->load->view('backend/'."account"."/".__FUNCTION__, $page_data,true);	
 				exit;
 		}
 		
@@ -588,12 +549,12 @@ public function insert_team_audit_parameters($post_array,$primary_key){
 					$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
 					$page_data['users']  = $this->db->get_where("user",array("country_id"=>$logged_user_country_id))->result_object();
 				}
-				echo $this->load->view('backend/'.get_called_class()."/".__FUNCTION__, $page_data,true);	
+				echo $this->load->view('backend/'."account"."/".__FUNCTION__, $page_data,true);	
 				exit;
 		}
 		
 		
-		$page_data['view_type']  = get_called_class();
+		$page_data['view_type']  = "account";
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase(__FUNCTION__);
         $this->load->view('backend/index', $page_data);

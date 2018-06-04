@@ -10,7 +10,7 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 
 <div class="row">
 
-	<div class="col-sm-8">
+	<div class="col-sm-10">
 		<?php 
 		
 			/** Check if an active survey exists. If no show the message there is no active survey or else check if a vote has been initiated**/
@@ -290,7 +290,7 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 	
 	
 	
-	<div class="col-sm-4">
+	<div class="col-sm-2">
 		<div class="row">
 			<div style="text-align: center;font-style: italic;font-weight: bold;" class="col-sm-12"><?=get_phrase("your_voting_privileges");?></div>
 		</div>
@@ -299,8 +299,8 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 			<div style="text-decoration: underline;font-weight: bold;" class="col-sm-12"><?=get_phrase("contribution");?>:</div>
 			
 			
-			<div class="col-sm-6"><span style="font-weight: bold;"><?=get_phrase("role");?>:</span> <?=$role->name;?></div>
-			<div class="col-sm-6"><span style="font-weight: bold;"><?=get_phrase("position");?>:</span> <?=$this->db->get_where("contribution",array("contribution_id"=>$role->contribution))->row()->name;?></div>
+			<div class="col-sm-12"><span style="font-weight: bold;"><?=get_phrase("role");?>:</span> <?=$role->name;?></div>
+			<div class="col-sm-12"><span style="font-weight: bold;"><?=get_phrase("position");?>:</span> <?=$this->db->get_where("contribution",array("contribution_id"=>$role->contribution))->row()->name;?></div>
 		</div>
 		<hr/>
 		<div class="row">
@@ -310,9 +310,9 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 				
 				if($scope->num_rows() > 0 ){
 			?>
-			<div class="col-sm-6"><span style="font-weight: bold;"><?=get_phrase("two_way");?>:</span> <?=$scope->row()->two_way == "1"?get_phrase("yes"):get_phrase("no");?></div>
+			<div class="col-sm-12"><span style="font-weight: bold;"><?=get_phrase("two_way");?>:</span> <?=$scope->row()->two_way == "1"?get_phrase("yes"):get_phrase("no");?></div>
 			<!-- <div class="col-sm-6"><span style="font-weight: bold;"><?=get_phrase("strict");?>:</span> <?=$scope->row()->strict == "1"?get_phrase("yes"):get_phrase("no");;?></div> -->
-			<div class="col-sm-6"><span style="font-weight: bold;"><?=get_phrase("type");?>: </span> <?=ucfirst($scope->row()->type);?></div>
+			<div class="col-sm-12"><span style="font-weight: bold;"><?=get_phrase("type");?>: </span> <?=ucfirst($scope->row()->type);?></div>
 				
 			<div class="col-sm-12"><span style="font-weight: bold;"><?=get_phrase("countries");?>:</span> 
 				<?php 

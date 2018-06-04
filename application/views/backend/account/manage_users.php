@@ -1,16 +1,3 @@
-<?php
-//echo $this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type");
-// $user_id = $this->session->login_user_id;
-// 
-// $this->crud_model->country_scope_where($user_id); 
-// 
-// $scope_users = $this->db->get("user")->result_object(); 
-// 
-// print_r($scope_users);
-// 
-// echo $this->crud_model->get_field_value("scope","user_id",$user_id,"type");
-?>
-
 <div class="row">
 	<div class="row">
 		<div class="col-sm-12 inner-progress"></div>
@@ -164,7 +151,7 @@
 			                                        <li class="divider"></li>
 			                                        
 			                                        <!-- USER EDITING  -->
-			                                        <li class="update_user">
+			                                        <li class="edit_user">
 			                                            <a href="#" onclick="showAjaxModal('<?php echo base_url();?>modal/popup/modal_user_edit/<?php echo $user->user_id;?>');">
 			                                                <i class="entypo-pencil"></i>
 			                                                    <?php echo get_phrase('edit');?>
