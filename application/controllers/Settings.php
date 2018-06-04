@@ -3,11 +3,11 @@ if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
 /*	
- *	@author 	: Joyonto Roy
- *	date		: 27 september, 2014
- *	FPS School Management System Pro
- *	http://codecanyon.net/user/FreePhpSoftwares
- *	support@freephpsoftwares.com
+ *	@author 	: Nicodemus Karisa Mwambire
+ *	date		: 29 May, 2018
+ *	AFR Staff Recognition System
+ *	https://www.compassionkenya.com
+ *	support@compassionkenya.com
  */
 
 class Settings extends CI_Controller
@@ -21,7 +21,7 @@ class Settings extends CI_Controller
         $this->load->library('session');
 		
 		/** System Feature Session Tag **/
-		$this->session->set_userdata('view_type', get_called_class());
+		$this->session->set_userdata('view_type', "settings");
 		
        /*cache control*/
 		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
@@ -102,7 +102,7 @@ class Settings extends CI_Controller
         }
         $page_data['page_name']  = 'system_settings';
         $page_data['page_title'] = get_phrase('system_settings');
-		$page_data['view_type']  = get_called_class();
+		$page_data['view_type']  = "settings";
         $page_data['settings']   = $this->db->get('settings')->result_array();
         $this->load->view('backend/index', $page_data);
     }
@@ -163,7 +163,7 @@ class Settings extends CI_Controller
 
         $page_data['page_name']  = 'sms_settings';
         $page_data['page_title'] = get_phrase('sms_settings');
-		$page_data['view_type']  = get_called_class();
+		$page_data['view_type']  = "settings";
         $page_data['settings']   = $this->db->get('settings')->result_array();
         $this->load->view('backend/index', $page_data);
     }
@@ -225,7 +225,7 @@ class Settings extends CI_Controller
 		}
 		$page_data['page_name']        = 'manage_language';
 		$page_data['page_title']       = get_phrase('manage_language');
-		$page_data['view_type']  = get_called_class();
+		$page_data['view_type']  = "settings";
 		//$page_data['language_phrases'] = $this->db->get('language')->result_array();
 		$this->load->view('backend/index', $page_data);	
     }

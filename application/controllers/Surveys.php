@@ -57,6 +57,9 @@ class Surveys extends CI_Controller
 		/**Select Category Table**/
 		$crud->set_table('grouping');
 		
+		/** Related Tables to Category **/
+		$crud->set_relation('created_by','user','firstname');
+		$crud->set_relation('last_modified_by','user','firstname');
 		
 		/** Set required fields **/
 		$crud->required_fields(array("name","description","status"));
@@ -372,6 +375,25 @@ class Surveys extends CI_Controller
 			$this->db->where(array("result_id"=>$result->result_id,"category_id"=>$category_id));
 			$this->db->update("tabulate",$data);
 		}
+	}
+	
+	function post_nomination_comment(){
+		$comment = $_POST['comment'];
+		$category_id = $_POST['category_id'];
+		$user_id = $_POST['user_id'];
+		
+		$data['comment'] = $comment;
+		
+		$result = $this->db->get_where("result",array("user_id"=>$user_id,"status"=>0))->row();
+		$category = $this->db->get_where("category",array("category_id"=>$category_id))->row();
+		
+		if($this->db->get_where("tabulate",array("result_id"=>$result->result_id,"category_id"=>$category_id))->num_rows() > 0){
+			$tabulate_id = $this->db->get_where("tabulate",array("result_id"=>$result->result_id,"category_id"=>$category_id))->row()->tabulate_id;
+			$this->db->where(array("tabulate_id"=>$tabulate_id));
+			$this->db->update("tabulate",$data);
+			
+		}
+		
 	}
 	
 	public function survey_results($param1="",$param2="",$param3=""){

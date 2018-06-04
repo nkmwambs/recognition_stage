@@ -2,9 +2,9 @@
 
 $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 
-//if(isset($results)){
-	//print_r($results);
-//}
+// if(isset($results)){
+	// print_r($results);
+// }
 
 ?>
 
@@ -67,7 +67,7 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 						<tbody>
 							<?php foreach($groupings as $grouping_id=>$categories){?>
 									<tr>
-										<td colspan="5" style="background-color:#F5F5F5;font-weight: bolder;text-align: center;"><?=$this->crud_model->get_type_name_by_id("grouping",$grouping_id);?></td>
+										<td colspan="6" style="background-color:#F5F5F5;font-weight: bolder;text-align: center;"><?=$this->crud_model->get_type_name_by_id("grouping",$grouping_id);?></td>
 									</tr>
 									<tr style="font-style: italic;">
 										<td><?=get_phrase("category");?></td>
@@ -75,6 +75,7 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 										<td><?=get_phrase("visibility");?></td>
 										<td><?=get_phrase("unit");?></td>
 										<td><?=get_phrase("nominate_unit");?></td>
+										<td><?=get_phrase("comment");?></td>
 									</tr>
 									
 									<?php 
@@ -257,6 +258,17 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 											<td><?=$this->crud_model->get_type_name_by_id("country",$category->visibility);?></td>
 											<td><?=ucfirst($unit_table_name);?></td>
 											<td><?=$options;?></td>
+											<?php
+												$comment = "";
+												if(count($results) > 0){
+													foreach($results as $result){
+														if($result->category_id === $category->category_id){
+															$comment = $result->comment; 
+														}
+													}
+												}
+											?>
+											<td><textarea readonly="readonly" id="comment_<?=$category->category_id;?>" class="form-control comment" placeholder="<?=get_phrase("comment_here")?>"><?=$comment;?></textarea></td>
 										</tr>
 									<?php 
 										}
@@ -265,7 +277,7 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 							<?php }?>
 							
 							<tr>
-								<td colspan="5" style="text-align: center;"><a id="submit_vote" href="<?=base_url();?>surveys/nominate/submit_vote/<?=$this->session->login_user_id;?>" class="btn btn-success btn-icon"><i class="fa fa-star"></i><?=get_phrase("submit");?></a></td>
+								<td colspan="6" style="text-align: center;"><a id="submit_vote" href="<?=base_url();?>surveys/nominate/submit_vote/<?=$this->session->login_user_id;?>" class="btn btn-success btn-icon"><i class="fa fa-star"></i><?=get_phrase("submit");?></a></td>
 							</tr>
 						</tbody>
 					</table> 
@@ -343,7 +355,7 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 			url:url,
 			success:function(response){
 				//alert(response);
-				$(this).css("border","1px green solid");
+				$("#comment_"+category_id).removeAttr("readOnly");
 			},
 			error:function(){
 				
@@ -353,5 +365,33 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 		ev.preventDefault();
 	});
 	
+	$(".comment").change(function(ev){
+		var comment = $(this).val();
+		var id = $(this).attr("id");
+		var category_id = id.split("_")[1]; 
+		var comment = $(this).val();
+		var user_id = '<?=$this->session->login_user_id;?>';
+		
+		var data = {"category_id":category_id,"comment":comment,"user_id":user_id}
+		
+		var url = "<?=base_url();?>surveys/post_nomination_comment";
+		
+		
+		$.ajax({
+			url:url,
+			data:data,
+			type:"POST",
+			success:function(response){
+				
+				
+			},
+			error:function(){
+				
+			}
+		});
+		
+		ev.preventDefault();
+		
+	});
 	
 </script>

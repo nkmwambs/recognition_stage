@@ -305,7 +305,7 @@ $config['cache_query_string'] = FALSE;
 | http://codeigniter.com/user_guide/libraries/encryption.html
 |
 */
-$config['encryption_key'] = 'FreePhpSoftwares';
+$config['encryption_key'] = '@!lov3cod3';
 
 /*
 |--------------------------------------------------------------------------
