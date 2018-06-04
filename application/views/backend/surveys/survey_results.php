@@ -15,6 +15,7 @@
 				<table class="table table-striped" id="table_export">
 					<thead>
 						<tr>
+							<th><?=get_phrase("voter_staff_number");?></th>
 							<th><?=get_phrase("voting_staff");?></th>
 							<th><?=get_phrase("country");?></th>
 							<th><?=get_phrase("vote_status");?></th>
@@ -24,7 +25,7 @@
 							<th><?=get_phrase("nomination_type");?></th>
 							<th><?=get_phrase("voting_unit");?></th>
 							<th><?=get_phrase("nominee");?></th>
-							<th><?=get_phrase("staff_number");?></th>
+							<th><?=get_phrase("comment");?></th>
 							
 						</tr>
 					</thead>
@@ -35,6 +36,7 @@
 							foreach($results as $result){
 						?>
 							<tr>
+								<td><?=$this->db->get_where("user",array("user_id"=>$result->user_id))->row()->employee_id;?></td>
 								<td><?php $user = $this->db->get_where("user",array("user_id"=>$result->user_id))->row(); echo $user->firstname.' '.$user->lastname;?></td>
 								<td><?=$this->crud_model->get_type_name_by_id("country",$user->country_id);?></td>
 								<td><?=$result->status === '0' ? get_phrase("in_progress"):get_phrase("completed");?></td>
@@ -52,7 +54,7 @@
 										 }	
 									?>
 								</td>
-								<td></td>
+								<td><?=$this->db->get_where("tabulate",array("category_id"=>$result->category_id,"result_id"=>$result->result_id))->row()->comment;?></td>
 							</tr>
 				
 						<?php 

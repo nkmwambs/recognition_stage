@@ -40,14 +40,14 @@
         
         
         <!-- SURVEYS -->
-        <li class="<?php if ($page_name == 'survey_results' ||  $page_name == 'nominate' || $page_name == 'manage_surveys' || $page_name == 'category_groups' || $page_name == 'categories'|| $page_name == 'survey_setting' || $page_name == 'mail_templates') echo 'opened active';?>">
+        <li class="<?php if ($page_name == 'survey_results'|| $page_name == 'votes'  ||  $page_name == 'nominate' || $page_name == 'manage_surveys' || $page_name == 'category_groups' || $page_name == 'categories'|| $page_name == 'survey_setting' || $page_name == 'mail_templates') echo 'opened active';?>">
             <a href="#">
                 <i class="entypo-layout"></i>
                 <span><?php echo get_phrase('surveys'); ?></span>
             </a>
             <ul>
             	
-	            <li class="manage_surveys <?php if ($page_name == 'category_groups' || $page_name == 'categories'|| $page_name == 'survey_setting' || $page_name == 'mail_templates') echo 'opened active';?>">
+	            <li class="manage_surveys <?php if ($page_name == 'category_groups' || $page_name == 'votes'  || $page_name == 'categories'|| $page_name == 'survey_setting' || $page_name == 'mail_templates') echo 'opened active';?>">
 	               <a href="#" class="ajax-content">
 	                   <span><i class="entypo-tools"></i> <?php echo get_phrase('manage_surveys'); ?></span>
 	                    </a>
@@ -72,7 +72,13 @@
 	                            </a>
 	                        </li>
 	                        
-	                        <li class="setup_countries <?php if ($page_name == 'mail_templates') echo 'active'; ?>">
+	                         <li class="reset_vote <?php if ($page_name == 'votes') echo 'active'; ?>">
+	                        	<a href="<?php echo base_url(); ?>surveys/votes" class="">
+	                                <span><i class="entypo-star"></i><?php echo get_phrase('votes'); ?></span>
+	                            </a>
+	                        </li>
+	                        
+	                        <li class="mail_templates <?php if ($page_name == 'mail_templates') echo 'active'; ?>">
 	                        	<a href="<?php echo base_url(); ?>surveys/mail_templates" class="">
 	                                <span><i class="entypo-popup"></i><?php echo get_phrase('mail_templates'); ?></span>
 	                            </a>
@@ -100,7 +106,7 @@
         
         
         <!-- MESSAGES -->
-        <li class="<?php if ($page_name == 'messages') echo 'active'; ?> ">
+        <li class="messages <?php if ($page_name == 'messages') echo 'active'; ?> ">
             <a href="<?php echo base_url();?>messages/message">
                 <i class="entypo-mail"></i>
                 <span><?php echo get_phrase('messages'); ?></span>

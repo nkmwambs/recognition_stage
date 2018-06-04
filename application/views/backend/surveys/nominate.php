@@ -192,7 +192,7 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 																													
 											$units = $this->db->get($unit_table_name)->result_object();										
 											
-											$options ='<select class="form-control nominate" id="'.$category->category_id.'">';
+											$options ='<select class="form-control nominate validate" id="'.$category->category_id.'">';
 											
 											$options .='<option value="">'.get_phrase("nominate_".$unit_table_name).'</option>';
 											if(count($results) > 0){
@@ -268,7 +268,7 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 													}
 												}
 											?>
-											<td><textarea readonly="readonly" id="comment_<?=$category->category_id;?>" class="form-control comment" placeholder="<?=get_phrase("comment_here")?>"><?=$comment;?></textarea></td>
+											<td><textarea readonly="readonly" id="comment_<?=$category->category_id;?>" class="form-control validate comment" placeholder="<?=get_phrase("comment_here")?>"><?=$comment;?></textarea></td>
 										</tr>
 									<?php 
 										}
@@ -277,7 +277,7 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 							<?php }?>
 							
 							<tr>
-								<td colspan="6" style="text-align: center;"><a id="submit_vote" href="<?=base_url();?>surveys/nominate/submit_vote/<?=$this->session->login_user_id;?>" class="btn btn-success btn-icon"><i class="fa fa-star"></i><?=get_phrase("submit");?></a></td>
+								<td colspan="6" style="text-align: center;"><button id="submit_vote"  class="btn btn-success btn-icon"><i class="fa fa-star"></i><?=get_phrase("submit");?></button></td>
 							</tr>
 						</tbody>
 					</table> 
@@ -338,7 +338,32 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 <script>
 	$("#submit_vote").click(function(ev){
 		
-		alert("Hello");
+		var req_validate = $(".validate"); 
+		var cnt = 0;
+		
+		$.each(req_validate,function(i,el){
+			if($(el).val() === ""){
+				cnt++;
+				$(el).css("border","1px solid red");
+			}
+		});
+		
+		if(cnt > 0){
+			alert("<?=get_phrase("you_have_missing_fields");?>");
+		}else{
+			var url = "<?=base_url();?>surveys/nominate/submit_vote/<?=$this->session->login_user_id;?>";
+			$.ajax({
+				url:url,
+				success:function(){
+					alert("<?=get_phrase("submit_successful");?>");
+					window.location.reload();
+				},
+				error:function(){
+					
+				}
+			})
+		}
+		
 		ev.preventDefault();
 	});
 	

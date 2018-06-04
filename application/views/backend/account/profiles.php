@@ -17,11 +17,11 @@
                     	</a>
             </li>
 			
-			<li class="">
+			<span class="add_profile"><li class="">
             	<a href="#add_profile" data-toggle="tab"><i class="entypo-plus"></i> 
 					<?php echo get_phrase('add_profile');?>
                     	</a>
-            </li>
+         </li></span>
                         
     	    
 		</ul>
@@ -90,7 +90,7 @@
 			
 			<!-- START ADD COUNTRIES-->
 						
-			<div class="tab-pane box" id="add_profile" style="padding: 5px">
+			<div class="tab-pane box add_profile" id="add_profile" style="padding: 5px">
                <div class="box-content padded">
 					<?php 
                      	echo form_open(base_url() . 'account/profiles/profile_add' , array('id'=>'frm_country', 'class' => 'form-horizontal form-groups-bordered validate','target'=>'_top' , 'enctype' => 'multipart/form-data'));

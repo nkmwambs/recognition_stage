@@ -21,7 +21,7 @@ class Surveys extends CI_Controller
         $this->load->library('session');
 		
 		/** System Feature Session Tag **/
-		$this->session->set_userdata('view_type', get_called_class());
+		$this->session->set_userdata('view_type', "surveys");
 		
        /*cache control*/
 		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
@@ -47,8 +47,8 @@ class Surveys extends CI_Controller
 		/**Instatiate CRUD**/
 		$crud = new grocery_CRUD();
 		
-		/**Set theme to Flexigrid**/
-		$crud->set_theme('Flexigrid');//Flexigrid
+		/**Set theme to flexigrid**/
+		$crud->set_theme('flexigrid');//flexigrid
 		
 		
 		/** Grid Subject **/
@@ -77,7 +77,7 @@ class Surveys extends CI_Controller
 		
 		
 		$output = $crud->render();	
-		$page_data['view_type']  = get_called_class();
+		$page_data['view_type']  = "surveys";
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase(__FUNCTION__);
 		$output = array_merge($page_data,(array)$output);
@@ -92,8 +92,8 @@ class Surveys extends CI_Controller
 		/**Instatiate CRUD**/
 		$crud = new grocery_CRUD();
 		
-		/**Set theme to Flexigrid**/
-		$crud->set_theme('Flexigrid');//Flexigrid
+		/**Set theme to flexigrid**/
+		$crud->set_theme('flexigrid');//flexigrid
 		
 		
 		/** Grid Subject **/
@@ -142,7 +142,7 @@ class Surveys extends CI_Controller
 		//$crud->add_action('More', '', 'demo/action_more','ui-icon-plus');
 		
 		$output = $crud->render();	
-		$page_data['view_type']  = get_called_class();
+		$page_data['view_type']  = "surveys";
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase(__FUNCTION__);
 		$output = array_merge($page_data,(array)$output);
@@ -176,8 +176,8 @@ class Surveys extends CI_Controller
 		/**Instatiate CRUD**/
 		$crud = new grocery_CRUD();
 		
-		/**Set theme to Flexigrid**/
-		$crud->set_theme('datatables');//Flexigrid
+		/**Set theme to flexigrid**/
+		$crud->set_theme('datatables');//flexigrid
 		
 		
 		/** Grid Subject **/
@@ -222,7 +222,7 @@ class Surveys extends CI_Controller
 		
 		
 		$output = $crud->render();	
-		$page_data['view_type']  = get_called_class();
+		$page_data['view_type']  = "surveys";
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase(__FUNCTION__);
 		$output = array_merge($page_data,(array)$output);
@@ -267,12 +267,74 @@ class Surveys extends CI_Controller
 		if ($this->session->userdata('user_login') != 1)
             redirect(base_url(), 'refresh');
 		
-		$page_data['view_type']  = get_called_class();
+		$page_data['view_type']  = "surveys";
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase(__FUNCTION__);
         $this->load->view('backend/index', $page_data);
 	}
 	
+	public function votes($param1="",$param2="",$param3=""){
+		if ($this->session->userdata('user_login') != 1)
+            redirect(base_url(), 'refresh');
+		
+		if ($this->session->userdata('user_login') != 1)
+            redirect(base_url(), 'refresh');
+		
+		/**Instatiate CRUD**/
+		$crud = new grocery_CRUD();
+		
+		/**Set theme to flexigrid**/
+		$crud->set_theme('flexigrid');//flexigrid
+		
+		
+		/** Grid Subject **/
+		$crud->set_subject(get_phrase('votes'));
+		
+		/**Select Category Table**/
+		$crud->set_table('result');
+		
+		
+		
+		/** Populate Status Type **/
+		$crud->field_type('status', 'dropdown',array('0'=>"active","1"=>"submitted"));	
+		
+		/** User Freindly Label**/
+		$crud->display_as("user_id",get_phrase("voter_last_name"));
+		
+		/** Related Tables to Category **/
+		//$crud->set_relation('survey_id','survey','start_date');
+		$crud->set_relation('user_id','user','{firstname} {lastname}');
+		$crud->set_relation('created_by','user','{firstname} {lastname}');
+		$crud->set_relation('last_modified_by','user','{firstname} {lastname}');
+		//$crud->set_relation('survey_id','survey','survey_id',array("status"=>1));
+		
+		
+		/** SET WHERE **/
+		$survey_id = 0;
+		$survey = $this->db->get_where("survey",array("status"=>"1"));
+		if($survey->num_rows() > 0){
+			$survey_id = $survey->row()->survey_id; 
+		}
+		$crud->where('survey_id',$survey_id);
+		
+		/** Assign Privileges **/
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_vote")) $crud->unset_add();
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_vote")) $crud->unset_edit();	
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_vote")) $crud->unset_delete();
+
+		/** Show in Edit or Add form**/
+		//$crud->columns('survey_id','user_id','status');
+		$crud->add_fields('survey_id','user_id','status');
+		$crud->edit_fields('status');
+		
+		
+		$output = $crud->render();	
+		$page_data['view_type']  = "surveys";
+		$page_data['page_name']  = __FUNCTION__;
+        $page_data['page_title'] = get_phrase(__FUNCTION__);
+		$output = array_merge($page_data,(array)$output);
+        $this->load->view('backend/index', $output);
+	}
 	public function nominate($param1="",$param2="",$param3=""){
 		if ($this->session->userdata('user_login') != 1)
             redirect(base_url(), 'refresh');
@@ -300,7 +362,7 @@ class Surveys extends CI_Controller
 			
 			$this->session->set_flashdata('flash_message',$msg);
 			
-			redirect(base_url().get_called_class().'/'.__FUNCTION__,"refresh");
+			redirect(base_url()."surveys".'/'.__FUNCTION__,"refresh");
 		}
 		
 		if($param1=="submit_vote"){
@@ -316,7 +378,7 @@ class Surveys extends CI_Controller
 			
 			$this->session->set_flashdata('flash_message',$msg);
 			
-			redirect(base_url().get_called_class().'/'.__FUNCTION__,"refresh");
+			redirect(base_url()."surveys".'/'.__FUNCTION__,"refresh");
 		}
 		
 		$user = $this->db->get_where("user",array("user_id"=>$this->session->login_user_id))->row();
@@ -349,7 +411,7 @@ class Surveys extends CI_Controller
 		$page_data['user'] = $user;
 		$page_data['role'] = $role;
 		$page_data['contribution'] = $contribution;
-		$page_data['view_type']  = get_called_class();
+		$page_data['view_type']  = "surveys";
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase(__FUNCTION__);
         $this->load->view('backend/index', $page_data);
@@ -412,7 +474,7 @@ class Surveys extends CI_Controller
 		
 		$page_data['results']  =  $results;
 		$page_data['survey']  =  $survey;
-		$page_data['view_type']  = get_called_class();
+		$page_data['view_type']  = "surveys";
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase(__FUNCTION__);
         $this->load->view('backend/index', $page_data);
