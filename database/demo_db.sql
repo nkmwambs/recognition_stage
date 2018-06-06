@@ -97,7 +97,8 @@ INSERT INTO `access` (`access_id`, `entitlement_id`, `profile_id`) VALUES
 (643,	4,	8),
 (647,	63,	7),
 (649,	61,	7),
-(651,	64,	7);
+(651,	64,	7),
+(652,	52,	4);
 
 DROP TABLE IF EXISTS `category`;
 CREATE TABLE `category` (
@@ -140,42 +141,73 @@ INSERT INTO `ci_sessions` (`id`, `ip_address`, `timestamp`, `data`) VALUES
 ('080ad2afa8bd99806409cd519ab41c20862f31d1',	'::1',	1528273230,	'__ci_last_regenerate|i:1528272955;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
 ('0d85fec56ed312151a410f4600f974a20316d19d',	'::1',	1528286276,	'__ci_last_regenerate|i:1528285653;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
 ('138a52b1a46cf0eca926f3fdd747d77e62f5c11f',	'::1',	1528272452,	'__ci_last_regenerate|i:1528272302;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
+('21f5e1d65e6d50f9fd01642e4aa6d8e8f85ae36f',	'::1',	1528318971,	'__ci_last_regenerate|i:1528318549;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
 ('22cd89fb4f67d8fd3bafcbf03cf4ba900f693db2',	'::1',	1528275185,	'__ci_last_regenerate|i:1528275180;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"surveys\";'),
 ('2595af9bb7e70f709288cc45abe716d4f74f2cb4',	'::1',	1528286306,	'__ci_last_regenerate|i:1528286305;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
 ('25f7ae881c57452f114d63b7898ca412bfc5d36d',	'::1',	1528297509,	'__ci_last_regenerate|i:1528297439;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"dashboard\";'),
+('2836deaba001f9ac18af346953397d487b76972c',	'::1',	1528304466,	'__ci_last_regenerate|i:1528304427;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:8:\"Messages\";'),
+('347fbadcc889e075611dad6a9a1e5b9c4ab864af',	'::1',	1528316723,	'__ci_last_regenerate|i:1528316482;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"dashboard\";'),
 ('34e9573904965a7ba49ecc3701f1dbc45d9a30e5',	'::1',	1528296913,	'__ci_last_regenerate|i:1528296693;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"dashboard\";'),
+('384d383d58b9439cdfa8e741c7bb68cc8bfeea97',	'::1',	1528309870,	'__ci_last_regenerate|i:1528309715;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"surveys\";'),
 ('391607b083a98709226ab7374ce9faa03382238a',	'::1',	1528270973,	'__ci_last_regenerate|i:1528270872;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
 ('39b494da6e72030a399f6812278521122cda21f9',	'::1',	1528273624,	'__ci_last_regenerate|i:1528273607;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
 ('45d40610f39b270e52f7f28fec29c747708705c1',	'::1',	1528296499,	'__ci_last_regenerate|i:1528296240;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"dashboard\";'),
 ('46fc3e3bbedf1ef7674afe199dc764feec2fc7fd',	'::1',	1528283024,	'__ci_last_regenerate|i:1528282757;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"Dashboard\";'),
+('49ef48a2b108a7ea71634fcfb4e5f98e9720b751',	'::1',	1528305603,	'__ci_last_regenerate|i:1528305568;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:8:\"Messages\";'),
 ('4d28321e073ed79977eaa4e19cd65990f50ddc30',	'::1',	1528267211,	'__ci_last_regenerate|i:1528267170;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
+('5168e1d96f21d5f3dd02e02dcc9d0c8a5563daf5',	'::1',	1528302546,	'__ci_last_regenerate|i:1528302373;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"dashboard\";'),
+('5204a5f37da3260e9adac9e3fff47558dc43834b',	'::1',	1528306953,	'__ci_last_regenerate|i:1528306750;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:8:\"Messages\";'),
+('521895b69f6497e15617544b8e21cf4175a95266',	'::1',	1528307062,	'__ci_last_regenerate|i:1528307062;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:8:\"Messages\";'),
 ('52cf1d9b5a5826b1b7596fa41125fd9c675efa34',	'::1',	1528279796,	'__ci_last_regenerate|i:1528279751;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
+('53cedc6835d35f4e3b314e365157a3af87e863bd',	'::1',	1528305234,	'__ci_last_regenerate|i:1528305145;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:8:\"Messages\";'),
+('5bb4a387b5f607977d7df08fb2ed01050ff67d5f',	'::1',	1528310159,	'__ci_last_regenerate|i:1528310027;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"surveys\";'),
 ('5dca50a9009ada9271a835b9507b7a305ddca6b7',	'::1',	1528271803,	'__ci_last_regenerate|i:1528271505;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
+('60b0d4b7aa083cf65a891df0945b0cb961ced131',	'::1',	1528319984,	'__ci_last_regenerate|i:1528319800;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
+('660d620355fc1fdb9e071dbfecd54dcad91aea9f',	'::1',	1528303932,	'__ci_last_regenerate|i:1528303931;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"surveys\";'),
 ('663966859bfea9e24dd2b1fdab1af8def02078ba',	'::1',	1528272051,	'__ci_last_regenerate|i:1528271949;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
 ('6f1dcfe1e034cd33f0d4091f8e7eb91613f71416',	'::1',	1528281571,	'__ci_last_regenerate|i:1528281406;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
+('710dee7a25507ac19b92b14713f5e3fa5c1e3f14',	'127.0.0.1',	1528307189,	'__ci_last_regenerate|i:1528307160;view_type|s:8:\"Messages\";user_login|s:1:\"1\";login_user_id|s:2:\"11\";name|s:5:\"Velma\";login_type|s:23:\"Partnership Facilitator\";profile_id|s:1:\"4\";country_id|s:2:\"27\";'),
+('73caed5aca5d6985331929853d3b221c39036fc8',	'::1',	1528317893,	'__ci_last_regenerate|i:1528317892;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"dashboard\";'),
 ('7550784a11a33720ca61f8048a70e8d0994a6cf4',	'::1',	1528267564,	'__ci_last_regenerate|i:1528267554;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
+('7a4d51451ee728f46b4f6ad23097f1561f7de2e8',	'::1',	1528309390,	'__ci_last_regenerate|i:1528309385;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"surveys\";'),
 ('8501c72d97663d0709ab71d2029ad4019ed48814',	'::1',	1528259357,	'__ci_last_regenerate|i:1528259106;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"Dashboard\";'),
 ('85ab94be755b865e4dba2a8943e1fac76a5dea4b',	'::1',	1528268072,	'__ci_last_regenerate|i:1528267872;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
 ('88043c2cc787916e291adcef37d280389bcc309e',	'127.0.0.1',	1528281556,	'__ci_last_regenerate|i:1528281555;user_login|s:1:\"1\";login_user_id|s:1:\"9\";name|s:5:\"Evans\";login_type|s:23:\"Partnership Facilitator\";profile_id|s:1:\"8\";country_id|s:2:\"25\";view_type|s:7:\"surveys\";'),
+('8eb68c601d20e137d19406feccd71ef937a4d753',	'::1',	1528316294,	'__ci_last_regenerate|i:1528316153;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"dashboard\";'),
+('980f214984bd2a41e29b6bc1bc130b0b4863c446',	'::1',	1528302786,	'__ci_last_regenerate|i:1528302786;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"dashboard\";'),
 ('991316ffe92ee8ac57a489cc1e8db694aff296f9',	'::1',	1528258741,	'__ci_last_regenerate|i:1528258379;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";'),
 ('9b92d3cc26da1d639d40da4cffff8084d5ef2c2d',	'::1',	1528260188,	'__ci_last_regenerate|i:1528260114;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
+('9d03224d6d2ca6fc9e96c0c6f93c8306d06a78b0',	'::1',	1528315321,	'__ci_last_regenerate|i:1528315089;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"dashboard\";'),
 ('9d6fef204ae3de88e999267f251730343ab5e406',	'::1',	1528274325,	'__ci_last_regenerate|i:1528274324;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"Dashboard\";'),
+('a7271ee51ee24719c0cfa2be6e0945edc1edef53',	'::1',	1528315726,	'__ci_last_regenerate|i:1528315719;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"dashboard\";'),
 ('af89d0d7efae1d5dee8988844efee38c785e3fbb',	'::1',	1528258978,	'__ci_last_regenerate|i:1528258743;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"Dashboard\";'),
 ('b039a2c567c706d6dd8259aaba08a4457f3e3dde',	'::1',	1528283408,	'__ci_last_regenerate|i:1528283069;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
 ('b0b5e32234f237a7531c27e35b42ed151e7c872c',	'::1',	1528297292,	'__ci_last_regenerate|i:1528297003;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"dashboard\";'),
 ('b191ce48291031345cc834a9d6ee0a818b2d63c0',	'::1',	1528283944,	'__ci_last_regenerate|i:1528283704;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
+('b58a79a5434d489f3922647ffdaee3e86f349ba8',	'::1',	1528306151,	'__ci_last_regenerate|i:1528305879;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:8:\"Messages\";'),
+('bc7d992a67f69244a580b97a42a3f8bc44b35213',	'::1',	1528309099,	'__ci_last_regenerate|i:1528308999;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"surveys\";'),
 ('bea9409776cb4a5cbb32fae82a14c9dde0d0abe5',	'::1',	1528281137,	'__ci_last_regenerate|i:1528281017;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
+('c95787e4ad4caa772f29106eff808b34b5c5b6a3',	'127.0.0.1',	1528320427,	'__ci_last_regenerate|i:1528320411;'),
 ('cbc3ef298c7fcb95bc6b78d51e5fb7fc4d2a5f44',	'::1',	1528266215,	'__ci_last_regenerate|i:1528266207;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
 ('ccefb2821fc02c86902d6b86f17b749bbbdf02e0',	'::1',	1528269040,	'__ci_last_regenerate|i:1528268885;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
+('cd9225f705ca13960ae3e3487d309de4a4b7997a',	'::1',	1528308995,	'__ci_last_regenerate|i:1528308697;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"surveys\";'),
 ('d10badfc85c547d28539da0cbfe30ca984ed6b1b',	'::1',	1528268795,	'__ci_last_regenerate|i:1528268576;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
 ('d40abbcfbe7aebe34c08db5e350718d93d8090df',	'127.0.0.1',	1528282738,	'__ci_last_regenerate|i:1528282545;user_login|s:1:\"1\";login_user_id|s:1:\"9\";name|s:5:\"Evans\";login_type|s:23:\"Partnership Facilitator\";profile_id|s:1:\"8\";country_id|s:2:\"25\";view_type|s:7:\"surveys\";'),
 ('d92ff8f2381f6f23041df926cefd04644b4b4124',	'127.0.0.1',	1528281118,	'__ci_last_regenerate|i:1528281098;user_login|s:1:\"1\";login_user_id|s:1:\"9\";name|s:5:\"Evans\";login_type|s:23:\"Partnership Facilitator\";profile_id|s:1:\"8\";country_id|s:2:\"25\";view_type|s:7:\"surveys\";flash_message|s:7:\"Success\";__ci_vars|a:1:{s:13:\"flash_message\";s:3:\"old\";}'),
+('d95e38cdb0b7a7bd1d04dede1518ebefdab3b942',	'::1',	1528306487,	'__ci_last_regenerate|i:1528306352;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:8:\"Messages\";'),
+('e2f1e30faa6480a8814ad838c597e9c6d466728e',	'::1',	1528315648,	'__ci_last_regenerate|i:1528315402;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"dashboard\";'),
 ('e6f272f46a8fdc6577547fc2caadc24333299445',	'::1',	1528266663,	'__ci_last_regenerate|i:1528266617;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
+('e93f1928ad2a4eae6627dc819ee94c25cca9425c',	'::1',	1528317256,	'__ci_last_regenerate|i:1528316978;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"dashboard\";'),
+('e99a1d7fe3b4c222605391355170a3e4ae96e05d',	'127.0.0.1',	1528306939,	'__ci_last_regenerate|i:1528306813;view_type|s:8:\"Messages\";user_login|s:1:\"1\";login_user_id|s:2:\"11\";name|s:5:\"Velma\";login_type|s:23:\"Partnership Facilitator\";profile_id|s:1:\"4\";country_id|s:2:\"27\";flash_message|s:13:\"Message Sent!\";__ci_vars|a:1:{s:13:\"flash_message\";s:3:\"old\";}'),
 ('ef694cd273f6031bf4e28fee25d6dea94fc4fc2c',	'::1',	1528289395,	'__ci_last_regenerate|i:1528289390;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"Dashboard\";'),
 ('f31e0b6bc4e19020761eddf6b938cf71ce5ef15b',	'::1',	1528285630,	'__ci_last_regenerate|i:1528284164;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
 ('f6d4b2529803f0583fc5090277610b23b273d0f3',	'::1',	1528260054,	'__ci_last_regenerate|i:1528259795;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
+('f755aba73cd61b78d986e37fe2f6042b0ad7df1e',	'::1',	1528317505,	'__ci_last_regenerate|i:1528317331;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"dashboard\";'),
+('f7b153ecfece3e8745e52f2bf63a6febb4d74924',	'::1',	1528319105,	'__ci_last_regenerate|i:1528318983;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";flash_message|s:7:\"Success\";__ci_vars|a:1:{s:13:\"flash_message\";s:3:\"old\";}'),
 ('fbdc33a270461f187c0bcbba746817da1c32957a',	'::1',	1528276201,	'__ci_last_regenerate|i:1528276200;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:9:\"Dashboard\";'),
-('fe1023898b4e99a6848ec0cbb10a7872e020a4e0',	'::1',	1528259485,	'__ci_last_regenerate|i:1528259417;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";');
+('fd089208b73c64c513859f38184ff2221192cda8',	'::1',	1528308697,	'__ci_last_regenerate|i:1528308262;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"surveys\";'),
+('fe1023898b4e99a6848ec0cbb10a7872e020a4e0',	'::1',	1528259485,	'__ci_last_regenerate|i:1528259417;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"account\";'),
+('feaf93979e101e643ee161f093516983aa924cab',	'::1',	1528307779,	'__ci_last_regenerate|i:1528307761;user_login|s:1:\"1\";login_user_id|s:1:\"1\";name|s:9:\"Nicodemus\";login_type|s:15:\"Program Trainer\";profile_id|s:1:\"7\";country_id|s:2:\"25\";view_type|s:7:\"surveys\";');
 
 DROP TABLE IF EXISTS `contribution`;
 CREATE TABLE `contribution` (
@@ -285,7 +317,7 @@ INSERT INTO `entitlement` (`entitlement_id`, `name`, `derivative_id`) VALUES
 (48,	'add_role',	17),
 (49,	'edit_role',	17),
 (50,	'delete_role',	17),
-(51,	'mail_templates',	10),
+(51,	'mail_templates',	20),
 (52,	'messages',	0),
 (53,	'add_profile',	18),
 (54,	'edit_profile',	18),
@@ -598,7 +630,17 @@ INSERT INTO `language` (`phrase_id`, `phrase`, `english`, `spanish`, `french`, `
 (269,	'delete_vote',	'',	'',	'',	NULL),
 (270,	'start_date',	'',	'',	'',	NULL),
 (271,	'voter_staff_number',	'',	'',	'',	NULL),
-(272,	'privileges',	'',	'',	'',	NULL);
+(272,	'privileges',	'',	'',	'',	NULL),
+(273,	'active_survey',	'',	'',	'',	NULL),
+(274,	'so_far_in_our_application',	'',	'',	'',	NULL),
+(275,	'active_users',	'',	'',	'',	NULL),
+(276,	'so_far_to_close_voting',	'',	'',	'',	NULL),
+(277,	'write_your_message',	'',	'',	'',	NULL),
+(278,	'send',	'',	'',	'',	NULL),
+(279,	'message_sent!',	'',	'',	'',	NULL),
+(280,	'reply_message',	'',	'',	'',	NULL),
+(281,	'templates',	'',	'',	'',	NULL),
+(282,	'AFR_staff_recognition_system',	'',	'',	'',	NULL);
 
 DROP TABLE IF EXISTS `message`;
 CREATE TABLE `message` (
@@ -611,6 +653,11 @@ CREATE TABLE `message` (
   PRIMARY KEY (`message_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+INSERT INTO `message` (`message_id`, `message_thread_code`, `message`, `sender`, `timestamp`, `read_status`) VALUES
+(1,	'3081518956498f5',	'Hello there',	'Program Trainer-1',	'1528306420',	0),
+(2,	'3081518956498f5',	'Taking too long to respond',	'Program Trainer-1',	'1528306773',	0),
+(3,	'2c65324e677a5ff',	'Hello my sister?',	'Program Trainer-1',	'1528306798',	1),
+(4,	'2c65324e677a5ff',	'Fine bro, just out for training!',	'Partnership Facilitator-11',	'1528306939',	1);
 
 DROP TABLE IF EXISTS `message_thread`;
 CREATE TABLE `message_thread` (
@@ -622,6 +669,9 @@ CREATE TABLE `message_thread` (
   PRIMARY KEY (`message_thread_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+INSERT INTO `message_thread` (`message_thread_id`, `message_thread_code`, `sender`, `reciever`, `last_message_timestamp`) VALUES
+(1,	'3081518956498f5',	'Program Trainer-1',	'Partnership Facilitator-13',	''),
+(2,	'2c65324e677a5ff',	'Program Trainer-1',	'Partnership Facilitator-11',	'');
 
 DROP TABLE IF EXISTS `noticeboard`;
 CREATE TABLE `noticeboard` (
@@ -644,7 +694,7 @@ CREATE TABLE `profile` (
 INSERT INTO `profile` (`profile_id`, `name`, `description`) VALUES
 (2,	'Country Admin',	''),
 (3,	'Manager',	''),
-(4,	'Staff',	''),
+(4,	'Staff',	'<p>\r\n	Non Management staff</p>\r\n'),
 (7,	'Super Admin',	'<p>\r\n	Has all privileges</p>\r\n'),
 (8,	'HRBP',	'<p>\r\n	Human Resource Staff</p>\r\n');
 
@@ -817,6 +867,20 @@ INSERT INTO `teamset` (`teamset_id`, `user_id`, `team_id`) VALUES
 (2,	11,	6),
 (3,	2,	3);
 
+DROP TABLE IF EXISTS `template`;
+CREATE TABLE `template` (
+  `template_id` int(100) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `template_trigger` varchar(50) NOT NULL,
+  `mail_tags` mediumtext NOT NULL,
+  `template_subject` varchar(100) NOT NULL,
+  `template_body` longtext NOT NULL,
+  PRIMARY KEY (`template_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `template` (`template_id`, `name`, `template_trigger`, `mail_tags`, `template_subject`, `template_body`) VALUES
+(1,	'User Registration',	'user_invite',	'{user} = User\'s First and Last Name,\r\n{system_name} = System Name,\r\n{user_email} = User\'s Email,\r\n{user_password} = User\'s Password,\r\n{user_role} = User\'s role,\r\n{user_profile} = User\'s Profile,\r\n{site_url} = Site URL,\r\n{system_admin_email} = Country Admin Email\r\n\r\n ',	'Welcome {user}',	'<p>\n	Dear {user}</p>\n<p>\n	Your account has successfully been created in the {system_name}. Below are your new account details:</p>\n<p>\n	Login Email: {user_email}</p>\n<p>\n	Password: {user_password}</p>\n<p>\n	Your Role: {user_role}</p>\n<p>\n	Profile: {user_profile}</p>\n<p>\n	You can proceed logging in at {site_url}. For information contact the administrator at {system_admin_email}&nbsp;or your HRBP in your country.</p>\n<p>\n	&nbsp;</p>\n<p>\n	Regards,</p>\n<p>\n	System Administrator&nbsp; &nbsp;</p>\n');
+
 DROP TABLE IF EXISTS `unit`;
 CREATE TABLE `unit` (
   `unit_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -860,6 +924,7 @@ INSERT INTO `user` (`user_id`, `firstname`, `lastname`, `email`, `password`, `ge
 (10,	'Patricia',	'Mghendi',	'EMghendi@ke.ci.org',	'956d2d5467ed373328ee2d165a51c399',	'female',	'9782845675',	'',	8,	4,	0,	1,	28),
 (11,	'Velma',	'Odhiambo',	'VOdhiambo@ke.ci.org',	'956d2d5467ed373328ee2d165a51c399',	'female',	'88756785',	'',	3,	4,	2,	1,	27),
 (12,	'Jackson',	'Maingi',	'nkmwambs@gmail.com',	'9605b753806fae5c65be5267af27b666',	'male',	'0722654376',	'KE138',	1,	4,	0,	1,	25),
-(13,	'Geoffrey',	'Mulusa',	'GMulusa@ke.ci.org',	'0fc90c560c94d1033fbecc58300d2dcb',	'male',	'724955786',	'KE125',	3,	4,	2,	1,	25);
+(13,	'Geoffrey',	'Mulusa',	'GMulusa@ke.ci.org',	'0fc90c560c94d1033fbecc58300d2dcb',	'male',	'724955786',	'KE125',	3,	4,	2,	1,	25),
+(14,	'Heri',	'Amani',	'nkwambs@gmail.com',	'ec58e83928fd399804942258b7482230',	'male',	'07689202',	'KE444',	1,	4,	2,	1,	25);
 
--- 2018-06-06 15:07:43
+-- 2018-06-06 21:32:05

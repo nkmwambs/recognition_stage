@@ -692,6 +692,23 @@ CREATE TABLE `teamset` (
   PRIMARY KEY (`teamset_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `template`;
+CREATE TABLE `template` (
+  `template_id` int(100) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `template_trigger` varchar(50) NOT NULL,
+  `mail_tags` mediumtext NOT NULL,
+  `template_subject` varchar(100) NOT NULL,
+  `template_body` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `template`
+--
+
+INSERT INTO `template` (`template_id`, `name`, `template_trigger`, `mail_tags`, `template_subject`, `template_body`) VALUES
+(1, 'User Registration', 'user_invite', '{user} = User\'s First and Last Name,\r\n{system_name} = System Name,\r\n{user_email} = User\'s Email,\r\n{user_password} = User\'s Password,\r\n{user_role} = User\'s role,\r\n{user_profile} = User\'s Profile,\r\n{site_url} = Site URL,\r\n{system_admin_email} = Country Admin Email\r\n\r\n ', 'Welcome {user}', '<p>\n	Dear {user}</p>\n<p>\n	Your account has successfully been created in the {system_name}. Below are your new account details:</p>\n<p>\n	Login Email: {user_email}</p>\n<p>\n	Password: {user_password}</p>\n<p>\n	Your Role: {user_role}</p>\n<p>\n	Profile: {user_profile}</p>\n<p>\n	You can proceed logging in at {site_url}. For information contact the administrator at {system_admin_email}&nbsp;or your HRBP in your country.</p>\n<p>\n	&nbsp;</p>\n<p>\n	Regards,</p>\n<p>\n	System Administrator&nbsp; &nbsp;</p>\n');
+
 
 DROP TABLE IF EXISTS `unit`;
 CREATE TABLE `unit` (
