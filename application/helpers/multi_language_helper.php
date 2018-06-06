@@ -31,10 +31,13 @@ if ( ! function_exists('get_phrase'))
 		}
 
 		/** insert blank phrases initially and populating the language db ***/
-		$check_phrase	=	$CI->db->get_where('language' , array('phrase' => $phrase))->row()->phrase;
-		if ( $check_phrase	!=		$phrase)
+		// $check_phrase	=	$CI->db->get_where('language' , array('phrase' => $phrase))->row()->phrase;
+		// if ( $check_phrase	!=		$phrase)
+			// $CI->db->insert('language' , array('phrase' => $phrase));
+
+		if($CI->db->get_where('language' , array('phrase' => $phrase))->num_rows()===0){
 			$CI->db->insert('language' , array('phrase' => $phrase));
-			
+		}	
 		
 		// query for finding the phrase from `language` table
 		$query	=	$CI->db->get_where('language' , array('phrase' => $phrase));

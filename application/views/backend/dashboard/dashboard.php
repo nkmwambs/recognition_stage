@@ -33,8 +33,8 @@
 					<div class="icon"><i class="entypo-suitcase"></i></div>
 					<div class="num" data-start="0" data-end="<?=$active_surveys->num_rows();?>"  data-duration="1500" data-delay="0">0</div>
 					
-					<h3>Active Survey</h3>
-					<p>so far in our application.</p>
+					<h3><?=get_phrase("active_survey")?></h3>
+					<p><?=get_phrase("so_far_in_our_application")?>.</p>
 				</div>
 				
 			</div>
@@ -45,8 +45,8 @@
 					<div class="icon"><i class="entypo-gauge"></i></div>
 					<div class="num"><?=$active_users;?></div>
 					
-					<h3>Active Users</h3>
-					<p>so far in our application.</p>
+					<h3><?=get_phrase("active_users");?></h3>
+					<p><?=get_phrase("so_far_in_our_application")?>.</p>
 				</div>
 				
 			</div>
@@ -58,7 +58,7 @@
 					<div class="num"><?=$vote_count;?></div>
 					
 					<h3>Cast Votes</h3>
-					<p>so far in our application</p>
+					<p><?=get_phrase("so_far_in_our_application")?>.</p>
 				</div>
 				
 			</div>
@@ -71,7 +71,7 @@
 					<div class="num"><?=$votes_not_submitted;?></div>
 					
 					<h3>Uncast Votes</h3>
-					<p>so far in our application</p>
+					<p><?=get_phrase("so_far_in_our_application")?>.</p>
 				</div>
 				
 			</div>
@@ -86,7 +86,7 @@
 					<div class="num"><?=$days_remaining;?></div>
 					
 					<h3>Days remaining</h3>
-					<p>so far to close voting.</p>
+					<p><?=get_phrase("so_far_to_close_voting");?>.</p>
 				</div>
 				
 			</div>
