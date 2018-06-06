@@ -1,5 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/*	
+ *	@author 	: Nicodemus Karisa
+ *	date		: 6th June, 2018
+ *	AFR Staff Recognition system
+ *	https://www.compassion.com
+ *	NKarisa@ke.ci.org
+ */
+
 class Modal extends CI_Controller {
 
 	

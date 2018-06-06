@@ -3,11 +3,11 @@ if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
 /*	
- *	@author 	: Joyonto Roy
- *	date		: 27 september, 2014
- *	FPS School Management System Pro
- *	http://codecanyon.net/user/FreePhpSoftwares
- *	support@freephpsoftwares.com
+ *	@author 	: Nicodemus Karisa
+ *	date		: 6th June, 2018
+ *	AFR Staff Recognition system
+ *	https://www.compassion.com
+ *	NKarisa@ke.ci.org
  */
 
 class Messages extends CI_Controller

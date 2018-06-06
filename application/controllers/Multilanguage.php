@@ -3,11 +3,11 @@ if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
 
 /*	
- *	@author : Joyonto Roy
- *	date	: 1 August, 2013
- *	University Of Dhaka, Bangladesh
- *	Hospital Management system
- *	http://codecanyon.net/user/joyontaroy
+ *	@author 	: Nicodemus Karisa
+ *	date		: 6th June, 2018
+ *	AFR Staff Recognition system
+ *	https://www.compassion.com
+ *	NKarisa@ke.ci.org
  */
 
 

@@ -3,12 +3,12 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-/* 	
- * 	@author : Joyonto Roy
- * 	30th July, 2014
- * 	Creative Item
- * 	www.freephpsoftwares.com
- * 	http://codecanyon.net/user/joyontaroy
+/*	
+ *	@author 	: Nicodemus Karisa
+ *	date		: 6th June, 2018
+ *	AFR Staff Recognition system
+ *	https://www.compassion.com
+ *	NKarisa@ke.ci.org
  */
 
 class Login extends CI_Controller {
