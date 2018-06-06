@@ -137,7 +137,7 @@ class Crud_model extends CI_Model {
 		
 		$team_ids = array();
 		
-		if($this->db->get_where("teamset",array("user_id"=>$user_id))->num_rows() > 0){
+		if($this->db->get_where("teamset",array("user_id<>"=>$user_id))->num_rows() > 0){
 		
 			$country_teams = $this->db->get_where("team",array("country_id"=>$user_country));
 			
@@ -226,8 +226,10 @@ class Crud_model extends CI_Model {
 			 if($categories->num_rows() > 0){
 				 foreach($country_visibility as $country_id){
 					 $category_visibility = $this->db->get_where("category",array("grouping_id"=>$grouping_id,"status"=>"1","assignment"=>$contribution,"visibility"=>$country_id));
+					 
+					 $team_belongs_to_country = $this->db->get_where("team",array("country_id"=>$user_country_id))->num_rows();
 					 					 
-					 if(($category_visibility->num_rows() > 0 && $category_visibility->row()->unit != 3) || ($category_visibility->num_rows() > 0 && $category_visibility->row()->unit == 3 && $this->db->get_where("team",array("country_id"=>$user_country_id))->num_rows() > 0)){
+					 if(($category_visibility->num_rows() > 0 && $category_visibility->row()->unit != 3) || ($category_visibility->num_rows() > 0 && $category_visibility->row()->unit == 3 && $team_belongs_to_country > 0 )){
 							
 						foreach($category_visibility->result_object() as $row){
 					 		$show_categories[] = (array)$row;

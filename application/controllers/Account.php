@@ -12,7 +12,7 @@ if (!defined('BASEPATH'))
 
 class Account extends CI_Controller
 {
-    
+    private $extra_callback_parameter = "";
     
 	function __construct()
 	{
@@ -58,15 +58,18 @@ class Account extends CI_Controller
 		/** Set required fields **/
 		$crud->required_fields(array("name"));
 		
-				/**Select Fields to Show in the Grid **/
+		/**Select Fields to Show in the Grid **/
 		$crud->columns('name');
 		
 	
 		/**Callbacks**/
-		$crud->callback_after_insert(array($this,'insert_country_audit_parameters'));
-		$crud->callback_after_update(array($this,'update_country_audit_parameters'));
+		$crud->callback_after_insert(array($this,'insert_country_audit_parameters')); /** Update Created by, Created Date and Last Modified By Date fields in database**/
+		$crud->callback_after_update(array($this,'update_country_audit_parameters')); /** Update last modified by database field ***/
+		$crud->callback_delete(array($this,'delete_country')); /** Delete countries with no staff registered **/
+		$crud->callback_insert(array($this,'insert_country')); /** Disallow duplicate countries before insert **/
 		
 		/** Hide fields from add and edit forms**/
+		$crud->columns('name',"staff");
 		$crud->add_fields('name');
 		$crud->edit_fields('name');
 		
@@ -74,8 +77,12 @@ class Account extends CI_Controller
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_country")) $crud->unset_add();
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_country")) $crud->unset_edit();	
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_country")) $crud->unset_delete();
-				
-		//$crud->add_action('More', '', 'demo/action_more','ui-icon-plus');
+		
+		//Revome the country with ID 1 from listing. This country has been used in the code as a control.  		
+		$crud->where("country_id!=","1");
+		
+		
+		$crud->callback_column('staff',array($this,'count_of_staff_country'));
 		
 		$output = $crud->render();	
 		$page_data['view_type']  = "account";
@@ -84,7 +91,29 @@ class Account extends CI_Controller
 		$output = array_merge($page_data,(array)$output);
         $this->load->view('backend/index', $output);
 	}
-
+	
+	function count_of_staff_country($value,$row){
+		return $this->db->get_where("user",array("country_id"=>$row->country_id))->num_rows();
+	}
+	
+	function insert_country($post_array){
+		if($this->db->get_where("country",array("name"=>$post_array["name"]))->num_rows() == 0 ){
+			return $this->db->insert("country",$post_array);
+		}else{
+			return $this->db->get_where("country",array("name"=>$post_array["name"]))->row();
+		}
+	}
+	
+	function delete_country($primary_key){
+		if($this->db->get_where("user",array("country_id"=>$primary_key))->num_rows() === 0){
+			$this->db->where(array("country_id"=>$primary_key));
+			 
+			return $this->db->delete("country"); 
+		}else{
+			
+			return FALSE;
+		}
+	}
 
 	public function insert_country_audit_parameters($post_array,$primary_key){
 		$post_array['created_by'] = $this->session->login_user_id;
@@ -127,13 +156,16 @@ class Account extends CI_Controller
 		/** Set required fields **/
 		$crud->required_fields(array("name"));
 		
-				/**Select Fields to Show in the Grid **/
-		$crud->columns('name');
+		/**Select Fields to Show in the Grid **/
+		$crud->columns('name',"staff");
 		
 	
 		/**Callbacks**/
 		$crud->callback_after_insert(array($this,'insert_department_audit_parameters'));
 		$crud->callback_after_update(array($this,'update_department_audit_parameters'));
+		$crud->callback_column("staff",array($this,"count_staff_department")); /** Count number of staff per department **/
+		$crud->callback_delete(array($this,"delete_department")); /** Delete department that lacks staff **/
+		$crud->callback_insert(array($this,'insert_department')); /** Insert department if name does not exist **/
 		
 		/** Hide fields from add and edit forms**/
 		$crud->add_fields('name');
@@ -152,7 +184,39 @@ class Account extends CI_Controller
         $page_data['page_title'] = get_phrase(__FUNCTION__);
 		$output = array_merge($page_data,(array)$output);
         $this->load->view('backend/index', $output);
-	}   
+	}  
+	
+	function insert_department($post_array){
+		if($this->db->get_where("department",array("name"=>$post_array["name"]))->num_rows() == 0 ){
+			return $this->db->insert("department",$post_array);
+		}else{
+			return $this->db->get_where("department",array("name"=>$post_array["name"]))->row();
+		}
+	} 
+	
+	function delete_department($primary_key){
+		
+		$this->db->join("role","role.role_id=user.role_id");
+		$this->db->join("department","department.department_id=role.department_id");
+		$this->db->where(array("department.department_id"=>$primary_key));
+		$rows = $this->db->get("user")->num_rows();
+		
+		if($rows === 0){
+			$this->db->where(array("department_id"=>$primary_key));
+			 
+			return $this->db->delete("department"); 
+		}else{
+			
+			return FALSE;
+		}
+	}
+
+	function count_staff_department($value,$row){
+		$this->db->join("role","role.role_id=user.role_id");
+		$this->db->join("department","department.department_id=role.department_id");
+		$this->db->where(array("department.department_id"=>$row->department_id));
+		return $this->db->get("user")->num_rows();
+	}
 	
 	public function insert_department_audit_parameters($post_array,$primary_key){
 		$post_array['created_by'] = $this->session->login_user_id;
@@ -286,6 +350,13 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 		
 		return true;
 	}
+	
+	public function get_country_teams($param1=""){
+
+		$data['teams'] = $this->db->get_where("team",array("country_id"=>$param1))->result_object();
+		
+		echo $this->load->view("backend/account/get_country_teams",$data,true);
+	}
 
 	public function teams($param1="",$param2="",$param3=""){
 	    	if ($this->session->userdata('user_login') != 1)
@@ -312,7 +383,7 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 		$crud->set_relation('country_id','country','name');
 		
 		/**Select Fields to Show in the Grid **/
-		$crud->columns(array("name","country_id","description"));
+		$crud->columns(array("name","country_id","description","staff"));
 		
 		/**Give columns user friendly labels**/
 		$crud->display_as('country_id',get_phrase('country'));
@@ -321,6 +392,8 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 		/**Callbacks**/
 		$crud->callback_after_insert(array($this,'insert_team_audit_parameters'));
 		$crud->callback_after_update(array($this,'update_team_audit_parameters'));
+		$crud->callback_column("staff",array($this,"count_staff_teams"));
+		$crud->callback_delete(array($this,"delete_team"));
 		
 		/** Hide fields from add and edit forms**/
 		$crud->add_fields(array("name","country_id","description"));
@@ -341,8 +414,32 @@ public function insert_role_audit_parameters($post_array,$primary_key){
         $this->load->view('backend/index', $output);
 	}
 
+	function delete_team($primary_key){
+		$this->db->join("teamset","teamset.user_id=user.user_id");
+		$this->db->where(array("team_id"=>$primary_key));
+		$users = $this->db->get("user")->num_rows(); /** Check how many users are in the team **/
+		
+		//$votes_cast_for_team = $this->db->get_where("tabulate",array())
+		
+		if($users === 0){
+			$this->db->where(array("team_id"=>$primary_key));
+			 
+			return $this->db->delete("team"); 
+		}else{
+			
+			return FALSE;
+		}
+	}
 
-public function insert_team_audit_parameters($post_array,$primary_key){
+	function count_staff_teams($value,$row){
+		
+		$this->db->join("teamset","teamset.user_id=user.user_id");
+		$this->db->where(array("team_id"=>$row->team_id));
+		return $this->db->get("user")->num_rows();
+	}
+	
+	
+	public function insert_team_audit_parameters($post_array,$primary_key){
 		$post_array['created_by'] = $this->session->login_user_id;
 		$post_array['created_date'] = date('Y-m-d h:i:s');
 		$post_array['last_modified_by'] = $this->session->login_user_id;
@@ -392,13 +489,22 @@ public function insert_team_audit_parameters($post_array,$primary_key){
 			$data['country_id'] = $this->input->post('country_id');
 			$data['password'] = md5(substr( md5( rand(100000000,20000000000) ) , 0,7));
 			
+			
+			
 			//Check if email exists
 			$users_with_email = $this->db->get_where('user',array('email'=>$this->input->post('email')))->num_rows();
 			
 			if($users_with_email === 0){
 				$this->db->insert('user',$data);
 				
-				//$insert_id = $this->db->insert_id();	
+				$insert_id = $this->db->insert_id();	
+				
+				/** Insert user team **/
+				if($this->input->post('team_id') !== ""){
+					$data2['user_id'] = $insert_id;
+					$data2['team_id'] = $this->input->post('team_id');
+				}
+				
 				//$this->session->set_flashdata('flash_message',get_phrase('user_created_successfully'));
 				
 				/** Send an Email to the user on success with login instructions here**/

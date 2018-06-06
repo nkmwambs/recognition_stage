@@ -31,7 +31,7 @@
 
 
         <!-- DASHBOARD -->
-        <li class="<?php if ($page_name == 'dashboard') echo 'active'; ?> ">
+        <li class="dashboard <?php if ($page_name == 'dashboard') echo 'active'; ?> ">
             <a href="<?php echo base_url();?>dashboard">
                 <i class="entypo-gauge"></i>
                 <span><?php echo get_phrase('dashboard'); ?></span>
