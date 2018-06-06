@@ -11,7 +11,7 @@ foreach ($messages as $row):
         <div class="mail-sender " style="padding:7px;">
 
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <img src="<?php echo $this->crud_model->get_image_url($sender_account_type, $sender_id); ?>" class="img-circle" width="30"> 
+                <img src="<?php echo $this->crud_model->get_image_url($sender_id); ?>" class="img-circle" width="30"> 
                 <span><?php echo $this->db->get_where("user", array('user_id' => $sender_id))->row()->firstname; ?></span>
             </a>
         </div>

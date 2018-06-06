@@ -487,7 +487,8 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 			$data['manager_id'] = $this->input->post('manager_id');
 			$data['auth'] = "1";
 			$data['country_id'] = $this->input->post('country_id');
-			$data['password'] = md5(substr( md5( rand(100000000,20000000000) ) , 0,7));
+			$password = substr( md5( rand(100000000,20000000000) ) , 0,7);
+			$data['password'] = md5($password);
 			
 			
 			
@@ -500,18 +501,18 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 				$insert_id = $this->db->insert_id();	
 				
 				/** Insert user team **/
-				if($this->input->post('team_id') !== ""){
-					$data2['user_id'] = $insert_id;
-					$data2['team_id'] = $this->input->post('team_id');
-				}
+				//if($this->input->post('team_id') !== ""){
+					//$data2['user_id'] = $insert_id;
+					//$data2['team_id'] = $this->input->post('team_id');
+				//}
 				
 				//$this->session->set_flashdata('flash_message',get_phrase('user_created_successfully'));
 				
 				/** Send an Email to the user on success with login instructions here**/
 				
-				$account_type = $this->crud_model->get_type_name_by_id("profile",$this->input->post('profile_id')); 
-				$this->email_model->account_opening_email($account_type,$this->input->post('email'));
-					
+				//$account_type = $this->crud_model->get_type_name_by_id("profile",$this->input->post('profile_id')); 
+				//$this->email_model->account_opening_email($account_type,$this->input->post('email'));
+				$this->email_model->user_invite($insert_id,$password);	
 			}
 			
 			// else{
@@ -524,8 +525,8 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
 				$page_data['users']  = $this->db->get_where("user",array("country_id"=>$logged_user_country_id))->result_object();
 			}
-			echo $this->load->view('backend/'."account"."/".__FUNCTION__, $page_data,true);
-			exit;	
+			$this->session->set_flashdata('flash_message',get_phrase('success'));	
+			redirect(base_url()."account/manage_users","refresh");
 		}
 		
 		if($param1==='edit_user'){
@@ -664,6 +665,78 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase(__FUNCTION__);
         $this->load->view('backend/index', $page_data);
+	}
+
+public function mail_templates(){
+		if ($this->session->userdata('user_login') != 1)
+            redirect(base_url(), 'refresh');
+		
+		/**Instatiate CRUD**/
+		$crud = new grocery_CRUD();
+		
+		/**Set theme to flexigrid**/
+		$crud->set_theme('flexigrid');//flexigrid
+		
+		
+		/** Grid Subject **/
+		$crud->set_subject(get_phrase('templates'));
+		
+		/**Select Category Table**/
+		$crud->set_table('template');
+		
+		$crud->callback_edit_field('mail_tags', array($this,"mail_tags_readonly"));	//template_name_readonly
+		$crud->callback_edit_field('name', array($this,"template_name_readonly"));	
+		$crud->callback_edit_field('template_trigger', array($this,"template_trigger_readonly"));	
+		/** Related Tables to Category **/
+		//$crud->set_relation('country_id','country','name');
+		//$crud->set_relation('created_by','user','firstname');
+		//$crud->set_relation('last_modified_by','user','firstname');
+
+		
+		/** Populate Status Type **/
+		//$crud->field_type('status', 'dropdown',array('0'=>"inactive","1"=>"active"));	
+		
+		/**Select Fields to Show in the Grid **/
+		//$crud->columns(array('start_date','end_date','country_id','status'));
+		
+		/** Show add/edit fields**/
+		//$crud->fields(array('start_date','end_date','status'));
+		
+		
+		/** Set required fields **/
+		//$crud->required_fields(array('start_date','end_date','country_id','status'));
+		
+		/** Set Field Label **/
+		//$crud->display_as("country_id",get_phrase("country"));
+		
+		/**Callbacks**/
+		$crud->callback_after_insert(array($this,'insert_survey_audit_parameters'));
+		$crud->callback_after_update(array($this,'update_survey_audit_parameters'));
+		
+		/** Assign Privileges **/
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_survey")) $crud->unset_add();
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_survey")) $crud->unset_edit();	
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_survey")) $crud->unset_delete();
+				
+		
+		$output = $crud->render();	
+		$page_data['view_type']  = "account";
+		$page_data['page_name']  = __FUNCTION__;
+        $page_data['page_title'] = get_phrase(__FUNCTION__);
+		$output = array_merge($page_data,(array)$output);
+        $this->load->view('backend/index', $output);
+	}
+
+	function mail_tags_readonly($value, $primary_key) {
+			return '<span>'.$value.'</span>';
+	}
+	
+	function template_name_readonly($value, $primary_key) {
+			return '<span>'.$value.'</span>';
+	}
+	
+	function template_trigger_readonly($value, $primary_key) {
+			return '<span>'.$value.'</span>';
 	}
 
 	/** AJAX LOADED CONTENT END**/

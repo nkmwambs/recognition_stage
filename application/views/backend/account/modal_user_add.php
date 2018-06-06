@@ -155,7 +155,7 @@
                                                        
                             <div class="form-group">
                               <div class="col-sm-offset-3 col-sm-5">
-                                  <div  class="btn btn-info btn-icon submit"><i class="fa fa-save"></i><?php echo get_phrase('save');?></div>
+                                  <button type="submit"  class="btn btn-info btn-icon "><i class="fa fa-save"></i><?php echo get_phrase('save');?></button>
                               </div>
 							</div>
           

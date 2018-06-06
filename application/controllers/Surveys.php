@@ -263,15 +263,7 @@ class Surveys extends CI_Controller
 		return true;
 	}
 
-	public function mail_templates(){
-		if ($this->session->userdata('user_login') != 1)
-            redirect(base_url(), 'refresh');
-		
-		$page_data['view_type']  = "surveys";
-		$page_data['page_name']  = __FUNCTION__;
-        $page_data['page_title'] = get_phrase(__FUNCTION__);
-        $this->load->view('backend/index', $page_data);
-	}
+	
 	
 	public function votes($param1="",$param2="",$param3=""){
 		if ($this->session->userdata('user_login') != 1)

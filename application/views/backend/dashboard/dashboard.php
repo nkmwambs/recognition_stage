@@ -1,5 +1,5 @@
 	<?php
-	
+		//echo $this->email_model->user_invite('1',"compassion12");
 		/** Active survey object **/
 		$active_surveys = $this->db->get_where("survey",array("status"=>'1'));
 		
