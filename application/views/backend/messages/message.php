@@ -44,7 +44,7 @@
                     <a href="<?php echo base_url(); ?>messages/message/message_read/<?php echo $row['message_thread_code']; ?>" style="padding:12px;">
                         <i class="entypo-dot"></i>
 
-                        <?php echo $this->db->get_where($user_to_show_type, array($user_to_show_type . '_id' => $user_to_show_id))->row()->name; ?>
+                        <?php echo $this->db->get_where('user', array('user_id' => $user_to_show_id))->row()->firstname; ?>
 
                         <span class="badge badge-default pull-right" style="color:#aaa;"><?php echo $user_to_show_type; ?></span>
 

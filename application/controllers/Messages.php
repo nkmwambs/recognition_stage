@@ -57,7 +57,7 @@ class Messages extends CI_Controller
 
         $page_data['message_inner_page_name']   = $param1;
         $page_data['page_name']                 = 'message';
-		$page_data['view_type']  = get_called_class();
+		$page_data['view_type']  = "messages";
         $page_data['page_title']                = get_phrase('private_messaging');
         $this->load->view('backend/index', $page_data);
     }

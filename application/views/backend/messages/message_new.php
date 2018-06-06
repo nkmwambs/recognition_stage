@@ -16,39 +16,27 @@
         <select class="form-control select2" name="reciever" required>
 
             <option value=""><?php echo get_phrase('select_a_user'); ?></option>
-            <optgroup label="<?php echo get_phrase('student'); ?>">
+            <?php
+            	$countries = $this->db->get("country");
+				if($countries->num_rows() > 0){
+				
+				foreach($countries->result_object() as $country){	
+            ?>
+            <optgroup label="<?php echo $country->name; ?>">
                 <?php
-                $students = $this->db->get('student')->result_array();
-                foreach ($students as $row):
+                $users = $this->db->get_where('user',array("auth"=>1,"country_id"=>$country->country_id))->result_array();
+                foreach ($users as $row):
                     ?>
 
-                    <option value="student-<?php echo $row['student_id']; ?>">
-                        - <?php echo $row['name']; ?></option>
+                    <option value="<?=$this->db->get_where("role",array("role_id"=>$row['role_id']))->row()->name;?>-<?php echo $row['user_id']; ?>">
+                        - <?php echo $row['firstname']." ".$row['lastname']; ?></option>
 
                 <?php endforeach; ?>
             </optgroup>
-            <optgroup label="<?php echo get_phrase('teacher'); ?>">
-                <?php
-                $teachers = $this->db->get('teacher')->result_array();
-                foreach ($teachers as $row):
-                    ?>
-
-                    <option value="teacher-<?php echo $row['teacher_id']; ?>">
-                        - <?php echo $row['name']; ?></option>
-
-                <?php endforeach; ?>
-            </optgroup>
-            <optgroup label="<?php echo get_phrase('parent'); ?>">
-                <?php
-                $parents = $this->db->get('parent')->result_array();
-                foreach ($parents as $row):
-                    ?>
-
-                    <option value="parent-<?php echo $row['parent_id']; ?>">
-                        - <?php echo $row['name']; ?></option>
-
-                <?php endforeach; ?>
-            </optgroup>
+            <?php
+				}
+				}
+            ?>
         </select>
     </div>
 

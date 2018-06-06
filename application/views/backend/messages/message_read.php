@@ -12,7 +12,7 @@ foreach ($messages as $row):
 
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                 <img src="<?php echo $this->crud_model->get_image_url($sender_account_type, $sender_id); ?>" class="img-circle" width="30"> 
-                <span><?php echo $this->db->get_where($sender_account_type, array($sender_account_type . '_id' => $sender_id))->row()->name; ?></span>
+                <span><?php echo $this->db->get_where("user", array('user_id' => $sender_id))->row()->firstname; ?></span>
             </a>
         </div>
 
