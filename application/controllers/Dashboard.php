@@ -53,4 +53,28 @@ class Dashboard extends CI_Controller
         $this->load->view('backend/index', $page_data);
     }
 	
+	    function testing()
+    {
+        if ($this->session->userdata('user_login') != 1)
+            redirect(base_url(), 'refresh');
+		
+					/**Instatiate CRUD**/
+		$crud = new grocery_CRUD();
+		
+		/**Set theme to flexigrid**/
+		$crud->set_theme('flexigrid');//flexigrid
+		
+		
+		/** Grid Subject **/
+		$crud->set_subject(get_phrase('users'));
+		
+		/**Select Category Table**/
+		$crud->set_table('user');
+			
+        $page_data['page_name']  = __FUNCTION__;
+        $page_data['view_type']  = "Dashboard";
+        $page_data['page_title'] = get_phrase('dashboard');
+        $this->load->view('backend/index', $page_data);
+    }
+	
 }

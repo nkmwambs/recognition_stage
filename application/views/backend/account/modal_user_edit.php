@@ -85,7 +85,38 @@ foreach ( $edit_data as $row):
                                 </div>
                             </div>
                             
-                            
+                             <div class="form-group">
+                                <label class="col-sm-3 control-label"><?php echo get_phrase('team');?></label>
+                                <div class="col-sm-5">
+                                    <select class="form-control" name="team_id[]" id="team_id" multiple="multiple">
+                                    	<?php
+                                    		$team_set = $this->db->get_where("teamset",array("user_id"=>$param2));
+											
+											$teams = $this->db->get_where("team",array("country_id"=>$row->country_id));
+											
+											if($teams->num_rows() > 0){
+												
+												foreach($teams->result_object() as $team){
+													if($team_set->num_rows() > 0){
+														
+														$selected = "";
+														foreach($team_set->result_object() as $row){
+															if($row->team_id === $team->team_id){
+																$selected = "selected";
+															}
+														}
+                                    	?>
+  			                                  			<option value="<?=$team->team_id;?>" <?php echo $selected;?>><?=$team->name;?></option>
+                                    	<?php
+													}
+												}
+											}
+                                    	?>
+                                    	
+                                    </select>
+                                    <div id="team_loading_progress"></div>
+                                </div>
+                            </div>
                             
                             <div class="form-group <?php if($this->session->login_user_id === $param2) echo "self_update";?>">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('role');?></label>
@@ -109,7 +140,7 @@ foreach ( $edit_data as $row):
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('manager');?></label>
                                 <div class="col-sm-5">
                                     <select class="form-control select2" name="manager_id">
-                                    	<option><?=get_phrase("select");?></option>
+                                    	<option value="0"><?=get_phrase("select");?></option>
                                     	<?php 
                                     		$this->db->join("role","role.role_id=user.role_id");
 											$this->db->where(array("contribution"=>"2"));
@@ -144,7 +175,7 @@ foreach ( $edit_data as $row):
                                                        
                             <div class="form-group">
                               <div class="col-sm-offset-3 col-sm-5">
-                                  <div  class="btn btn-info btn-icon submit"><i class="fa fa-save"></i><?php echo get_phrase('save');?></div>
+                                  <div  class="btn btn-info btn-icon"><i class="fa fa-save"></i><?php echo get_phrase('save');?></div>
                               </div>
 							</div>
           
@@ -159,3 +190,25 @@ foreach ( $edit_data as $row):
 <?php
 endforeach;
 ?>
+
+<script>
+$("#country_id").change(function(){
+	var country_id = $(this).val();
+	var url = "<?=base_url();?>account/get_country_teams/"+country_id;
+	
+	$.ajax({
+		url:url,
+		beforeSend:function(){
+			$("#team_loading_progress").html('<div style="text-align:center;margin-top:0px;"><img style="width:00px;height:80px;" src="<?php echo base_url();?>uploads/preloader2.gif" /></div>');
+		},
+		success:function(resp){
+			$("#team_loading_progress").html('');
+			$("#team_id").html(resp);
+		},
+		error:function(){
+			
+		}
+	});
+});
+
+</script>

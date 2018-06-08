@@ -229,7 +229,12 @@
             </ul>
         </li>
 		
-        
+           <li class="dashboard <?php if ($page_name == 'testing') echo 'active'; ?> ">
+            <a href="<?php echo base_url();?>dashboard/testing">
+                <i class="entypo-gauge"></i>
+                <span><?php echo "Test"; ?></span>
+            </a>
+        </li>
 
     </ul>
 

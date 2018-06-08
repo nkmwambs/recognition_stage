@@ -87,6 +87,33 @@ $user = $this->db->get_where("user",array("user_id"=>$param2))->row();
 							?>		
 						</td>
 					</tr>
+					
+					<tr>
+						<td><?=get_phrase("department");?></td>
+						<?php $department_id = $this->db->get_where("role",array("role_id"=>$user->role_id))->row()->department_id;?>
+						<td><?=$this->crud_model->get_type_name_by_id("department",$department_id);?></td>
+					</tr>
+					
+					<tr>
+						<td><?=get_phrase("teams");?></td>
+						<td>
+							<?php 
+									$team_array = array();
+									$teamset = $this->db->get_where("teamset",array("user_id"=>$param2))->result_object();
+									foreach($teamset as $team){
+										$team_array[] = $this->db->get_where("team",array("team_id"=>$team->team_id))->row()->name;
+									}
+									
+									$team_str = implode(",", $team_array);
+									
+									if($team_str==""){
+										$team_str = get_phrase("not_set");
+									}
+									echo $team_str;
+							;?>
+						</td>
+					</tr>
+					
 					</tbody>
 				</table>	
 			</div>

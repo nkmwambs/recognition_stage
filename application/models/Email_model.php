@@ -46,8 +46,8 @@ class Email_model extends CI_Model {
 	
 	/*** Mail Templates  ***/
 	
-	function user_invite($user_id="",$password=""){
-		$template = $this->db->get_where("template",array("template_trigger"=>"user_invite"));
+	function manage_account_email($user_id="",$template_trigger="",$password=""){
+		$template = $this->db->get_where("template",array("template_trigger"=>$template_trigger));
 		
 		$template_subject = $template->row()->template_subject;
 		$template_body = $template->row()->template_body;

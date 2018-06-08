@@ -501,23 +501,23 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 				$insert_id = $this->db->insert_id();	
 				
 				/** Insert user team **/
-				//if($this->input->post('team_id') !== ""){
-					//$data2['user_id'] = $insert_id;
-					//$data2['team_id'] = $this->input->post('team_id');
-				//}
+				if($this->input->post('team_id')){
+					foreach($this->input->post('team_id') as $team_id){
+						$data2['user_id'] = $insert_id;
+						$data2['team_id'] = $team_id;
+					
+						$this->db->insert('teamset',$data2);
+					}
+					
+				}
 				
-				//$this->session->set_flashdata('flash_message',get_phrase('user_created_successfully'));
 				
 				/** Send an Email to the user on success with login instructions here**/
-				
-				//$account_type = $this->crud_model->get_type_name_by_id("profile",$this->input->post('profile_id')); 
-				//$this->email_model->account_opening_email($account_type,$this->input->post('email'));
-				$this->email_model->user_invite($insert_id,$password);	
+		
+				$this->email_model->manage_account_email($insert_id,"user_invite",$password);	
 			}
 			
-			// else{
-				// $this->session->set_flashdata('flash_message',get_phrase('process_failed_email_exists'));
-			// }
+
 			$page_data['message'] = get_phrase("success");
 			$page_data['user']  = $this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row();
 			$page_data['users']  = $this->db->get("user")->result_object();
@@ -546,14 +546,25 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 				
 			$this->db->update('user',$data);
 			
+			if($this->input->post('team_id')){
+				$this->db->delete("teamset",array("user_id"=>$param2));
+					foreach($this->input->post('team_id') as $team_id){
+						$data2['user_id'] = $param2;
+						$data2['team_id'] = $team_id;
+					
+						$this->db->insert('teamset',$data2);
+					}
+					
+			}
+			
 			$page_data['user']  = $this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row();
 			$page_data['users']  = $this->db->get("user")->result_object();
 			if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
 				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
 				$page_data['users']  = $this->db->get_where("user",array("country_id"=>$logged_user_country_id))->result_object();
 			}
-			echo $this->load->view('backend/'."account"."/".__FUNCTION__, $page_data,true);	
-			exit;
+			$this->session->set_flashdata('flash_message',get_phrase('success'));	
+			redirect(base_url()."account/manage_users","refresh");
 		}
 		
 		
@@ -588,25 +599,27 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 					$this->db->insert("scope_country",$data);		
 				}	
 			}else{
+				$countries  = $this->input->post("country_id");	
+				
+				if(sizeof($countries) > 0){
+					$data["two_way"] = $this->input->post("two_way");
+					//$data["strict"] = $this->input->post("strict");
+					$data['user_id'] = $param2;
+					$data['type'] = $this->input->post("type");
+											
+					$this->db->insert("scope",$data);
 					
-				$data["two_way"] = $this->input->post("two_way");
-				//$data["strict"] = $this->input->post("strict");
-				$data['user_id'] = $param2;
-				$data['type'] = $this->input->post("type");
-										
-				$this->db->insert("scope",$data);
-				
-				$scope_id = $this->db->insert_id();
-				
-				$countries  = $this->input->post("country_id");
-				
-				foreach($countries as $country){
-					$data2['country_id'] = $country;
-					$data2['scope_id'] = $scope_id;
+					$scope_id = $this->db->insert_id();
 					
-					$this->db->insert("scope_country",$data2);	
+					
+					
+					foreach($countries as $country){
+						$data2['country_id'] = $country;
+						$data2['scope_id'] = $scope_id;
+						
+						$this->db->insert("scope_country",$data2);	
+					}
 				}
-				
 			}
 
 			
@@ -716,7 +729,7 @@ public function mail_templates(){
 		/** Assign Privileges **/
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_survey")) $crud->unset_add();
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_survey")) $crud->unset_edit();	
-		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_survey")) $crud->unset_delete();
+		$crud->unset_delete();
 				
 		
 		$output = $crud->render();	
@@ -728,7 +741,12 @@ public function mail_templates(){
 	}
 
 	function mail_tags_readonly($value, $primary_key) {
-			return '<span>'.$value.'</span>';
+			$tags_array = explode(",", $value);
+			$tag_str = "";
+			foreach($tags_array as $tag){
+				$tag_str .= "<div class='label label-primary'>".$tag."</div>&nbsp;";
+			}  
+			return $tag_str;
 	}
 	
 	function template_name_readonly($value, $primary_key) {

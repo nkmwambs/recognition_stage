@@ -102,11 +102,10 @@ class Login extends CI_Controller {
         //resetting user password here
         $new_password           =   substr( md5( rand(100000000,20000000000) ) , 0,7);
 
-        // Checking credential for admin
+        // Checking credential for user
         $query = $this->db->get_where('user' , array('email' => $email));
         if ($query->num_rows() > 0) 
         {
-            //$reset_account_type     =   'admin';
             $this->db->where('email' , $email);
             $this->db->update('user' , array('password' => md5($new_password)));
             $resp['status']         = 'true';
@@ -114,7 +113,8 @@ class Login extends CI_Controller {
        
 
         // send new password to user email  
-        $this->email_model->password_reset_email($new_password , $email);
+        //$this->email_model->password_reset_email($new_password , $email);
+        //$this->email_model->manage_account_email($query->row()->user_id,"password_reset",$new_password);
 
         $resp['submitted_data'] = $_POST;
 

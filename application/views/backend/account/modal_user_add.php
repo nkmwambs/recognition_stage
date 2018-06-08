@@ -89,8 +89,8 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('team');?></label>
                                 <div class="col-sm-5">
-                                    <select class="form-control select2" name="team_id" id="team_id">
-                                    	<option><?=get_phrase("select");?></option>
+                                    <select class="form-control" name="team_id[]" id="team_id" multiple="multiple">
+                                    	<!-- <option><?=get_phrase("select");?></option> -->
                                     	
                                     </select>
                                     <div id="team_loading_progress"></div>
@@ -120,7 +120,7 @@
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('manager');?></label>
                                 <div class="col-sm-5">
                                     <select class="form-control select2" name="manager_id"  required="required">
-                                    	<option><?=get_phrase("select");?></option>
+                                    	<option value="0"><?=get_phrase("select");?></option>
                                     	<?php 
                                     		$this->db->join("role","role.role_id=user.role_id");
 											$this->db->where(array("contribution"=>"2"));
@@ -155,7 +155,7 @@
                                                        
                             <div class="form-group">
                               <div class="col-sm-offset-3 col-sm-5">
-                                  <button type="submit"  class="btn btn-info btn-icon "><i class="fa fa-save"></i><?php echo get_phrase('save');?></button>
+                                  <button type="submit"  class="btn btn-info btn-icon3"><i class="fa fa-save"></i><?php echo get_phrase('save');?></button>
                               </div>
 							</div>
           
