@@ -65,10 +65,20 @@ class Surveys extends CI_Controller
 		$crud->required_fields(array("name","description","status"));
 
 		/**Select Fields to Show in the Grid **/
-		$crud->columns('name','description','status');
+		$crud->columns('name','description','categories','status');
 
 		/** Populate User Type **/
 		$crud->field_type('status', 'dropdown',array('0'=>"inactive","1"=>"active"));
+
+		/** Assign Privileges **/
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_grouping")) $crud->unset_add();
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_grouping")) $crud->unset_edit();
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_grouping")) $crud->unset_delete();
+
+
+		/** Callbacks**/
+		$crud->callback_column('categories',array($this,'count_of_categories_grouping'));
+		$crud->callback_delete(array($this,"grouping_check_on_delete"));
 
 
 		/** Hide fields from add and edit forms**/
@@ -82,6 +92,22 @@ class Surveys extends CI_Controller
         $page_data['page_title'] = get_phrase(__FUNCTION__);
 		$output = array_merge($page_data,(array)$output);
         $this->load->view('backend/index', $output);
+	}
+
+	function grouping_check_on_delete($primary_key){
+		/**Check if grouping it has categories**/
+		$count_of_categories = $this->db->get_where("category",array("grouping_id"=>$primary_key));
+
+		if($count_of_categories->num_rows() === 0){
+			$this->db->where(array("grouping_id"=>$primary_key));
+			return $this->db->delete("grouping");
+		}else{
+			return false;
+		}
+	}
+
+	function count_of_categories_grouping($value,$row){
+		return $this->db->get_where("category",array("grouping_id"=>$row->grouping_id))->num_rows();
 	}
 
 	public function categories($param1="",$param2="",$param3=""){
@@ -116,7 +142,7 @@ class Surveys extends CI_Controller
 		//$crud->field_type('unit', 'dropdown',array('0'=>get_phrase("country"),"1"=>get_phrase("department"),"2"=>get_phrase("team"),"3"=>get_phrase("user")));
 
 		/**Select Fields to Show in the Grid **/
-		$crud->columns('name','grouping_id','visibility','assignment',"unit",'status');
+		$crud->columns('name','grouping_id','visibility','assignment',"unit",'has_votes','status');
 
 		/**Give columns user friendly labels**/
 		$crud->display_as('name',get_phrase('title'))
@@ -125,9 +151,21 @@ class Surveys extends CI_Controller
 				->display_as('assignment',get_phrase('assigned_user_type'))
 				->display_as('status',get_phrase('status'));
 
+
+		/** Assign Privileges **/
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_category")) $crud->unset_add();
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_category")) $crud->unset_edit();
+		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_category")) $crud->unset_delete();
+
+
+
 		/**Callbacks**/
 		$crud->callback_after_insert(array($this,'insert_audit_parameters'));
 		$crud->callback_after_update(array($this,'update_audit_parameters'));
+		$crud->callback_column("has_votes",function ($value,$row){
+        	return $this->db->get_where("tabulate",array("category_id"=>$row->category_id))->num_rows() > 0?get_phrase("yes"):get_phrase("no");
+    	});
+    $crud->callback_delete(array($this,"count_votes_on_delete"));
 
 		/** Hide fields from add and edit forms**/
 		$crud->fields('name','grouping_id','visibility','assignment','status','created_by','created_date','last_modified_by');
@@ -148,6 +186,18 @@ class Surveys extends CI_Controller
 		$output = array_merge($page_data,(array)$output);
         $this->load->view('backend/index', $output);
 	}
+
+  function count_votes_on_delete($primary_key){
+    /** Check if has votes **/
+    $has_votes = $this->db->get_where("tabulate",array("category_id"=>$primary_key));
+
+    if($has_votes->num_rows() === 0){
+      $this->db->where(array("category_id"=>$primary_key));
+      return $this->db->delete("category");
+    }else{
+      return false;
+    }
+  }
 
 	public function insert_audit_parameters($post_array,$primary_key){
 		$post_array['created_by'] = $this->session->login_user_id;
@@ -234,7 +284,7 @@ class Surveys extends CI_Controller
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_survey")) $crud->unset_delete();
 		if($this->crud_model->check_profile_privilege($this->session->profile_id,"survey_results")) $crud->add_action(get_phrase('results'), '', '', 'ui-icon-folder-open',array($this,'show_nomination_results'));
 
-  
+
 
 
 		$output = $crud->render();
@@ -248,13 +298,13 @@ class Surveys extends CI_Controller
   function change_survey_status($primary_key , $row){
     // /** Check if an active survey exists  **/
     // $check_active_survey = $this->db->get_where("survey",array("status"=>"1"))->num_rows();
-// 
+//
     // /** Check status of current of the updated survey **/
     // $previous_survey_status = $this->db->get_where("survey",array("survey_id"=>$primary_key))->row()->status;
-// 
+//
     // /** Count of Unsubmitted Votes for the survey **/
     // $count_of_votes = $this->db->get_where("result",array("survey_id"=>$primary_key,"status"=>0))->num_rows();
-// 
+//
     // if($check_active_survey > 0 && $previous_survey_status === "0" ){
       // return false;
     // }elseif ($previous_survey_status === "1" && $count_of_votes > 0) {
@@ -262,7 +312,7 @@ class Surveys extends CI_Controller
     // }
     // } else{
       // $status = 0;
-      // if($row->status = 1) 
+      // if($row->status = 1)
       // $this->db->where(array("survey_id"=>$primary_key));
       // return $this->db->update("survey",$post_array);
     // }

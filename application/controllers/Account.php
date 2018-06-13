@@ -67,7 +67,7 @@ class Account extends CI_Controller
 		$crud->callback_after_update(array($this,'update_country_audit_parameters')); /** Update last modified by database field ***/
 		$crud->callback_delete(array($this,'delete_country')); /** Delete countries with no staff registered **/
 		$crud->callback_insert(array($this,'insert_country')); /** Disallow duplicate countries before insert **/
-    $crud->callback_column('staff',array($this,'count_of_staff_country'));
+    	$crud->callback_column('staff',array($this,'count_of_staff_country'));
 
 		/** Hide fields from add and edit forms**/
 		$crud->columns('name',"staff");
