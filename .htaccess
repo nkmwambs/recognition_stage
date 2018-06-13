@@ -2,4 +2,8 @@ RewriteEngine on
 RewriteCond $1 !^(index\.php|resources|robots\.txt)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+<<<<<<< HEAD
 RewriteRule ^(.*)$ index.php/$1 [L,QSA] 
+=======
+RewriteRule ^(.*)$ index.php/$1 [L,QSA] 
+>>>>>>> 8692a68da8188e363a5068171cfd5ae4ae9bf734
