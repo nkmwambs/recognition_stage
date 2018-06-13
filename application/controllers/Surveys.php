@@ -234,8 +234,7 @@ class Surveys extends CI_Controller
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_survey")) $crud->unset_delete();
 		if($this->crud_model->check_profile_privilege($this->session->profile_id,"survey_results")) $crud->add_action(get_phrase('results'), '', '', 'ui-icon-folder-open',array($this,'show_nomination_results'));
 
-    /** Add action button **/
-
+  
 
 
 		$output = $crud->render();
@@ -249,13 +248,13 @@ class Surveys extends CI_Controller
   function change_survey_status($primary_key , $row){
     // /** Check if an active survey exists  **/
     // $check_active_survey = $this->db->get_where("survey",array("status"=>"1"))->num_rows();
-//
+// 
     // /** Check status of current of the updated survey **/
     // $previous_survey_status = $this->db->get_where("survey",array("survey_id"=>$primary_key))->row()->status;
-//
+// 
     // /** Count of Unsubmitted Votes for the survey **/
     // $count_of_votes = $this->db->get_where("result",array("survey_id"=>$primary_key,"status"=>0))->num_rows();
-//
+// 
     // if($check_active_survey > 0 && $previous_survey_status === "0" ){
       // return false;
     // }elseif ($previous_survey_status === "1" && $count_of_votes > 0) {
@@ -263,7 +262,7 @@ class Surveys extends CI_Controller
     // }
     // } else{
       // $status = 0;
-      // if($row->status = 1)
+      // if($row->status = 1) 
       // $this->db->where(array("survey_id"=>$primary_key));
       // return $this->db->update("survey",$post_array);
     // }
@@ -401,7 +400,7 @@ class Surveys extends CI_Controller
 		//if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_vote")) $crud->unset_add();
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_vote")) $crud->unset_edit();
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_vote")) $crud->unset_delete();
-     $crud->unset_add();
+		$crud->unset_add();
 		/** Show in Edit or Add form**/
 		//$crud->columns('survey_id','user_id','status');
 		$crud->add_fields('survey_id','user_id','status');
