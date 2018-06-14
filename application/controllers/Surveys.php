@@ -157,7 +157,8 @@ class Surveys extends CI_Controller
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_category")) $crud->unset_edit();
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_category")) $crud->unset_delete();
 
-
+    /**Unset Text Editor**/
+    $crud->unset_texteditor(array('description','full_text'));
 
 		/**Callbacks**/
 		$crud->callback_after_insert(array($this,'insert_audit_parameters'));
@@ -166,6 +167,8 @@ class Surveys extends CI_Controller
         	return $this->db->get_where("tabulate",array("category_id"=>$row->category_id))->num_rows() > 0?get_phrase("yes"):get_phrase("no");
     	});
     $crud->callback_delete(array($this,"count_votes_on_category_delete"));
+
+
 
 		/** Hide fields from add and edit forms**/
 		$crud->fields('name','grouping_id','visibility','assignment','status','created_by','created_date','last_modified_by');

@@ -262,7 +262,9 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 									?>
 
 										<tr>
-											<td><?=$category->name;?></td>
+											<td>
+												<a href="#" data-html="true" data-toggle="tooltip" title="<?=$category->description;?>"><?=$category->name;?></a>
+											</td>
 											<td><?=$this->crud_model->get_type_name_by_id("contribution",$category->assignment);?></td>
 											<td><?=$this->crud_model->get_type_name_by_id("country",$category->visibility);?></td>
 											<td><?=ucfirst($unit_table_name);?></td>
