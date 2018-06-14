@@ -165,7 +165,7 @@ class Surveys extends CI_Controller
 		$crud->callback_column("has_votes",function ($value,$row){
         	return $this->db->get_where("tabulate",array("category_id"=>$row->category_id))->num_rows() > 0?get_phrase("yes"):get_phrase("no");
     	});
-    $crud->callback_delete(array($this,"count_votes_on_delete"));
+    $crud->callback_delete(array($this,"count_votes_on_category_delete"));
 
 		/** Hide fields from add and edit forms**/
 		$crud->fields('name','grouping_id','visibility','assignment','status','created_by','created_date','last_modified_by');
@@ -187,7 +187,7 @@ class Surveys extends CI_Controller
         $this->load->view('backend/index', $output);
 	}
 
-  function count_votes_on_delete($primary_key){
+  function count_votes_on_category_delete($primary_key){
     /** Check if has votes **/
     $has_votes = $this->db->get_where("tabulate",array("category_id"=>$primary_key));
 
