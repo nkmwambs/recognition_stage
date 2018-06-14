@@ -575,8 +575,9 @@ public function insert_role_audit_parameters($post_array,$primary_key){
       $message = get_phrase('failure');
 
       /** Checking if email exists  **/
-      if($this->db->get_where("user",array("email"=>$this->input->post("email")))->num_rows() == 0 ){
-        $this->db->Update("user",$data);
+      if($this->db->get_where("user",array("email"=>$this->input->post("email"),"user_id"=>$param2))->num_rows() == 0 ){
+        $this->db->where(array("user_id"=>$param2));	
+        $this->db->update("user",$data);
         /** Set success message **/
         $message  = get_phrase('success');
       }

@@ -37,7 +37,7 @@
 			<div class="tab-pane box" id="list" style="padding: 5px">
                <div class="box-content">
 					<?php
-                     	echo form_open(base_url() . 'account/manage_users/update_profile_info/' , array('class' => 'form-horizontal form-groups-bordered validate','target'=>'_top' , 'enctype' => 'multipart/form-data'));
+                     	echo form_open(base_url() . 'account/manage_users/update_profile_info/'.$user->user_id  , array('class' => 'form-horizontal form-groups-bordered validate','target'=>'_top' , 'enctype' => 'multipart/form-data'));
                     ?>
 
                             <div class="form-group">
