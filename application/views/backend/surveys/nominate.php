@@ -65,6 +65,14 @@ $scope = $this->db->get_where("scope",array("user_id"=>$user->user_id));
 								</div>
 							</div>
 				<?php
+					}elseif($this->db->get_where("team",array("country_id"=>$user->country_id))->num_rows() === 0){
+				?>
+						<div class="row">
+							<div class="col-sm-12" style="text-align: center;">
+								<div class="well"><?=get_phrase("teams_not_set_for_the_country");?></div>
+							</div>
+						</div>
+				<?php		
 					}else{
 
 					//print_r($groupings);
