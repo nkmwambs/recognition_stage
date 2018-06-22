@@ -43,7 +43,7 @@ $db['default']['database'] = "recognition";
 
 
 // The following values can probably stay the same.
-$db['default']['dbdriver'] = "pdo";
+$db['default']['dbdriver'] = "mysqli";
 $db['default']['dbprefix'] = "";
 $db['default']['pconnect'] = FALSE;
 $db['default']['db_debug'] = FALSE;

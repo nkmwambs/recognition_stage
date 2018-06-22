@@ -55,6 +55,17 @@
                               value="<?php echo $this->db->get_where('settings' , array('type' =>'system_email'))->row()->description;?>">
                       </div>
                   </div>
+                  
+                  <div class="form-group">
+                      <label  class="col-sm-3 control-label"><?php echo get_phrase('mail_notification');?></label>
+                      <div class="col-sm-9">
+                          <select name="system_mail_notification" class="form-control">
+                          	  <?php $system_mail_notification	=	$this->db->get_where('settings' , array('type'=>'system_mail_notification'))->row()->description;?>
+                              <option value="yesy" <?php if ($system_mail_notification == 'yes')echo 'selected';?>> <?=get_phrase("active");?></option>
+                              <option value="no" <?php if ($system_mail_notification == 'no')echo 'selected';?>> <?=get_phrase("inactive");?></option>
+                          </select>
+                      </div>
+                  </div>
                     
                   <div class="form-group">
                       <label  class="col-sm-3 control-label"><?php echo get_phrase('language');?></label>

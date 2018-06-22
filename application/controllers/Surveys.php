@@ -257,17 +257,18 @@ class Surveys extends CI_Controller
 
 		/** Populate Status/Allow User Edit Type **/
 		$crud->field_type('status', 'dropdown',array('0'=>"inactive","1"=>"active"));
-    $crud->field_type('allow_user_edit', 'dropdown',array('0'=>"no","1"=>"yes"));
+    	$crud->field_type('allow_user_edit', 'dropdown',array('0'=>"no","1"=>"yes"));
+		$crud->field_type('unsubmitted_votes_action', 'dropdown',array('0'=>get_phrase('no_action'),"1"=>get_phrase('force_delete'),"2"=>get_phrase("force_submit")));
 
 		/**Select Fields to Show in the Grid **/
-		$crud->columns(array('start_date','end_date','country_id',"allow_user_edit",'votes','status'));
+		$crud->columns(array('start_date','end_date','country_id',"allow_user_edit","unsubmitted_votes_action",'votes','status'));
 
 		/** Show add/edit fields**/
-		$crud->fields(array('start_date','end_date','allow_user_edit','status'));
+		$crud->fields(array('start_date','end_date','allow_user_edit','unsubmitted_votes_action','status'));
 
 
 		/** Set required fields **/
-		$crud->required_fields(array('start_date','end_date','country_id','allow_user_edit','status'));
+		$crud->required_fields(array('start_date','end_date','country_id','allow_user_edit','unsubmitted_votes_action','status'));
 
 		/** Set Field Label **/
 		$crud->display_as("country_id",get_phrase("country"));
@@ -277,8 +278,8 @@ class Surveys extends CI_Controller
 		$crud->callback_after_update(array($this,'update_survey_audit_parameters'));
 		$crud->callback_insert(array($this,'survey_check_on_insert'));
 		$crud->callback_update(array($this,"survey_check_on_update"));
-    $crud->callback_delete(array($this,"survey_check_on_delete"));
-    $crud->callback_column('votes',array($this,'count_of_votes_survey'));
+    	$crud->callback_delete(array($this,"survey_check_on_delete"));
+    	$crud->callback_column('votes',array($this,'count_of_votes_survey'));
 
 		/** Assign Privileges **/
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"survey_status")) $crud->add_action(get_phrase('change_status'), '', '', 'ui-icon-shuffle',array($this,'change_survey_status'));
@@ -287,8 +288,9 @@ class Surveys extends CI_Controller
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_survey")) $crud->unset_delete();
 		if($this->crud_model->check_profile_privilege($this->session->profile_id,"survey_results")) $crud->add_action(get_phrase('results'), '', '', 'ui-icon-folder-open',array($this,'show_nomination_results'));
 
-
-
+		/**Remove the view button**/
+		$crud->unset_read();
+		
 
 		$output = $crud->render();
 		$page_data['view_type']  = "surveys";
@@ -299,26 +301,65 @@ class Surveys extends CI_Controller
 	}
 
   function change_survey_status($primary_key , $row){
-    // /** Check if an active survey exists  **/
-    // $check_active_survey = $this->db->get_where("survey",array("status"=>"1"))->num_rows();
-//
-    // /** Check status of current of the updated survey **/
-    // $previous_survey_status = $this->db->get_where("survey",array("survey_id"=>$primary_key))->row()->status;
-//
-    // /** Count of Unsubmitted Votes for the survey **/
-    // $count_of_votes = $this->db->get_where("result",array("survey_id"=>$primary_key,"status"=>0))->num_rows();
-//
-    // if($check_active_survey > 0 && $previous_survey_status === "0" ){
-      // return false;
-    // }elseif ($previous_survey_status === "1" && $count_of_votes > 0) {
-      // return false;
-    // }
-    // } else{
-      // $status = 0;
-      // if($row->status = 1)
-      // $this->db->where(array("survey_id"=>$primary_key));
-      // return $this->db->update("survey",$post_array);
-    // }
+  	/** The Survey Object**/
+	$survey = $this->db->get_where("survey",array("survey_id"=>$primary_key))->row();
+	
+	/** Count of Unsubmitted Votes in the Survey **/
+	$unsubmitted_votes = $this->db->get_where("result",array("survey_id"=>$primary_key,"status"=>0))->num_rows();
+		
+	/** Unsubmitted Votes Action on Deactivate **/
+	$action = $survey->unsubmitted_votes_action;
+	
+	if($survey->status === '1' && $unsubmitted_votes > 0){
+					
+		if($action === 0) {
+			//Do nothing
+		}elseif($action === '1'){
+			//Force Delete
+			//$unsubmitted_votes = $this->db->get_where("result",array("survey_id"=>$primary_key,"status"=>'0'))->result_object();
+			foreach($unsubmitted_votes as $to_delete){
+				//Delete votes tabulation
+				$this->db->where(array("result_id"=>$to_delete->result_id));
+				$this->db->delete("tabulate");
+				
+				//Delete the Vote Result
+				$this->db->where(array("result_id"=>$to_delete->result_id));
+				$this->db->delete("result");
+			}
+			
+		}elseif($action === '2'){
+			//Force Submit
+			$this->db->where(array('status'=>0));
+			$data['status'] = '1';
+			$data['forced_submit'] = '1';
+			
+			$this->db->update('result',$data);
+		}
+		
+		$this->db->where(array("survey_id"=>$primary_key));
+		$data2['status'] = '0';
+		
+		$this->db->update('survey',$data2);
+		
+	}elseif($survey->status === '1' && $unsubmitted_votes === '0'){
+		//Close the survey
+		$data3['status'] = 0;
+		$this->db->where(array('survey_id'=>$primary_key));
+		
+		$this->db->update("survey",$data3);
+			
+	}elseif($survey->status === 0){
+		//Check if active survey exists
+		$active_surveys = $this->db->get_where("survey",array("status"=>1))->num_rows();
+		if($active_surveys === '0'){
+			//Activate the Survey
+			$data5['status'] = '1';
+			$this->db->where(array('survey_id'=>$primary_key));
+			$this->db->update("survey",$data5);
+		}
+	}
+	
+  
   }
 
   function count_of_votes_survey($value,$row){
