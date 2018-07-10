@@ -316,7 +316,7 @@ class Surveys extends CI_Controller
 			//Do nothing
 		}elseif($action === '1'){
 			//Force Delete
-			//$unsubmitted_votes = $this->db->get_where("result",array("survey_id"=>$primary_key,"status"=>'0'))->result_object();
+			$unsubmitted_votes = $this->db->get_where("result",array("survey_id"=>$primary_key,"status"=>'0'))->result_object();
 			foreach($unsubmitted_votes as $to_delete){
 				//Delete votes tabulation
 				$this->db->where(array("result_id"=>$to_delete->result_id));
@@ -659,13 +659,25 @@ class Surveys extends CI_Controller
             redirect(base_url(), 'refresh');
 
 		if($param1=="") redirect(base_url().'surveys/survey_setting', 'refresh');
+		
 		$survey = array();
 		$survey_arr = $this->db->get_where("survey",array("survey_id"=>$param1));
 		$results = array();
+		
 		if($survey_arr->num_rows() > 0){
 			$survey = $survey_arr->row();
-			$this->db->join("tabulate","tabulate.result_id=result.result_id");
-			$results = $this->db->get_where("result",array("survey_id"=>$survey->survey_id))->result_object();
+			if(isset($_POST['country_id'])){
+				$this->db->join("user","user.user_id=result.user_id");
+				$this->db->join("tabulate","tabulate.result_id=result.result_id");
+				$results = $this->db->get_where("result",array("survey_id"=>$survey->survey_id,"country_id"=>$_POST['country_id']))->result_object();
+			}else{
+				$this->db->join("user","user.user_id=result.user_id");
+				$this->db->join("tabulate","tabulate.result_id=result.result_id");
+				//$this->db->where($this->crud_model->country_scope_where($this->session->login_user_id,'admin'));
+				$this->db->where(array("survey_id"=>$survey->survey_id,"country_id"=>$this->session->country_id));
+				$results = $this->db->get("result")->result_object();
+			}
+			
 		}
 
 		$page_data['results']  =  $results;
