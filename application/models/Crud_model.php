@@ -176,7 +176,9 @@ class Crud_model extends CI_Model {
 	} 
 	
 	function users_with_country_scope_for_voting($country_id=""){
-		$scope_countries = $this->db->get_where("scope_country",array("country_id"=>$country_id));
+		$this->db->where(array("country_id"=>$country_id));
+		$this->db->or_where(array("country_id"=>1));
+		$scope_countries = $this->db->get("scope_country");
 		
 		$user_ids = array();
 		$scope_cond = "";
@@ -188,8 +190,6 @@ class Crud_model extends CI_Model {
 				}
 				
 			}
-		
-		
 		
 		$scope_cond .= '(';
 			$cnt = 1;

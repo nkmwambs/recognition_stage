@@ -35,11 +35,11 @@
 */
 
 // The following values will probably need to be changed.
-$db['default']['dsn'] = 'mysql:host=localhost;dbname=recognition';
+$db['default']['dsn'] = 'mysql:host=localhost;dbname=compatl8_recognition';
 $db['default']['hostname'] = "localhost";
 $db['default']['username'] = "root";
 $db['default']['password'] = "";
-$db['default']['database'] = "recognition";
+$db['default']['database'] = "compatl8_recognition";
 
 
 // The following values can probably stay the same.

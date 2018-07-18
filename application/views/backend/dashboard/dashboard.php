@@ -1,4 +1,21 @@
 	<?php
+		// $user_country = $this->db->get_where("country",array("country_id"=>25))->row()->name;
+		// $scope_countries = $user_country;
+		// $this->db->join("scope","scope.scope_id=scope_country.scope_id");
+		// $this->db->join("country","country.country_id=scope_country.country_id");
+		// $this->db->select("name");
+		// $this->db->where(array("user_id"=>152));
+		// $scope_obj = $this->db->get("scope_country");
+		// if($scope_obj->num_rows()>0){
+			// $scope_countries = $scope_obj->result_array();
+// 			
+			// $scope_countries = array_column($scope_countries,"name");
+// 			
+			// $scope_countries = $user_country.",".implode(",", $scope_countries);
+		// }
+// 		
+		// print_r($scope_countries);
+	
 		//echo $this->email_model->user_invite('1',"compassion12");
 		/** Active survey object **/
 		$active_surveys = $this->db->get_where("survey",array("status"=>'1'));

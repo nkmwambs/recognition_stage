@@ -1,5 +1,6 @@
 <?php 
 $edit_data		=	$this->db->get_where('user' , array('user_id' => $param2) )->result_object();
+//print_r($edit_data);
 foreach ( $edit_data as $row):
 ?>
 <div class="row">
@@ -97,18 +98,20 @@ foreach ( $edit_data as $row):
 											if($teams->num_rows() > 0){
 												
 												foreach($teams->result_object() as $team){
+													$selected = "";
 													if($team_set->num_rows() > 0){
 														
-														$selected = "";
+														//$selected = "";
 														foreach($team_set->result_object() as $row){
 															if($row->team_id === $team->team_id){
 																$selected = "selected";
 															}
 														}
+													}
                                     	?>
   			                                  			<option value="<?=$team->team_id;?>" <?php echo $selected;?>><?=$team->name;?></option>
                                     	<?php
-													}
+													
 												}
 											}
                                     	?>
@@ -124,11 +127,11 @@ foreach ( $edit_data as $row):
                                     <select class="form-control select2" name="role_id">
                                     	<option><?=get_phrase("select");?></option>
                                     	<?php
-                                    		$roles = $this->crud_model->get_results_by_id("role");
+                                    		$roles = $this->db->get("role")->result_object();
 											
 											foreach($roles as $role):
                                     	?>
-                                    		<option value="<?=$role->role_id;?>" <?php if($row->role_id === $role->role_id) echo "selected";?> ><?=$role->name;?></option>
+                                    		<option value="<?=$role->role_id;?>" <?php if(isset($row->role_id ) && ($row->role_id === $role->role_id)) echo "selected";?> ><?=$role->name;?></option>
                                     	<?php
                                     		endforeach;
                                     	?>
