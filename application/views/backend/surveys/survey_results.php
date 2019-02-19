@@ -1,5 +1,5 @@
 <?php
-//print_r($results);
+if(count($results)>0){
 ?>
 <div class="row">
 	
@@ -12,6 +12,8 @@
             	</div>
             </div>
 			<div class="panel-body">
+				
+				
 				<form action="<?=base_url();?>surveys/survey_results/<?=$results[0]->survey_id;?>/search" method="POST">
 					
 				<div class="row">
@@ -41,6 +43,7 @@
 				</div>
 				
 				</form>
+				
 				
 				<hr />
 				
@@ -121,6 +124,24 @@
 	</div>
 </div>		
 
+<?php
+}else{
+?>	
+<div class="row">
+	<div class="col-sm-12">
+		<a href="<?=base_url();?>surveys/survey_setting" class="btn btn-default"><?=get_phrase("back");?></a>
+	</div>	
+</div>
+<hr />
+<div class="row">
+	<div class="col-sm-12">
+		<div class="well"><?=get_phrase("no_results_found");?></div>
+	</div>
+</div>
+<?php	
+}
+?>
+
 <script>
 	$(document).ready(function(){
 		//var datatable = $('.table').DataTable();
@@ -142,12 +163,15 @@
 		
 		
 		var datatable = $('#table_export').DataTable({
-		       dom: '<Bf><"col-sm-12"rt><ip>',
+		       //dom: '<Bf><"col-sm-12"rt><ip>',
+		       dom: '<"row"l><Bf><"col-sm-12"rt><ip>',
 		       pagingType: "full_numbers",
 		       buttons: [
 		           'csv', 'excel', 'print'
 		       ],
 		       stateSave: true,
+		       lengthMenu: [[25,50, 100, 150,-1], [25,50 ,100,150 ,"All"]],
+			   pageLength: 25
 		           
 		   });
 		   

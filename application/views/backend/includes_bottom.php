@@ -71,8 +71,6 @@
 <!--my extension-->
 <script src="<?php echo base_url();?>assets/js/myExtension.js"></script>
 
-<script src="<?=base_url();?>assets/js/jquery.multi-select.js"></script>
-
 <!-- SHOW TOASTR NOTIFIVATION -->
 <?php if ($this->session->flashdata('flash_message') != ""):?>
 

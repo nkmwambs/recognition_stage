@@ -14,10 +14,10 @@ class Crud_model extends CI_Model {
         $this->output->set_header('Pragma: no-cache');
     }
 
-    function get_type_name_by_id($type, $type_id = '', $field = 'name') {
+    function get_type_name_by_id($table_name, $primary_key = '', $field = 'name') {
         //return $this->db->get_where($type, array($type . '_id' => $type_id))->row()->$field;
-        if($this->db->get_where($type, array($type . '_id' => $type_id))->num_rows() > 0 ){
-        	return $this->db->get_where($type, array($type . '_id' => $type_id))->row()->$field;
+        if($this->db->get_where($table_name, array($table_name . '_id' => $primary_key))->num_rows() > 0 ){
+        	return $this->db->get_where($table_name, array($table_name . '_id' => $primary_key))->row()->$field;
         }else{
         	return NULL;
         }
@@ -55,22 +55,51 @@ class Crud_model extends CI_Model {
 	
 	/** PREVILEDGES **/	
 	
-	function scope_countries($user_id="",$show_your_country= false){
-		$scope = $this->db->get_where("scope",array("user_id"=>$user_id))->row();		
+	function admin_user($user_id=""){
+		
+		$is_admin = false;
+		
+		$this->db->where(array("type<>"=>"vote","user_id"=>$user_id));
+		
+		$result = $this->db->get("scope")->num_rows();
+		
+		if($result>0) $is_admin = true;
+		
+		return $is_admin; 
+	}
 	
+	/**
+	 * Scope Countries: return Array of countries ids the user has ability to vote or be 
+	 * voted in or administration
+	 * 
+	 * @param integer user_id
+	 * @param boolean show_your_country
+	 * @return Array of countries ids the user has ability to vote or be voted in or administration
+	 */
+	function scope_countries($user_id="",$show_your_country = false){
+		//Retrieve a record showing users ability to vote/ voted/admininster other countries data
+		$scope = $this->db->get_where("scope",array("user_id"=>$user_id));		
+		
+		//Getting user resident country id
 		$user_country_id = $this->db->get_where("user",array("user_id"=>$user_id))->row()->country_id;
 	
 		$country_ids = array();
-		$country_ids[0] = "1";	
+		
+		/**
+		 * Add your resident country in the array $country_ids if the $show_your_country == true
+		 */
 		if($show_your_country === true){
 			$country_ids[] = $user_country_id;
 		}
 		
-		if($this->db->get_where("scope",array("user_id"=>$user_id))->num_rows() > 0){
-			$result = $this->db->get_where("scope_country",array("scope_id"=>$scope->scope_id));
-			$countries = $result->result_object();
+		//If $scope->num_rows() > 0, user has ability to vote or be voted by other country users
+		
+		if($scope->num_rows() > 0){
 			
-			foreach($countries as $country){
+			$countries_to_be_voted_in = $this->db->get_where("scope_country",array("scope_id"=>$scope->row()->scope_id))
+			->result_object();
+			
+			foreach($countries_to_be_voted_in as $country){
 				$country_ids[] = $country->country_id;
 			}
 			
@@ -79,34 +108,95 @@ class Crud_model extends CI_Model {
 		return $country_ids;
 	}
 	
+	function user_teams($user_id="",$user_country_id=""){
+		
+		$this->db->join("teamset","teamset.team_id=team.team_id");
+		$teams = $this->db->get_where("team",array("country_id"=>$user_country_id,"user_id"=>$this->session->login_user_id));
+											
+		return $teams->num_rows() > 0 ?  implode(",",array_column($teams->result_array(),"name")): get_phrase("teams_not_set");							
+			
+	}
+
+	function scope_countries_by_name($user_id="",$show_your_country= false){
+		$scope = $this->db->get_where("scope",array("user_id"=>$user_id))->row();		
+	
+		$user_country_id = $this->db->get_where("user",array("user_id"=>$user_id))->row()->country_id;
+	
+		$country_ids = array();
+	
+		if($show_your_country === true){
+			$country_ids[] = $this->db->get_where("country",array("country_id"=>$user_country_id))->row()->name;
+		}
+		
+		if($this->db->get_where("scope",array("user_id"=>$user_id))->num_rows() > 0){
+			$this->db->join("country","country.country_id=scope_country.country_id");
+			$result = $this->db->get_where("scope_country",array("scope_id"=>$scope->scope_id));
+			$countries = $result->result_object();
+			
+			foreach($countries as $country){
+				$country_ids[] = $country->name;
+			}
+			
+		}	
+				
+		return $country_ids;
+	}	
+	
+	/**
+	 * country_scope_where - Builds a condition string for a query that will be used to return 
+	 * countries of voters and admins
+	 * @param integer user_id
+	 * @param string scope_type
+	 * @return String: ('country_id' = 1 or 'country_id'=>27 or 'country_id'=>n)
+	 */
 	
 	function country_scope_where($user_id="",$scope_type = "vote"){
 
-		$country_ids =  array();		
+		$country_ids =  array();
+		
+		/**
+		 * If the scope type == to admin, list only your country of residence. 
+		 * This is used in the nominate view to filter only users of the logged user contry during 
+		 * nomination and administrating your country's system settings.
+		 * ELSE
+		 * If scope type == both or vote, all the countries that you have a scope are listed. 
+		 * It's used in the nomination view to list all users from all contries.
+		 * Both allows you to vote and do administration for the countries.
+		 */
+		
 		if($scope_type === "admin"){
-			 $country_ids[0] = $this->db->get_where("user",array("user_id"=>$user_id))->row()->country_id;
+			 $country_ids[0] = $this->session->country_id;
 		}else{
 		
-		$country_ids = $this->crud_model->scope_countries($user_id,true);
+			$country_ids = $this->crud_model->scope_countries($user_id,true);
 		}
+			/**
+			 * Building a condition string for a query based on scope 
+			* countries set when the scope type is either admin or vote/both 
+			 */
+			
 			$scope_cond = '(';
 			$cnt = 1;
 				foreach($country_ids as $country_id){
-					// $this->db->where(array("country_id"=>$country_id));
+					
 					if($cnt === count($country_ids)){
+						/**
+					 	* Turn true when your scope type is admin or last loop instance 
+					 	* when count == size of array of country ids
+					 	*/
 						$scope_cond  .= "country_id = ".$country_id.")";
-					}elseif($cnt === 1 && $cnt !== count($country_ids)){
+					}elseif($cnt !== count($country_ids)){
+						/**
+						 * Turn true when your scope type is vote/both but in the first to n-1 loop
+					 	*/
 						$scope_cond  .= "country_id = ".$country_id." or ";	
-					}else{
-						$scope_cond  .= "country_id = ".$country_id." or ";
 					}
 																
 				$cnt++;
 			}
 															
-		 $scope_cond .= '';
 		return $scope_cond;													
-		//return $this->db->where($scope_cond);
+
 	}
 	
 
@@ -175,86 +265,89 @@ class Crud_model extends CI_Model {
 		return $scope_cond;	
 	} 
 	
+	/**
+	 * users_with_country_scope_for_voting: Returns a condition string for query with users ids
+	 * @param Integer country_id
+	 * @return String
+	 */
+	
 	function users_with_country_scope_for_voting($country_id=""){
-		$this->db->where(array("country_id"=>$country_id));
-		$this->db->or_where(array("country_id"=>1));
-		$scope_countries = $this->db->get("scope_country");
 		
-		$user_ids = array();
-		$scope_cond = "";
-		if($scope_countries->num_rows() > 0){
-			foreach($scope_countries->result_object() as $scope_country){
-				if($this->db->get_where("scope",array("scope_id"=>$scope_country->scope_id,"two_way"=>1,"type<>"=>"admin"))->num_rows() > 0){
-					$user_ids[]  = $this->db->get_where("scope",array("scope_id"=>$scope_country->scope_id,"two_way"=>1,"type<>"=>"admin"))->row()->user_id;
-					
-				}
-				
-			}
+		/**
+		 * Get records from user ids from scope table. 
+		 * The users should have a contry scope equal to the passed argument in the scope country table
+		 */
+		$this->db->select(array('scope.user_id'));
+		$this->db->join('user','user.user_id=scope.user_id'); 
+		$this->db->join('scope_country','scope_country.scope_id=scope.scope_id');
+		$user_ids = $this->db->get_where("scope",array("scope_country.country_id"=>$country_id,
+		"two_way"=>1,"type<>"=>"admin",'user.auth'=>1))->result_object();
 		
-		$scope_cond .= '(';
+		/**
+		 * Loop the users as you build query string 
+		 */
+		$scope_cond = '(';
 			$cnt = 1;
-				foreach($user_ids as $user_id){
-					// $this->db->where(array("country_id"=>$country_id));
+				foreach($user_ids as $user){
 					if($cnt === count($user_ids)){
-						$scope_cond  .= "user_id = ".$user_id.")";
-					}elseif($cnt === 1 && $cnt !== count($user_ids)){
-						$scope_cond  .= "user_id = ".$user_id." or ";	
-					}else{
-						$scope_cond  .= "user_id = ".$user_id." or ";
+						$scope_cond  .= "user_id = ".$user->user_id.")";
+					}elseif($cnt !== count($user_ids)){
+						$scope_cond  .= "user_id = ".$user->user_id." or ";	
 					}
 																
 				$cnt++;
 			}
 															
-		 $scope_cond .= '';
-		}
+		
 	
 		return $scope_cond;
 	} 
 	
-	/**Categories**/
+	/**
+	 * Scope categories_in_grouping: return Array of Categories grouped per grouping 
+	 * ex. Staff Category, Manager Recognition group
+	 * 
+	 * @param integer $grouping_id
+	 * @param integer $user_id
+	 * @param integer $staff_position
+	 * @return return Array of Categories grouped per grouping 
+	 * ex. Staff Category, Manager Recognition group
+	 */
 
-	function categories_in_grouping($grouping_id="",$user_id="",$contribution=""){
-		$user_country_id = $this->db->get_where("user",array("user_id"=>$user_id))->row()->country_id;
-		$country_visibility = array("1",$user_country_id);
+	function categories_in_grouping($user_id="",$staff_position=""){
 		
 		$show_categories = array();
 		
-		if($contribution === '1'){	
-			$categories = $this->db->get_where("category",array("grouping_id"=>$grouping_id,"status"=>'1',"assignment"=>$contribution)); 
-			
-			 if($categories->num_rows() > 0){
-				 foreach($country_visibility as $country_id){
-					 $category_visibility = $this->db->get_where("category",array("grouping_id"=>$grouping_id,"status"=>"1","assignment"=>$contribution,"visibility"=>$country_id));
-					 
-					 $team_belongs_to_country = $this->db->get_where("team",array("country_id"=>$user_country_id))->num_rows();
-					 					 
-					 if(($category_visibility->num_rows() > 0 && $category_visibility->row()->unit != 3) || ($category_visibility->num_rows() > 0 && $category_visibility->row()->unit == 3 && $team_belongs_to_country > 0 )){
-							
-						foreach($category_visibility->result_object() as $row){
-					 		$show_categories[] = (array)$row;
-					 	}	
-							
-						
-					 }
-				 }
-			 }
-		}else{
-			$categories = $this->db->get_where("category",array("grouping_id"=>$grouping_id,"status"=>'1')); 
-			
-			 if($categories->num_rows() > 0){
-				 foreach($country_visibility as $country_id){
-					 $category_visibility = $this->db->get_where("category",array("grouping_id"=>$grouping_id,"status"=>"1","visibility"=>$country_id));
-					 if(count($country_visibility) > 0 && $category_visibility->num_rows() > 0){
-						//$show_categories[] = (array)$category_visibility->row();
-						foreach($category_visibility->result_object() as $row){
-					 		$show_categories[] = (array)$row;
-					 	}
-					 }
-				 }
-			 }
+		$user_country = $this->session->country_id;
+		
+		/**
+		 * A Where condintion string to be used in the db query
+		 */	
+		$condition_string = " status = 1 AND visibility IN (1,$user_country)";	
+								
+		/**
+		 * Appends staff position to Where condintion string where the user is a staff
+		 */
+		if($staff_position == 1){
+			$condition_string .= " AND assignment = $staff_position";				
 		}
-		return (OBJECT)$show_categories;
+		
+		//A query to return categories	
+		$this->db->where($condition_string);
+		$categories = $this->db->get("category"); 
+		
+		/**
+		 * Checks if the there are categories and create an array of categories grouped by groups
+		 */		
+
+		if($categories->num_rows() > 0){
+			//Get categories grouped in groups ex. Staff Categories
+			foreach($categories->result_object() as $category){
+				$show_categories[$category->grouping_id][] = $category;
+			}
+		}
+	
+		return $show_categories;
 	}
 	
 	    

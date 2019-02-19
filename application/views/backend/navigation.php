@@ -228,7 +228,16 @@
 
             </ul>
         </li>
-
+        
+        <!--Admin Tests-->
+		
+		<li class="tests <?php if ($page_name == 'tests') echo 'active'; ?> ">
+            <a href="<?php echo base_url();?>Tests/testing_email_templates">
+                <i class="entypo-code"></i>
+                <span><?php echo get_phrase('tests'); ?></span>
+            </a>
+        </li>
+        
            
     </ul>
 

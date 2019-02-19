@@ -33,7 +33,8 @@
 									<select multiple="multiple" name="country_id[]" class="form-control multi-select">
 										<?php
 											
-											foreach($countries as $country):
+											foreach($countries as $country){
+												if($country->country_id !== '1'){
 												if($country->country_id!==$user->country_id){
 												$selected = "";
 												foreach($selected_countries as $selected_country):
@@ -45,7 +46,8 @@
 											<option value="<?=$country->country_id;?>" <?=$selected;?>><?=get_phrase($country->name);?></option>
 										<?php 
 												}
-											endforeach;
+												}
+											}
 										?>
 										
 									</select>

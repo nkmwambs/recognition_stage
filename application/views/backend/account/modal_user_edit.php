@@ -86,40 +86,6 @@ foreach ( $edit_data as $row):
                                 </div>
                             </div>
                             
-                             <div class="form-group">
-                                <label class="col-sm-3 control-label"><?php echo get_phrase('team');?></label>
-                                <div class="col-sm-5">
-                                    <select class="form-control" name="team_id[]" id="team_id" multiple="multiple">
-                                    	<?php
-                                    		$team_set = $this->db->get_where("teamset",array("user_id"=>$param2));
-											
-											$teams = $this->db->get_where("team",array("country_id"=>$row->country_id));
-											
-											if($teams->num_rows() > 0){
-												
-												foreach($teams->result_object() as $team){
-													$selected = "";
-													if($team_set->num_rows() > 0){
-														
-														//$selected = "";
-														foreach($team_set->result_object() as $row){
-															if($row->team_id === $team->team_id){
-																$selected = "selected";
-															}
-														}
-													}
-                                    	?>
-  			                                  			<option value="<?=$team->team_id;?>" <?php echo $selected;?>><?=$team->name;?></option>
-                                    	<?php
-													
-												}
-											}
-                                    	?>
-                                    	
-                                    </select>
-                                    <div id="team_loading_progress"></div>
-                                </div>
-                            </div>
                             
                             <div class="form-group <?php if($this->session->login_user_id === $param2) echo "self_update";?>">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('role');?></label>
@@ -178,7 +144,7 @@ foreach ( $edit_data as $row):
                                                        
                             <div class="form-group">
                               <div class="col-sm-offset-3 col-sm-5">
-                                  <div  class="btn btn-info btn-icon"><i class="fa fa-save"></i><?php echo get_phrase('save');?></div>
+                                  <button  class="btn btn-info btn-icon"><i class="fa fa-save"></i><?php echo get_phrase('save');?></button>
                               </div>
 							</div>
           

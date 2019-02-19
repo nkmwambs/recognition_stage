@@ -9,7 +9,7 @@
         <!-- Language Selector -->			
            <li class="dropdown language-selector">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-close-others="true">
-                        	<i class="entypo-user"></i> <?php echo ucfirst($this->session->userdata('name')).' - '.ucfirst($this->session->userdata('login_type'));?> (<?php echo $this->crud_model->get_type_name_by_id("profile", $this->session->profile_id);?>) 
+                        	<i class="entypo-user"></i> <?php echo ucfirst($this->session->userdata('name')).' - '.ucfirst($this->session->userdata('login_type'));?> (<?php echo $this->crud_model->get_type_name_by_id("profile", $this->session->profile_id);?>) - <?=get_phrase("user_id");?>: <?=$this->session->login_user_id;?> 
                     </a>
 
 				
@@ -24,12 +24,12 @@
 										
 					<?php if( $this->crud_model->user_privilege($this->session->profile_id,"switch_user") ){ ?>
 					
-					<li>
+					<!-- <li>
 						<a href="<?php echo base_url();?>account/manage_profile">
                         	<i class="entypo-switch"></i>
 							<span><?php echo get_phrase('switch_user');?></span>
 						</a>
-					</li>
+					</li> -->
 					<?php } ?>
 				</ul>
 				

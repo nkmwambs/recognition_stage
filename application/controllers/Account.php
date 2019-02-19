@@ -260,9 +260,14 @@ class Account extends CI_Controller
 
 		/** Set relationship n_n **/
 		$crud->set_relation_n_n(get_phrase("privileges"), 'access', 'entitlement', 'profile_id', 'entitlement_id', 'name','access_id');
-
-
-			/** Assign Privileges **/
+		
+		$crud->set_relation_n_n(get_phrase("members"), 'assign_profile', 'user', 'profile_id','user_id', '{firstname} {lastname}');
+		
+		/** Set drop down fields**/
+		
+		$crud->field_type("assignable", "dropdown",array('0'=>get_phrase("none_system_admin_can_assign"),"1"=>get_phrase("only_system_admin_can_assign")));
+		
+		/** Assign Privileges **/
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_profile")) $crud->unset_add();
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_profile")) $crud->unset_edit();
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_profile")) $crud->unset_delete();
@@ -300,7 +305,8 @@ class Account extends CI_Controller
 		/** Related Tables to Category **/
 		$crud->set_relation('contribution','contribution','name');
 		$crud->set_relation('department_id','department','name');
-
+		//$crud->set_relation_n_n("members", "user", "role_id","role_id","email");
+		//$crud->set_relation_n_n("members", "teamset", "user", "team_id", "user_id", "email");
 		/**Select Fields to Show in the Grid **/
 		$crud->columns(array("name","contribution","department_id"));
 
@@ -359,11 +365,10 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 	}
 
 	public function teams($param1="",$param2="",$param3=""){
-	    	if ($this->session->userdata('user_login') != 1)
+	    if ($this->session->userdata('user_login') != 1)
             redirect(base_url() . 'login', 'refresh');
 
-
-			/**Instatiate CRUD**/
+		/**Instatiate CRUD**/
 		$crud = new grocery_CRUD();
 
 		/**Set theme to flexigrid**/
@@ -375,15 +380,52 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 
 		/**Select Category Table**/
 		$crud->set_table('team');
-
+		
+		$crud->set_relation_n_n("members", "teamset", "user", "team_id", "user_id", "{firstname} {lastname}",null,array("country_id"=>$this->session->country_id));
+		//$crud->set_relation_n_n($field_name, $relation_table, $selection_table, $primary_key_alias_to_this_table, $primary_key_alias_to_selection_table, $title_field_selection_table);
+		
+		/**Change Visibility Field Based on Scope**/
+		$user_scope_obj = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id));
+		if($user_scope_obj->num_rows()>0){
+			$scope_type = $user_scope_obj->row()->type;
+			if($scope_type!=="vote"){
+				$crud->where('team.country_id',$this->session->country_id);
+					$countries  = $this->crud_model->scope_countries($this->session->login_user_id,true);
+						$country_names = array();
+						foreach($countries as $country){
+							$country_names[$country] = $this->db->get_where("country",array("country.country_id"=>$country))->row()->name;
+							if($country!=='1'){
+								$crud->or_where('team.country_id',$country);
+							}
+							
+						}
+						
+						$crud->field_type('country_id', 'dropdown',$country_names);
+		
+						
+			}else{
+				$crud->where('team.country_id',$this->session->country_id);
+				$crud->field_type('team.country_id', 'dropdown',array($this->session->country_id=>$this->db->get_where('country',array("country_id"=>$this->session->country_id))->row()->name));			
+				$crud->set_relation('country_id','country','name',array("country_id"=>$this->session->country_id));
+				
+			}
+		}else{
+			$crud->field_type('team.country_id', 'dropdown',array($this->session->country_id=>$this->db->get_where('country',array("country_id"=>$this->session->country_id))->row()->name));			
+			/** Show only Categories of the countries user has a scope for **/
+			$crud->where('team.country_id',$this->session->country_id);
+			
+			/** Related Tables to Category **/
+			$crud->set_relation('country_id','country','name',array("country_id"=>$this->session->country_id));
+		
+		}
+		
 		/** Set required fields **/
-		$crud->required_fields(array("name","country_id","description"));
+		$crud->required_fields(array("name","country_id","description","user_id"));
 
-		/** Related Tables to Category **/
-		$crud->set_relation('country_id','country','name');
-
+		
 		/**Select Fields to Show in the Grid **/
-		$crud->columns(array("name","country_id","description","staff"));
+		$crud->columns(array("name","country_id","description","staff","members"));
+		
 
 		/**Give columns user friendly labels**/
 		$crud->display_as('country_id',get_phrase('country'));
@@ -397,15 +439,13 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 
 		/** Hide fields from add and edit forms**/
 		$crud->add_fields(array("name","country_id","description"));
-		$crud->edit_fields(array("name","country_id","description"));
+		$crud->edit_fields(array("name","country_id","description","members"));
 
 		/** Assign Privileges **/
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_team")) $crud->unset_add();
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_team")) $crud->unset_edit();
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_team")) $crud->unset_delete();
-
-		//$crud->add_action('More', '', 'demo/action_more','ui-icon-plus');
-
+	
 		$output = $crud->render();
 		$page_data['view_type']  = "account";
 		$page_data['page_name']  = __FUNCTION__;
@@ -414,6 +454,7 @@ public function insert_role_audit_parameters($post_array,$primary_key){
         $this->load->view('backend/index', $output);
 	}
 
+	
 	function delete_team($primary_key){
 		$this->db->join("teamset","teamset.user_id=user.user_id");
 		$this->db->where(array("team_id"=>$primary_key));
@@ -460,20 +501,12 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 	}
 
 
-  	/** MANEGE USER INFORMATION **/
+  	/** MANAGE USER INFORMATION **/
 	public function manage_users($param1="",$param2="",$param3=""){
 		if ($this->session->userdata('user_login') != 1)
             redirect(base_url(), 'refresh');
 
-		$page_data['user']  = $this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row();
-			$page_data['users']  = $this->db->get("user")->result_object();
-
-			if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
-				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
-				$page_data['users']  = $this->db->get_where("user",array("country_id"=>$logged_user_country_id))->result_object();
-			}
-
-		$page_data['msg'] = get_phrase("success");
+		$msg = get_phrase("failed");
 
 		if($param1==='add_user'){
 			$data['firstname'] = $this->input->post('firstname');
@@ -500,32 +533,15 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 
 				$insert_id = $this->db->insert_id();
 
-				/** Insert user team **/
-				if($this->input->post('team_id')){
-					foreach($this->input->post('team_id') as $team_id){
-						$data2['user_id'] = $insert_id;
-						$data2['team_id'] = $team_id;
-
-						$this->db->insert('teamset',$data2);
-					}
-
-				}
-
 
 				/** Send an Email to the user on success with login instructions here**/
 
 				$this->email_model->manage_account_email($insert_id,"user_invite",$password);
+				
+				if($this->db->affected_rows() > 0) $msg = get_phrase("success");
 			}
 
-
-			$page_data['message'] = get_phrase("success");
-			$page_data['user']  = $this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row();
-			$page_data['users']  = $this->db->get("user")->result_object();
-			if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
-				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
-				$page_data['users']  = $this->db->get_where("user",array("country_id"=>$logged_user_country_id))->result_object();
-			}
-			$this->session->set_flashdata('flash_message',get_phrase('success'));
+			$this->session->set_flashdata('flash_message',$msg);
 			redirect(base_url()."account/manage_users","refresh");
 		}
 
@@ -545,25 +561,10 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 			$data['country_id'] = $this->input->post('country_id');
 
 			$this->db->update('user',$data);
+			
+			if($this->db->affected_rows()>0) $msg = get_phrase("success");
 
-			if($this->input->post('team_id')){
-				$this->db->delete("teamset",array("user_id"=>$param2));
-					foreach($this->input->post('team_id') as $team_id){
-						$data2['user_id'] = $param2;
-						$data2['team_id'] = $team_id;
-
-						$this->db->insert('teamset',$data2);
-					}
-
-			}
-
-			$page_data['user']  = $this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row();
-			$page_data['users']  = $this->db->get("user")->result_object();
-			if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
-				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
-				$page_data['users']  = $this->db->get_where("user",array("country_id"=>$logged_user_country_id))->result_object();
-			}
-			$this->session->set_flashdata('flash_message',get_phrase('success'));
+			$this->session->set_flashdata('flash_message',$msg);
 			redirect(base_url()."account/manage_users","refresh");
 		}
 
@@ -579,16 +580,17 @@ public function insert_role_audit_parameters($post_array,$primary_key){
         $this->db->where(array("user_id"=>$param2));	
         $this->db->update("user",$data);
         /** Set success message **/
-        $message  = get_phrase('success');
+        if($this->db->affected_rows()>0) $msg = get_phrase("success");
+			
       }
-      $this->session->set_flashdata('flash_message',$message);
-			redirect(base_url()."account/manage_users/","refresh");
+      
+
+			$this->session->set_flashdata('flash_message',$msg);
+			redirect(base_url()."account/manage_users","refresh");
     }
 
     if($param1 == "change_password"){
 
-      /** Set deafult message - Failure **/
-      $message = get_phrase('failure');
 
       $data['password'] = md5($this->input->post("new_password"));
       $current_password =  $this->input->post("password");
@@ -600,14 +602,14 @@ public function insert_role_audit_parameters($post_array,$primary_key){
           $this->db->update("user",$data,array("user_id"=>$param2));
 
           /** Set success message **/
-          $message  = get_phrase('success');
+         if($this->db->affected_rows()>0) $msg = get_phrase("success");
       }
 
-      $this->session->set_flashdata('flash_message',$message);
-			redirect(base_url()."account/manage_users/","refresh");
+      	$this->session->set_flashdata('flash_message',$msg);
+		redirect(base_url()."account/manage_users/","refresh");
     }
 
-		if($param1==="assign_scope"){
+	if($param1==="assign_scope"){
 
 			if($this->db->get_where("scope",array("user_id"=>$param2))->num_rows() > 0){
 
@@ -662,42 +664,38 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 			}
 
 
-			$page_data['message']  = get_phrase("success");
-			$page_data['user']  = $this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row();
-			$page_data['users']  = $this->db->get("user")->result_object();
-			if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
-				$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
-				$page_data['users']  = $this->db->get_where("user",array("country_id"=>$logged_user_country_id))->result_object();
-			}
-			echo $this->load->view('backend/'."account"."/".__FUNCTION__, $page_data,true);
-			exit;
+			$this->session->set_flashdata('flash_message',get_phrase("success"));
+			redirect(base_url()."account/manage_users/","refresh");
 		}
 
 
 		if($param1==='user_suspend'){
 
-      /**  Check current user auth **/
-
-      $current_auth = $this->db->get_where("user",array("user_id"=>$param2))->row()->auth;
-
-      /** Set success message **/
-      $message  = get_phrase('success');
-
-      if($current_auth  === '0'){
-        $data['auth'] = "1";
-				$this->db->where(array('user_id'=>$param2));
-
-				$this->db->update('user',$data);
-      } else {
-        $data['auth'] = "0";
-				$this->db->where(array('user_id'=>$param2));
-
-				$this->db->update('user',$data);
-
-      }
-
-      $this->session->set_flashdata('flash_message',$message);
-      redirect(base_url()."account/manage_users/","refresh");
+		      /**  Check current user auth **/
+		
+		      $current_auth = $this->db->get_where("user",array("user_id"=>$param2))->row()->auth;
+		
+		
+		      if($current_auth  === '0'){
+		        $data['auth'] = "1";
+						$this->db->where(array('user_id'=>$param2));
+		
+						$this->db->update('user',$data);
+						
+						/** Set success message **/
+		      			if($this->db->affected_rows() > 0 ) $msg = get_phrase('success');
+		      } else {
+		        $data['auth'] = "0";
+						$this->db->where(array('user_id'=>$param2));
+		
+						$this->db->update('user',$data);
+						
+						/** Set success message **/
+		      			if($this->db->affected_rows() > 0 ) $msg = get_phrase('success');
+		      }
+		
+		      $this->session->set_flashdata('flash_message',$msg);
+		      redirect(base_url()."account/manage_users/","refresh");
 		}
 
 
@@ -709,23 +707,51 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 
 				$this->db->delete('user');
 
-
-				$page_data['user']  = $this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row();
-				$page_data['users']  = $this->db->get("user")->result_object();
-				if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") === 'vote' ){
-					$logged_user_country_id = $this->session->country_id;//$this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row()->country_id;
-					$page_data['users']  = $this->db->get_where("user",array("country_id"=>$logged_user_country_id))->result_object();
-				}
-				echo $this->load->view('backend/'."account"."/".__FUNCTION__, $page_data,true);
-				exit;
+				if($this->db->affected_rows() > 0 ) $msg = get_phrase('success');
+				
+				$this->session->set_flashdata('flash_message',$msg);
+		      	redirect(base_url()."account/manage_users/","refresh");
 		}
-
-
+		
+		$this->db->where(array("country_id"=>$this->session->country_id));
+		$page_data['users']  = $this->db->get("user")->result_object();
+		
+		$user_scope_type = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id));
+		
+		if($user_scope_type->num_rows()>0){
+			$type = $user_scope_type->row()->type;
+			if($type == "admin" || $type == "both"){
+				$scope_country_ids = $this->crud_model->scope_countries($this->session->login_user_id,true);
+		
+				foreach($scope_country_ids as $country_ids){
+					$this->db->or_where(array("country_id"=>$country_ids));	
+				}	
+				$page_data['users']  = $this->db->get("user")->result_object();
+			}
+			
+		}
+		
+		
+		
+		$page_data['user']  = $this->db->get_where("user",array('user_id'=>$this->session->login_user_id))->row();
 		$page_data['view_type']  = "account";
-		$page_data['page_name']  = __FUNCTION__;
-        $page_data['page_title'] = get_phrase(__FUNCTION__);
+		$page_data['page_name']  = "manage_users";
+        $page_data['page_title'] = get_phrase("manage_users");
         $this->load->view('backend/index', $page_data);
 	}
+
+function authenticate_user_add(){
+	 $return_duplicate_false_tag = "0";
+	 
+	 if($this->input->post('field')){
+	 	$field = $this->input->post('field');
+	 	$value = $this->input->post('value');
+		$rec = $this->db->get_where("user",array($field=>$value));
+		$return_duplicate_false_tag = $rec->num_rows()> 0? "0":"1";
+	 }
+	 
+	 echo $return_duplicate_false_tag;
+}
 
 public function mail_templates(){
 		if ($this->session->userdata('user_login') != 1)
@@ -787,6 +813,43 @@ public function mail_templates(){
         $this->load->view('backend/index', $output);
 	}
 
+	function manage_profile($param1="",$param2=""){
+		if ($this->session->userdata('user_login') != 1)
+            redirect(base_url(), 'refresh');
+		
+		
+		
+		$page_data['user'] = $this->db->get_where("user",array("user_id"=>$this->session->login_user_id))->result_object();	
+		$page_data['view_type']  = "account";
+		$page_data['page_name']  = __FUNCTION__;
+        $page_data['page_title'] = get_phrase(__FUNCTION__);
+        $this->load->view('backend/index', $page_data);
+	}
+	
+	function edit_user_profile($param1=""){
+			
+			$data = array();
+			
+			$msg = get_phrase('no_changes_made');
+			
+			if(!preg_match('/^[a-f0-9]{32}$/', $this->input->post("password"))){
+				$data['password'] = md5($this->input->post("password"));
+			}
+			
+			if($this->db->get_where("user",array("user_id"=>$this->session->login_user_id))->row()->phone !== $this->input->post("phone")){
+				$data['phone'] = $this->input->post("phone");
+			}
+			
+			
+			if(count($data)>0){
+				$this->db->where(array("user_id"=>$this->session->login_user_id));
+				$this->db->update("user",$data);
+				$msg = get_phrase('update_successful');
+			}
+			
+			echo $msg;
+		}
+	
 	function mail_tags_readonly($value, $primary_key) {
 			$tags_array = explode(",", $value);
 			$tag_str = "";

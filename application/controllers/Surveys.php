@@ -127,20 +127,52 @@ class Surveys extends CI_Controller
 
 		/**Select Category Table**/
 		$crud->set_table('category');
+		
 
 		/** Set required fields **/
 		$crud->required_fields(array("name","description","visibility","grouping_id","assignment","unit","status"));
 
 		/** Related Tables to Category **/
-		$crud->set_relation('visibility','country','name');
+		//$crud->set_relation('visibility','country','name');
 		$crud->set_relation('grouping_id','grouping','name');
 		$crud->set_relation('assignment','contribution','name');
+		//$crud->set_relation('visibility','country','name');
 		$crud->set_relation('unit','unit','name');
-
+		
+		
+		/**Change Visibility Drop down field Based on Scope - Add Form**/
+		$user_scope_obj = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id));
+		if($user_scope_obj->num_rows()>0){
+			$scope_type = $user_scope_obj->row()->type;
+			if($scope_type!=="vote"){
+				$crud->where('visibility',$this->session->country_id);
+				$crud->or_where('visibility',1);
+					$countries  = $this->crud_model->scope_countries($this->session->login_user_id,true);
+						$country_names = array();
+						foreach($countries as $country){
+							$country_names[$country] = $this->db->get_where("country",array("country_id"=>$country))->row()->name;
+							if($country!=='1'){
+								$crud->or_where('visibility',$country);
+							}
+							
+						}
+						
+						$crud->field_type('visibility', 'dropdown',$country_names);
+						
+			}else{
+				$crud->where('visibility',$this->session->country_id);
+				$crud->field_type('visibility', 'dropdown',array($this->session->country_id=>$this->db->get_where('country',array("country_id"=>$this->session->country_id))->row()->name));			
+			}
+		}else{
+			$crud->field_type('visibility', 'dropdown',array($this->session->country_id=>$this->db->get_where('country',array("country_id"=>$this->session->country_id))->row()->name));			
+			/** Show only Categories of the countries user has a scope for **/
+			$crud->where('visibility',$this->session->country_id);
+		}
+		
+		
 		/** Populate Field Types **/
 		$crud->field_type('status', 'dropdown',array('0'=>"inactive","1"=>"active"));
-		//$crud->field_type('unit', 'dropdown',array('0'=>get_phrase("country"),"1"=>get_phrase("department"),"2"=>get_phrase("team"),"3"=>get_phrase("user")));
-
+		
 		/**Select Fields to Show in the Grid **/
 		$crud->columns('name','grouping_id','visibility','assignment',"unit",'has_votes','status');
 
@@ -157,16 +189,21 @@ class Surveys extends CI_Controller
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_category")) $crud->unset_edit();
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_category")) $crud->unset_delete();
 
-    /**Unset Text Editor**/
-    $crud->unset_texteditor(array('description','full_text'));
+    	/**Unset Text Editor**/
+    	$crud->unset_texteditor(array('description','full_text'));
 
 		/**Callbacks**/
 		$crud->callback_after_insert(array($this,'insert_audit_parameters'));
 		$crud->callback_after_update(array($this,'update_audit_parameters'));
 		$crud->callback_column("has_votes",function ($value,$row){
-        	return $this->db->get_where("tabulate",array("category_id"=>$row->category_id))->num_rows() > 0?get_phrase("yes"):get_phrase("no");
+			$this->db->join("result","result.result_id=tabulate.result_id");
+        	return $this->db->get_where("tabulate",array("category_id"=>$row->category_id,"country_id"=>$this->session->country_id))->num_rows() > 0?get_phrase("yes"):get_phrase("no");
     	});
-    $crud->callback_delete(array($this,"count_votes_on_category_delete"));
+		$crud->callback_column("visibility",function ($value,$row){
+        	return $this->db->get_where("country",array("country_id"=>$row->category_id,"country_id"=>$value))->row()->name;
+    	});
+    	
+    	$crud->callback_delete(array($this,"count_votes_on_category_delete"));
 
 
 
@@ -258,17 +295,17 @@ class Surveys extends CI_Controller
 		/** Populate Status/Allow User Edit Type **/
 		$crud->field_type('status', 'dropdown',array('0'=>"inactive","1"=>"active"));
     	$crud->field_type('allow_user_edit', 'dropdown',array('0'=>"no","1"=>"yes"));
-		$crud->field_type('unsubmitted_votes_action', 'dropdown',array('0'=>get_phrase('no_action'),"1"=>get_phrase('force_delete'),"2"=>get_phrase("force_submit")));
+		$crud->field_type('action_on_active_votes', 'dropdown',array('0'=>get_phrase('no_action'),"1"=>get_phrase('force_delete'),"2"=>get_phrase("force_submit")));
 
 		/**Select Fields to Show in the Grid **/
-		$crud->columns(array('start_date','end_date','country_id',"allow_user_edit","unsubmitted_votes_action",'votes','status'));
+		$crud->columns(array('start_date','end_date','country_id',"allow_user_edit","action_on_active_votes",'votes','status'));
 
 		/** Show add/edit fields**/
-		$crud->fields(array('start_date','end_date','allow_user_edit','unsubmitted_votes_action','status'));
+		$crud->fields(array('start_date','end_date','allow_user_edit','action_on_active_votes','status'));
 
 
 		/** Set required fields **/
-		$crud->required_fields(array('start_date','end_date','country_id','allow_user_edit','unsubmitted_votes_action','status'));
+		$crud->required_fields(array('start_date','end_date','country_id','allow_user_edit','action_on_active_votes','status'));
 
 		/** Set Field Label **/
 		$crud->display_as("country_id",get_phrase("country"));
@@ -282,7 +319,7 @@ class Surveys extends CI_Controller
     	$crud->callback_column('votes',array($this,'count_of_votes_survey'));
 
 		/** Assign Privileges **/
-		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"survey_status")) $crud->add_action(get_phrase('change_status'), '', '', 'ui-icon-shuffle',array($this,'change_survey_status'));
+		//if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"survey_status")) $crud->add_action(get_phrase('change_status'), '', '', 'ui-icon-shuffle',array($this,'change_survey_status'));
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_survey")) $crud->unset_add();
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_survey")) $crud->unset_edit();
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_survey")) $crud->unset_delete();
@@ -308,7 +345,7 @@ class Surveys extends CI_Controller
 	$unsubmitted_votes = $this->db->get_where("result",array("survey_id"=>$primary_key,"status"=>0))->num_rows();
 		
 	/** Unsubmitted Votes Action on Deactivate **/
-	$action = $survey->unsubmitted_votes_action;
+	$action = $survey->action_on_active_votes;
 	
 	if($survey->status === '1' && $unsubmitted_votes > 0){
 					
@@ -363,7 +400,32 @@ class Surveys extends CI_Controller
   }
 
   function count_of_votes_survey($value,$row){
-    	return $this->db->get_where("result",array("survey_id"=>$row->survey_id))->num_rows();
+  		
+		
+		$user_scope_obj = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id));
+		if($user_scope_obj->num_rows()>0){
+			$scope_type = $user_scope_obj->row()->type;
+			if($scope_type!=="vote"){
+				
+				//$this->db->or_where('country_id',1);
+					$countries  = $this->crud_model->scope_countries($this->session->login_user_id,true);
+
+						foreach($countries as $country){
+							
+							if($country!=='1'){
+								$this->db->or_where('country_id',$country);
+							}
+							
+						}
+						$this->db->where(array("survey_id"=>$row->survey_id));
+						$this->db->where('country_id',$this->session->country_id);
+						
+			}else{
+				$this->db->where('country_id',$this->session->country_id);
+			}
+		}
+		
+    	return $this->db->get("result")->num_rows();
   }
 
   function survey_check_on_delete($primary_key){
@@ -445,69 +507,105 @@ class Surveys extends CI_Controller
 *End of Survey settings feature
 */
 
-	public function votes($param1="",$param2="",$param3=""){
-		if ($this->session->userdata('user_login') != 1)
+	function votes(){
+	     if ($this->session->userdata('user_login') != 1)
             redirect(base_url(), 'refresh');
-
-		if ($this->session->userdata('user_login') != 1)
-            redirect(base_url(), 'refresh');
-
-		/**Instatiate CRUD**/
-		$crud = new grocery_CRUD();
-
-		/**Set theme to flexigrid**/
-		$crud->set_theme('flexigrid');//flexigrid
-
-
-		/** Grid Subject **/
-		$crud->set_subject(get_phrase('votes'));
-
-		/**Select Category Table**/
-		$crud->set_table('result');
-
-    /** Callbacks**/
-    $crud->callback_before_delete(array($this,'delete_result_tabulation'));
-
-		/** Populate Status Type **/
-		$crud->field_type('status', 'dropdown',array('0'=>"active","1"=>"submitted"));
-
-		/** User Freindly Label**/
-		$crud->display_as("user_id",get_phrase("voter_last_name"));
-
-		/** Related Tables to Category **/
-		//$crud->set_relation('survey_id','survey','start_date');
-		$crud->set_relation('user_id','user','{firstname} {lastname}');
-		$crud->set_relation('created_by','user','{firstname} {lastname}');
-		$crud->set_relation('last_modified_by','user','{firstname} {lastname}');
-		//$crud->set_relation('survey_id','survey','survey_id',array("status"=>1));
-
-
-		/** SET WHERE **/
-		$survey_id = 0;
-		$survey = $this->db->get_where("survey",array("status"=>"1"));
-		if($survey->num_rows() > 0){
-			$survey_id = $survey->row()->survey_id;
-		}
-		$crud->where('survey_id',$survey_id);
-
-		/** Assign Privileges **/
-		//if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_vote")) $crud->unset_add();
-		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_vote")) $crud->unset_edit();
-		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_vote")) $crud->unset_delete();
-		$crud->unset_add();
-		/** Show in Edit or Add form**/
-		//$crud->columns('survey_id','user_id','status');
-		$crud->add_fields('survey_id','user_id','status');
-		$crud->edit_fields('status');
-
-
-		$output = $crud->render();
-		$page_data['view_type']  = "surveys";
-		$page_data['page_name']  = __FUNCTION__;
-        $page_data['page_title'] = get_phrase(__FUNCTION__);
-		$output = array_merge($page_data,(array)$output);
-        $this->load->view('backend/index', $output);
+		
+		//$countries  = $this->crud_model->scope_countries($this->session->login_user_id,true);
+		$this->db->join('survey','survey.survey_id=result.survey_id');
+		$this->db->join('country','country.country_id=result.country_id');
+		$this->db->select(array('country.name','count("userid") as count','result.status'));
+		$this->db->group_by('result.country_id,result.status');
+		$results_raw = $this->db->get_where('result',array('survey.status'=>1))->result_object();
+			
+		$results = array();
+		
+		foreach($results_raw as $row){
+			$status = 'active';
+			if($row->status == 1){
+				$status = 'submitted';
+			}
+			$results[$row->name][$status] = $row->count;
+		}	
+		
+		$page_data['results'] = $results;	
+        $page_data['page_name']  = "votes";
+        $page_data['view_type']  = "surveys";
+        $page_data['page_title'] = get_phrase('votes_summary');
+        $this->load->view('backend/index', $page_data);	
 	}
+
+	// public function votes($param1="",$param2="",$param3=""){
+		// if ($this->session->userdata('user_login') != 1)
+            // redirect(base_url(), 'refresh');
+// 
+		// /**Instatiate CRUD**/
+		// $crud = new grocery_CRUD();
+// 
+		// /**Set theme to flexigrid**/
+		// $crud->set_theme('flexigrid');//flexigrid
+// 
+// 
+		// /** Grid Subject **/
+		// $crud->set_subject(get_phrase('votes'));
+// 
+		// /**Select Category Table**/
+		// $crud->set_table('result');
+		// //$crud->set_relation("country_id", "country", "name");
+		// /** Use only the user resident country - Only show votes cast for the country or with user admin scope**/		
+		// $user_scope_obj = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id));
+		// if($user_scope_obj->num_rows() > 0){
+			// $scope_type = $user_scope_obj->row()->type;
+			// if($scope_type!=="vote"){
+					// $countries  = $this->crud_model->scope_countries($this->session->login_user_id,true);
+					// $crud->where('country_id',$this->session->country_id);
+						// foreach($countries as $country){
+// 							
+							// if($country!=='1'){
+								// $crud->or_where('country_id',$country);
+							// }
+// 							
+						// }
+// 						
+			// }
+// 			
+		// }else{
+			// $crud->where('country_id',$this->session->country_id);
+		// }
+		// //$crud->set_relation("country_id", "country", "name");
+// 		
+		// /** SET WHERE **/
+		// $survey_id = 0;
+		// $survey = $this->db->get_where("survey",array("status"=>"1"));
+		// if($survey->num_rows() > 0) $survey_id = $survey->row()->survey_id;
+		// $crud->where('survey_id',$survey_id);
+// 		
+		// /** Callbacks**/
+    	// $crud->callback_before_delete(array($this,'delete_result_tabulation'));
+// 
+		// /** Populate Status Type **/
+		// $crud->field_type('status', 'dropdown',array('0'=>"active","1"=>"submitted"));
+// 		
+		// /** Assign Privileges **/
+		// if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"edit_vote")) $crud->unset_edit();
+		// if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"delete_vote")) $crud->unset_delete();
+		// $crud->unset_add();
+// 		
+// 		
+// 		
+		// /** Show in Edit or Add form**/
+		// $crud->columns('user_id','country_id','status');
+		// $crud->add_fields('survey_id','user_id','status');
+		// $crud->edit_fields('status');
+// 		
+// 
+		// $output = $crud->render();
+		// $page_data['view_type']  = "surveys";
+		// $page_data['page_name']  = __FUNCTION__;
+        // $page_data['page_title'] = get_phrase(__FUNCTION__);
+		// $output = array_merge($page_data,(array)$output);
+        // $this->load->view('backend/index', $output);
+	// }
 
   function delete_result_tabulation($primary_key){
     /** Count Tabulated results **/
@@ -526,9 +624,11 @@ class Surveys extends CI_Controller
 
 
 		$msg = get_phrase("success");
-
+		
+		$survey = $this->db->get_where("survey",array("status"=>"1"));
+		
 		if($param1=="start_nomination"){
-			$survey = $this->db->get_where("survey",array("status"=>"1"));
+			
 
 			$result = $this->db->get_where("result",array("survey_id"=>$survey->row()->survey_id,"user_id"=>$param2));
 
@@ -536,6 +636,7 @@ class Surveys extends CI_Controller
 			if($result->num_rows() === 0){
 				$data['survey_id'] = $survey->row()->survey_id;
 				$data['user_id'] = $param2;
+				$data['country_id'] = $this->db->get_where("user",array("user_id"=>$param2))->row()->country_id;
 				$data['status'] = "0";
 				$data['created_date'] = date("Y-m-d h:i:s");
 				$data['created_by'] = $param2;
@@ -577,35 +678,21 @@ class Surveys extends CI_Controller
 
     }
 
-		$user = $this->db->get_where("user",array("user_id"=>$this->session->login_user_id))->row();
-		$role = $this->db->get_where("role",array("role_id"=>$user->role_id))->row();
-		$contribution = $role->contribution;
-
-		$groupings =  $this->db->get_where("grouping",array("status"=>'1'))->result_object();
-
-		$grouped_categories = array();
-
-		$user_scope = $this->crud_model->scope_countries($this->session->login_user_id,true);
-
-		foreach($groupings as $grouping){
-			$categories = $this->crud_model->categories_in_grouping($grouping->grouping_id,$this->session->login_user_id,$contribution);
-
-			if(sizeof($categories) > 0){
-				foreach($categories as $category){
-					$grouped_categories[$grouping->grouping_id][] = $category;
-				}
-			}
-		}
+		$contribution = $this->session->staff_position;
+		
+		$categories = $this->crud_model->categories_in_grouping($this->session->login_user_id,$contribution);
 
 		$page_data['results']  = array();
-		if($this->db->get_where("result",array("user_id"=>$this->session->login_user_id,"status"=>'0'))->num_rows() > 0){
-			$current_survey = $this->db->get_where("result",array("user_id"=>$this->session->login_user_id,"status"=>'0'))->row();
-			$page_data['results'] = $this->db->get_where("tabulate",array("result_id"=>$current_survey->result_id))->result_object();
+		$results_of_current_survey_obj = $this->db->get_where("result",array("user_id"=>$this->session->login_user_id,"status"=>'0'));
+		if($results_of_current_survey_obj->num_rows() > 0){
+			$this->db->join('result','result.result_id=tabulate.result_id');
+			
+			$page_data['results'] = $this->db->get_where("tabulate",
+			array("tabulate.result_id"=>$results_of_current_survey_obj->row()->result_id))
+			->result_object();
 		}
 
-		$page_data['groupings'] =(OBJECT) $grouped_categories;
-		$page_data['user'] = $user;
-		$page_data['role'] = $role;
+		$page_data['groupings'] =(OBJECT) $categories;
 		$page_data['contribution'] = $contribution;
 		$page_data['view_type']  = "surveys";
 		$page_data['page_name']  = __FUNCTION__;
@@ -620,6 +707,7 @@ class Surveys extends CI_Controller
 
 		$data['result_id'] = $result->result_id;
 		$data['category_id'] = $category_id;
+		//$data['country_id'] = $this->db->get_where("user",array("user_id"=>$voting_user_id))->row()->country_id;
 		$data['nominated_unit'] = $category->unit;
 		$data['nominee_id'] = $nominee_id;
 		$data['created_by'] = $voting_user_id;
@@ -641,15 +729,17 @@ class Surveys extends CI_Controller
 		$user_id = $_POST['user_id'];
 
 		$data['comment'] = $comment;
-
+		
 		$result = $this->db->get_where("result",array("user_id"=>$user_id,"status"=>0))->row();
 		$category = $this->db->get_where("category",array("category_id"=>$category_id))->row();
 
 		if($this->db->get_where("tabulate",array("result_id"=>$result->result_id,"category_id"=>$category_id))->num_rows() > 0){
-			//$tabulate_id = $this->db->get_where("tabulate",array("result_id"=>$result->result_id,"category_id"=>$category_id))->row()->tabulate_id;
 			$this->db->where(array("result_id"=>$result->result_id,"category_id"=>$category_id));
 			$this->db->update("tabulate",$data);
-
+		}else{
+			$this->post_nomination_choice($category_id,0,$user_id);
+			$this->db->where(array("result_id"=>$result->result_id,"category_id"=>$category_id));
+			$this->db->update("tabulate",$data);
 		}
 
 	}
@@ -669,12 +759,12 @@ class Surveys extends CI_Controller
 			if(isset($_POST['country_id'])){
 				$this->db->join("user","user.user_id=result.user_id");
 				$this->db->join("tabulate","tabulate.result_id=result.result_id");
-				$results = $this->db->get_where("result",array("survey_id"=>$survey->survey_id,"country_id"=>$_POST['country_id']))->result_object();
+				$results = $this->db->get_where("result",array("survey_id"=>$param1,"result.country_id"=>$_POST['country_id']))->result_object();
 			}else{
 				$this->db->join("user","user.user_id=result.user_id");
 				$this->db->join("tabulate","tabulate.result_id=result.result_id");
-				//$this->db->where($this->crud_model->country_scope_where($this->session->login_user_id,'admin'));
-				$this->db->where(array("survey_id"=>$survey->survey_id,"country_id"=>$this->session->country_id));
+					//$this->db->where($this->crud_model->country_scope_where($this->session->login_user_id,'admin'));
+				$this->db->where(array("survey_id"=>$param1,"result.country_id"=>$this->session->country_id));
 				$results = $this->db->get("result")->result_object();
 			}
 			

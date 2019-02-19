@@ -65,14 +65,24 @@ class Login extends CI_Controller {
         if ($query->num_rows() > 0) {
 			
 		    $row = $query->row();
-			$role = $this->db->get_where("role",array("role_id"=>$row->role_id))->row()->name;
+			$role = $this->db->get_where("role",array("role_id"=>$row->role_id))->row();
 			
 		    $this->session->set_userdata('user_login', '1');
 		    $this->session->set_userdata('login_user_id', $row->user_id);
 		    $this->session->set_userdata('name', $row->firstname);
-			$this->session->set_userdata('login_type', $role);	
+			$this->session->set_userdata('login_type', $role->name);
+			$this->session->set_userdata('role_name', $role->name);	
 			$this->session->set_userdata('profile_id', $row->profile_id);	
-			$this->session->set_userdata('country_id', $row->country_id);				
+			$this->session->set_userdata('country_id', $row->country_id);	
+			$this->session->set_userdata('role_id', $row->role_id);	
+			$this->session->set_userdata('staff_position', $role->contribution);
+			
+			// $scope = $this->db->get_where("scope",array("user_id"=>$row->user_id));
+// 			
+			// $this->session->set_userdata('two_way', $scope->two_way);
+			// $this->session->set_userdata('scope_type', $scope->type);
+			
+						
             return 'success';
         }
 
@@ -114,7 +124,7 @@ class Login extends CI_Controller {
 
         // send new password to user email  
         //$this->email_model->password_reset_email($new_password , $email);
-        //$this->email_model->manage_account_email($query->row()->user_id,"password_reset",$new_password);
+        $this->email_model->manage_account_email($query->row()->user_id,"password_reset",$new_password);
 
         $resp['submitted_data'] = $_POST;
 
