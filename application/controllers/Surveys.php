@@ -19,6 +19,7 @@ class Surveys extends CI_Controller
 		parent::__construct();
 		$this->load->database();
         $this->load->library('session');
+		$this->load->helper('create_html_tag');
 
 		/** System Feature Session Tag **/
 		$this->session->set_userdata('view_type', "surveys");
@@ -682,20 +683,21 @@ class Surveys extends CI_Controller
 		
 		$categories = $this->crud_model->categories_in_grouping($this->session->login_user_id,$contribution);
 
-		$page_data['results']  = array();
-		$results_of_current_survey_obj = $this->db->get_where("result",array("user_id"=>$this->session->login_user_id,"status"=>'0'));
-		if($results_of_current_survey_obj->num_rows() > 0){
-			$this->db->join('result','result.result_id=tabulate.result_id');
-			
-			$page_data['results'] = $this->db->get_where("tabulate",
-			array("tabulate.result_id"=>$results_of_current_survey_obj->row()->result_id))
-			->result_object();
-		}
+		$page_data['controller_nominees']  = array();
+		
+		$this->db->join('result','result.result_id=tabulate.result_id');
+		$nominees_before_voting_object =  $this->db->get_where("tabulate",
+			array("result.user_id"=>$this->session->login_user_id,"result.status"=>'0'));
 
-		$page_data['groupings'] =(OBJECT) $categories;
+		
+		if($nominees_before_voting_object->num_rows() > 0){
+			$page_data['controller_nominees'] = $nominees_before_voting_object->result_object();
+		}
+		
+		$page_data['controller_groupings'] =(OBJECT) $categories;
 		$page_data['contribution'] = $contribution;
-		$page_data['view_type']  = "surveys";
-		$page_data['page_name']  = __FUNCTION__;
+		$page_data['view_type']  = lcfirst(__CLASS__);// Returns the name of the class
+		$page_data['page_name']  = __FUNCTION__; //Return the name of the method
         $page_data['page_title'] = get_phrase(__FUNCTION__);
         $this->load->view('backend/index', $page_data);
 	}

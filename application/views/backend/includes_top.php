@@ -18,6 +18,10 @@
 		<!--Bootstrap JS CDNs-->
 		<script src="<?php echo base_url();?>assets/js/bootstrap.js"></script>
 		
+		<!--Bootstrap Select-->
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/css/bootstrap-select.min.css"/>
+   		<link rel="stylesheet" href="<?php echo base_url();?>assets/css/ajax-bootstrap-select.css"/>
+		
 		<!--Datatables Buttons JS CDNs-->
 		<script src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
 		<script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.flash.min.js"></script>
@@ -39,11 +43,6 @@
 <link rel="stylesheet" href="<?php echo base_url();?>assets/css/custom.css">
 
 <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-
-
-<script src="<?php echo base_url();?>assets/js/accounting.min.js"></script>
-
-<link rel="stylesheet" href="<?php echo base_url();?>assets/css/columns.css">
 
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.3.1/css/buttons.dataTables.min.css">
 

@@ -9,7 +9,7 @@
         <!-- Language Selector -->			
            <li class="dropdown language-selector">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-close-others="true">
-                        	<i class="entypo-user"></i> <?php echo ucfirst($this->session->userdata('name')).' - '.ucfirst($this->session->userdata('login_type'));?> (<?php echo $this->crud_model->get_type_name_by_id("profile", $this->session->profile_id);?>) - <?=get_phrase("user_id");?>: <?=$this->session->login_user_id;?> 
+                        	<i class="entypo-user"></i> <?php echo ucfirst($this->session->name).' - '.ucfirst($this->session->login_type);?> (<?php echo $this->session->profile_name;?>) - <?=get_phrase("user_id");?>: <?=$this->session->login_user_id;?> 
                     </a>
 
 				
@@ -37,8 +37,31 @@
 			</li>
         </ul>
         
+   
         
-		<ul class="list-inline links-list pull-right">
+		<ul class="list-inline  pull-right">
+			<!-- <li>
+				<i class="entypo-lock"></i> <?=get_phrase('change_password');?>
+			</li> -->
+			
+			 <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-close-others="true">
+                        <i class="entypo-lock"></i> <?=get_phrase('change_password');?>
+                    </a>
+
+				
+				<ul class="dropdown-menu <?php if ($text_align == 'right-to-left') echo 'pull-right'; else echo 'pull-left';?>">
+					<li>
+						<a href="<?php echo base_url();?>account/manage_profile">
+                        	<i class="entypo-info"></i>
+							<span><?php echo get_phrase('edit_profile');?></span>
+						</a>
+					</li>
+
+				</ul>
+				
+				
+			</li>
 			
 			<!-- Language Selector--> 			
            <li class="dropdown language-selector">

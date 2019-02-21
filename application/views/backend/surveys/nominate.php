@@ -5,15 +5,19 @@
  * If the user is not found in this object, then he/she is restricted to 
  * vote or be voted in his/her country, He/has no ability to administrate 
  * outside his country.
+ * 
+ * It determines the users you can vote for outside your country of residence if you exists 
+ * in the scope table. With two way == 1 you can vote and be vote by the other country users whereas if 0, then 
+ * you can only be voted by other country users but you can't vote for them.
+ * 
  */
-
-$scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id));
+$scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id,'two_way'=>1));
 
 ?>
 
 <div class="row">
 
-	<div class="col-sm-10">
+	<div class="col-sm-12">
 		
 		<?php
 			/**
@@ -106,232 +110,107 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 				?>
 
 				<!-- Show nomination table if a vote has not been submitted -->
-
-					<table class="table">
-						<thead>
-
-						</thead>
-						<tbody>
-							<?php foreach($groupings as $grouping_id=>$categories){?>
-									<tr>
-										<td colspan="6" style="background-color:#F5F5F5;font-weight: bolder;text-align: center;">
-											<?=$this->crud_model->get_type_name_by_id("grouping",$grouping_id);?>
-										</td>
-									</tr>
-									<tr style="font-style: italic;">
-										<td><?=get_phrase("category");?></td>
-										<td><?=get_phrase("assignment");?></td>
-										<td><?=get_phrase("visibility");?></td>
-										<td><?=get_phrase("unit");?></td>
-										<td><?=get_phrase("nominate_unit");?></td>
-										<td><?=get_phrase("comment");?></td>
-									</tr>
-
-									<?php
-										/** Populate nominating Units Select form control. Derived from the static table Unit**/
-										foreach($categories as $category){
-											//Get the table name of the units to nominate Ex. User/ Staff, Department, Team or Country
-											$unit_table_name = $this->db->get_where("unit",array("unit_id"=>$category->unit))->row()->name;
-
-											/** Set country scope filter if a user has scope set **/
-
-											if($scope->num_rows() >0 ){
-												//Condition string to be used in a query where clause 
-												$cond = $this->crud_model->country_scope_where($this->session->login_user_id,$scope->row()->type);
-											}
-
-
-											/** Add Unit filter controls here - Start **/
-
-											if($unit_table_name === "user"){
-												/** User Filters Set here
-												 *
-												 * Users cannot nominate themselves
-												 * Cannot vote inactive users
-												 * Users can only nominate users in the country and those assigned to the countries with Scope type of Both or Vote and Two Way set to Yes
-												 * Users can nominate other country staff if have a scope of either Two Way set as yes or no and Type set as Voting.
-												 *
-												 * **/
-
-												 /**
-												  * Prevent listing yourself to the moninate unit dropdown and Inactive Users
-												  * Filter users from other countries with the current user country within their scope and of type not equal to admin and scope two way set as yes
-												  * Show scoped users only for categories with visibility set as All i.e. 1
-												  * **/
-
-												 /** Set Manager User List here. Find managers categories (assignemnt == 2 ) 
-												  * and then set users as the nominees fot the manager**/
-												if($category->assignment == '2'){
-													/** Only show staff that are managed by the current user for categories that 
-													 * require managers contribution **/
-													$this->db->where(array("manager_id"=>$this->session->login_user_id));
-												}else{
-													/** List all staff for the country and those with scope to the country for voting **/
-													 $cond2 = "user_id != ".$this->session->login_user_id." AND auth = 1";
-													if($category->visibility === '1'){
-														$user_ids_query = $this->crud_model->users_with_country_scope_for_voting($this->session->country_id);
-														if($user_ids_query !==""){
-															$cond2 = $user_ids_query." or ".$cond2;
-														}
-
-													}
-													$this->db->order_by("country_id,firstname");
-													$this->db->where($cond2);
-												}
-
-												 /** Prevent listing users from other countries if the current logged user have no scope set**/
-
-												 if($scope->num_rows() > 0){
-												 	/** Check if the Scope allows Voting i.e. Not Admin type. Allow voting other country staff if scope type is not admin **/
-												 	if($scope->row()->type == "admin"){
-												 		$this->db->where(array("country_id"=>$this->session->country_id));
-												 	}else{
-												 		/** Filter in all countries the current user has a voting scope for but for categories with all countries visibility**/
-												 		if($category->visibility === '1'){
-												 			$this->db->where($cond);
-												 		}else{
-												 			$this->db->where(array("country_id"=>$this->session->country_id));
-												 		}
-
-												 	}
-
-												 }else{
-												 	$this->db->where(array("country_id"=>$this->session->country_id));
-												 }
-
-
-											}
-
-											if($unit_table_name === "team"){
-												/** Team Filters Set here
-												 * A user can only nominate a team from his or her residence country
-												 * A user is not allowed to nominate teams the belong to
-												 *
-												 * **/
-
-
-												 /** Only list the current users country teams **/
-												 	$cond4 = " country_id = ".$this->session->country_id;
-													if($this->crud_model->user_teams_to_vote($this->session->login_user_id) !==""){
-														$cond4 = $this->crud_model->user_teams_to_vote($this->session->login_user_id);
-													}
-
-													$this->db->order_by("name");
-												 	$this->db->where($cond4);
-
-
-											}
-
-											if($unit_table_name === "department"){
-												/** Department Filters Set here**/
-													$user_department_id = $this->db->get_where("role",array("role_id"=>$this->session->role_id))->row()->department_id;
-													$this->db->order_by("name");
-													$this->db->where(array("department_id<>"=>$user_department_id));
-											}
-
-											 /** Add Unit filter controls here - End **/
-
-											$units = $this->db->get($unit_table_name)->result_object();
-
-											$options ='<select class="form-control nominate validate" id="'.$category->category_id.'">';
-											//if() $options .="<optgroup label='".$this->crud_model->get_type_name_by_id("country",$unit->country_id)."'";
-											$options .='<option value="0">'.get_phrase("no_viable_option").'</option>';
-
-											if(count($results) > 0){
-												$select_none_viable = "";
-
-
-													foreach($units as $unit){
-
-														$options_html = "";
-															if($unit_table_name === "user"){
-																$options_html = $unit->firstname.' '.$unit->lastname.' ['.$this->crud_model->get_type_name_by_id("country",$unit->country_id).']';
-															}else{
-																$options_html = $unit->name;
-															}
-														$val = $unit_table_name;
-														$id = $unit_table_name.'_id';
-														$show_choice = "";
-														$selected = "";
-														foreach($results as $result){
-															if($category->category_id === $result->category_id){
-																$unit_trace = $this->db->get_where("unit",array("unit_id"=>$result->nominated_unit))->row()->name;
-
-																if($unit_trace === $unit_table_name && $result->nominee_id !== '0'){
-																	$show_choice = $this->db->get_where($unit_table_name,array($id=>$result->nominee_id))->row()->$id;
-
-																}elseif($unit_trace === $unit_table_name && $result->nominee_id === '0') {
-																	$show_choice = '0';
-																	$select_none_viable ="selected='selected'";
-
+					<div class="row">
+						<div class="col-xs-12">
+							
+						<div class="panel-group" id="accordion-test">
+						<?php 
+							$grouping_cnt = 0;
+							foreach($controller_groupings as $grouping_id=>$categories){
+						?>
+							<div class="panel panel-success">
+								<div class="panel-heading">
+									<h4 class="panel-title">
+										<a class="btn btn-icon btn-block" data-toggle="collapse" data-parent="#accordion-test" href="#collapse_<?=$grouping_id;?>">
+											<i class="fa fa-<?=$this->crud_model->get_type_name_by_id("grouping",$grouping_id,'fa-icon');?>"></i> 
+											 <?=$this->crud_model->get_type_name_by_id("grouping",$grouping_id);?>
+										</a>
+									</h4>
+								</div>
+								
+								<div id="collapse_<?=$grouping_id;?>" class="panel-collapse collapse <?php if($grouping_cnt == 0) echo "in";?>">
+									<div class="panel-body">
+										<table class="table table-striped">
+											<thead>
+												<tr style="font-style: italic;">
+													<th><?=get_phrase("category");?></th>
+													<th><?=get_phrase("visibility");?></th>
+													<th><?=get_phrase("nominate_unit");?></th>
+													<th><?=get_phrase("comment");?></th>
+												</tr>
+											</thead>
+											<tbody>
+												<?php
+													/** Populate nominating Units Select form control. Derived from the static table Unit**/
+													foreach($categories as $category){
+														//Get the table name of the units to nominate Ex. User/ Staff, Department, Team or Country
+														$unit_table_name = $this->db->get_where("unit",array("unit_id"=>$category->unit))->row()->name;
+														
+														//Get potential nominees
+														$potential_nominees = $this->crud_model->list_potential_nominees_per_category($unit_table_name,$category);
+														
+														//Create a potential nominees select tag
+														$units_select_tag = select_tag($unit_table_name,$category,$potential_nominees,$controller_nominees);
+												?>	
+														<tr>
+															<td>
+																<a href="#" data-html="true" data-toggle="tooltip" title="<?=$category->description;?>">
+																	<?=$category->name;?>
+																</a>
+															</td>
+															<td><?=$this->crud_model->get_type_name_by_id("country",$category->visibility);?></td>
+															<td><?=$units_select_tag;?></td>
+															<?php
+																/**
+																 * Loops $controller_nominees as it populates the comments of the nominees
+																 */
+																$comment = "";
+																if(count($controller_nominees) > 0){
+																	foreach($controller_nominees as $nominee){
+																		if($nominee->category_id === $category->category_id){
+																			$comment .= $nominee->comment;
+																			break;
+																		}
+																		
+																	}
 																}
-
-															}
-														}
-
-
-														if($show_choice === $unit->$id ){
-															$selected ="selected='selected'";
-														}
-
-														$options .= '<option value="'.$unit->$id.'" '.$selected.'>'.$options_html.'</option>';
-
-
+															?>
+															<td>
+																<textarea readonly="readonly" id="comment_<?=$category->category_id;?>" 
+																	class="form-control validate comment" 
+																placeholder="<?=get_phrase("comment_here")?>"><?=$comment;?></textarea>
+															</td>
+														</tr>	
+												<?php	
 													}
-													$options .='<option value="0" '.$select_none_viable.'>'.get_phrase("no_viable_option").'</option>';
-												}else{
-
-													foreach($units as $unit){
-														$options_html = "";
-															if($unit_table_name === "user"){
-																$options_html = $unit->firstname.' '.$unit->lastname.' ['.$this->crud_model->get_type_name_by_id("country",$unit->country_id).']';
-															}else{
-																$options_html = $unit->name;
-															}
-														$val = $unit_table_name;
-														$id = $unit_table_name.'_id';
-
-														$options .= '<option value="'.$unit->$id.'">'.$options_html.'</option>';
-
-													}
-
-														$options .='<option value="0">'.get_phrase("no_viable_option").'</option>';
-												}
-											$options .="</select>";
-
-									?>
-
-										<tr>
-											<td>
-												<a href="#" data-html="true" data-toggle="tooltip" title="<?=$category->description;?>"><?=$category->name;?></a>
-											</td>
-											<td><?=$this->crud_model->get_type_name_by_id("contribution",$category->assignment);?></td>
-											<td><?=$this->crud_model->get_type_name_by_id("country",$category->visibility);?></td>
-											<td><?=ucfirst($unit_table_name);?></td>
-											<td><?=$options;?></td>
-											<?php
-												$comment = "";
-												if(count($results) > 0){
-													foreach($results as $result){
-														if($result->category_id === $category->category_id){
-															$comment = $result->comment;
-														}
-													}
-												}
-											?>
-											<td><textarea readonly="readonly" id="comment_<?=$category->category_id;?>" class="form-control validate comment" placeholder="<?=get_phrase("comment_here")?>"><?=$comment;?></textarea></td>
-										</tr>
-									<?php
-										}
-									?>
-
-							<?php }?>
-
-							<tr>
-								<td colspan="6" style="text-align: center;"><button id="submit_vote"  class="btn btn-success btn-icon"><i class="fa fa-star"></i><?=get_phrase("submit");?></button></td>
-							</tr>
-						</tbody>
-					</table>
+												?>
+												
+											</tbody>
+										</table>
+									</div>
+								</div>
+								
+							</div>
+							
+						<?php
+							$grouping_cnt++;
+						}
+						?>	
+						</div>
+					
+							
+						</div>
+					</div>
+							
+					<div class="row">
+						<div class='col-xs-12' style="text-align: center;">
+								<button id="submit_vote"  class="btn btn-success btn-icon">
+									<i class="fa fa-star"></i><?=get_phrase("submit_vote");?>
+								</button>
+						</div>
+					</div>
+						
+					
 		<?php
 				}
 			}
@@ -339,42 +218,40 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 		}
 		?>
 	</div>
-
-
-
-	<div class="col-sm-2">
-		<div class="row">
-			<div style="text-align: center;font-style: italic;font-weight: bold;" class="col-sm-12"><?=get_phrase("your_voting_privileges");?></div>
+</div>
+	
+	<hr />
+	
+	<div class="row">
+		<div class="col-sm-12">
+			<div style="text-align: center;font-style: italic;font-weight: bold;" class="col-sm-12">
+				<?=get_phrase("your_voting_privileges");?>
+			</div>
 		</div>
-		<hr/>
-		<div class="row">
+	</div>
+	
+	<hr />
+	
+	<div class="row">
+		<div class="col-sm-6">
 			<div style="text-decoration: underline;font-weight: bold;" class="col-sm-12"><?=get_phrase("contribution");?>:</div>
 
-
+			<!--Return user role, position, department and profile name -->
 			<div class="col-sm-12"><span style="font-weight: bold;"><?=get_phrase("role");?>:</span> <?=$this->session->role_name;?></div>
-			<div class="col-sm-12"><span style="font-weight: bold;"><?=get_phrase("position");?>:</span> <?=$this->db->get_where("contribution",array("contribution_id"=>$this->session->staff_position))->row()->name;?></div>
-			<div class="col-sm-12"><span style="font-weight: bold;"><?=get_phrase("department");?>:</span> <?=$this->db->get_where("department",array("department_id"=>$this->db->get_where("role",array("role_id"=>$this->session->role_id))->row()->department_id))->row()->name;;?></div>
-				<?php
-						$team_array = array();
-						$teamset = $this->db->get_where("teamset",array("user_id"=>$this->session->login_user_id))->result_object();
-						foreach($teamset as $team){
-							$team_array[] = $this->db->get_where("team",array("team_id"=>$team->team_id))->row()->name;
-						}
-
-						$team_str = implode(",", $team_array);
-
-						if($team_str==""){
-							$team_str = get_phrase("not_set");
-						}
-						//echo $team_str;
-				?>
-				<div class="col-sm-12"><span style="font-weight: bold;"><?=get_phrase("teams");?>:</span> <?=$team_str;?></div>
-		</div>
-		<hr/>
-		<div class="row">
-			<div style="text-decoration: underline;" class="col-sm-12"><?=get_phrase("scope");?>:</div>
+			<div class="col-sm-12"><span style="font-weight: bold;"><?=get_phrase("position");?>:</span> <?=ucfirst($this->session->staff_position_name);?></div>
+			<div class="col-sm-12"><span style="font-weight: bold;"><?=get_phrase("department");?>:</span> <?=$this->session->department_name;?></div>
+			<div class="col-sm-12"><span style="font-weight: bold;"><?=get_phrase("user_profile");?>:</span> <?=$this->session->profile_name;?></div>
+			<div class="col-sm-12">
+					<span style="font-weight: bold;"><?=get_phrase("teams");?>:</span> 
+					<!--List name of special teams for a logged in user -->
+					<?=$this->crud_model->get_team_name_of_the_logged_in_user();?>
+			</div>
+		</div>	
+	
+		<div class="col-sm-6">
+			<div style="text-decoration: underline;font-weight: bold;" class="col-sm-12"><?=get_phrase("scope");?>:</div>
+		
 			<?php
-
 
 				if($scope->num_rows() > 0 ){
 			?>
@@ -383,28 +260,24 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 			<div class="col-sm-12"><span style="font-weight: bold;"><?=get_phrase("type");?>: </span> <?=ucfirst($scope->row()->type);?></div>
 
 			<div class="col-sm-12"><span style="font-weight: bold;"><?=get_phrase("countries");?>:</span>
-				<?php
-					$countries  = $this->crud_model->scope_countries($this->session->login_user_id,true);
-					$country_names = array();
-					foreach($countries as $country){
-						$country_names[] = $this->db->get_where("country",array("country_id"=>$country))->row()->name;
-					}
-					echo implode(",", $country_names);
-				?>
+				<?=$this->crud_model->get_scope_countries_names_of_logged_in_user();?>
 			</div>
 
 			<?php
 				}
 			?>
 
-			<div class="col-sm-12"><span style="font-weight: bold;"><?=get_phrase("your_country");?>:</span> <?=$this->crud_model->get_type_name_by_id("country",$this->session->country_id);?>
+			<div class="col-sm-12">
+				<span style="font-weight: bold;"><?=get_phrase("your_country");?>:</span> <?=$this->session->country_name;?>
+			</div>	
 		</div>
-		<hr/>
+
 	</div>
-</div>
 
 <script>
+
 $(document).ready(function(){
+	
 	$.each($(".nominate"),function(i,el){
 			if($(el).val() == "0"){
 				$("#comment_"+$(el).attr("id")).val("No viable option");
@@ -420,7 +293,7 @@ $(document).ready(function(){
 
 	$("#submit_vote").click(function(ev){
 
-		var req_validate = $(".validate");
+		var req_validate = $(".comment");
 		var cnt = 0;
 
 		$.each(req_validate,function(i,el){
@@ -501,4 +374,7 @@ $(document).ready(function(){
 
 	});
 
+
+
+    //$('select').trigger('change');
 </script>

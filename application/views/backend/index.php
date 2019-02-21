@@ -25,7 +25,7 @@
 	<?php include 'privileges.php';?>
 </head>
 <body class="page-body <?php if ($skin_colour != '') echo 'skin-' . $skin_colour;?> page-fade-only">
-	<div class="page-container <?php if ($text_align == 'right-to-left') echo 'right-sidebar';?>" >
+	<div class="page-container sidebar-collapsed <?php if ($text_align == 'right-to-left') echo 'right-sidebar';?>" >
 		<?php include 'navigation.php';?>	
 		<div class="main-content">
 		
@@ -35,7 +35,7 @@
 				       <i class="entypo-right-circled"></i> 
 							<?php echo $page_title;?>
 				    </h3>
-				    
+				<hr />
 				<div class="page-content">	
 		           <!--Showing Progress GIF. Must be available in evert form-->
 					<div class="inner-progress"><?=$message;?></div>

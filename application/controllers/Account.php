@@ -499,7 +499,27 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 
 		return true;
 	}
-
+	
+	function add_new_user(){
+		if ($this->session->userdata('user_login') != 1)
+            redirect(base_url(), 'refresh');
+		
+		$page_data['view_type']  =  lcfirst(__CLASS__);
+		$page_data['page_name']  = __FUNCTION__;
+        $page_data['page_title'] = get_phrase(__FUNCTION__);
+        $this->load->view('backend/index', $page_data);
+	}
+	
+	function edit_user($user_id = ""){
+		if ($this->session->userdata('user_login') != 1)
+            redirect(base_url(), 'refresh');
+		
+		$page_data['user_id'] = $user_id;
+		$page_data['view_type']  =  __CLASS__;
+		$page_data['page_name']  = __FUNCTION__;
+        $page_data['page_title'] = get_phrase(__FUNCTION__);
+        $this->load->view('backend/index', $page_data);		
+	}
 
   	/** MANAGE USER INFORMATION **/
 	public function manage_users($param1="",$param2="",$param3=""){

@@ -167,3 +167,8 @@
         </div>
     </div>
     
+    <!--Bootstrap select intitialization-->
+
+	<script>
+		$('.selectpicker').selectpicker();		
+	</script>

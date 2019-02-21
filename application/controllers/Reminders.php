@@ -1,4 +1,6 @@
-<?php class Reminders extends CI_Controller {
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class Reminders extends CI_Controller {
 	public function __construct() {
 		parent::__construct(); 
 		$this->load->database();
@@ -41,14 +43,24 @@
 		
 		if($cron_times->num_rows() > 0){
 			foreach($cron_times->result_object() as $cron){
-				if($cron->days_to_closure == $days_to_go){
-					$this->email_model->manage_account_email($user_id,$cron->template_trigger,true);
+				
+				if($cron->days_to_closure == $days_to_go || $cron->days_to_closure  == 0){
+					
+					if($cron->notify_based_on_vote_not_submitted == 0){
+						$this->email_model->manage_account_email($user_id,$cron->template_trigger,true);
+					}else{
+						$check_unsubmitted_vote = $this->db->get_where('result',
+						array('user_id'=>$user_id,'survey_id'=>$active_survey_obj->row()->survey_id,'status'=>0));
+						
+						if($check_unsubmitted_vote->num_rows() > 0){
+							$this->email_model->manage_account_email($user_id,$cron->template_trigger,true);
+						}
+					}
+					
 				}
+				
 			}
 		}
-
-		//$this->email_model->manage_account_email($user_id,$template_trigger,true);
-		
 		
  	}
   	

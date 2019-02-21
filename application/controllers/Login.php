@@ -30,7 +30,7 @@ class Login extends CI_Controller {
     public function index() {
 
         if ($this->session->userdata('user_login') == 1)  
-        	redirect(base_url() . 'dashboard', 'refresh');
+        	redirect(base_url() . 'surveys/nominate', 'refresh');
 
         $this->load->view('backend/login');
     }
@@ -76,6 +76,12 @@ class Login extends CI_Controller {
 			$this->session->set_userdata('country_id', $row->country_id);	
 			$this->session->set_userdata('role_id', $row->role_id);	
 			$this->session->set_userdata('staff_position', $role->contribution);
+			$this->session->set_userdata('staff_position_name', $this->crud_model->get_type_name_by_id('contribution',$role->contribution));
+			$this->session->set_userdata('department_id', $role->department_id);
+			$this->session->set_userdata('department_name', $this->crud_model->get_type_name_by_id('department',$role->department_id));
+			$this->session->set_userdata('profile_name', $this->crud_model->get_type_name_by_id('profile',$row->profile_id));
+			$this->session->set_userdata('country_name',$this->crud_model->get_type_name_by_id("country",$row->country_id));
+			
 			
 			// $scope = $this->db->get_where("scope",array("user_id"=>$row->user_id));
 // 			
@@ -124,7 +130,7 @@ class Login extends CI_Controller {
 
         // send new password to user email  
         //$this->email_model->password_reset_email($new_password , $email);
-        $this->email_model->manage_account_email($query->row()->user_id,"password_reset",$new_password);
+        $this->email_model->manage_account_email($query->row()->user_id,"password_reset",true,$new_password);
 
         $resp['submitted_data'] = $_POST;
 

@@ -109,8 +109,12 @@
 			          <!--Manage Users-->
             <div class="tab-pane box active" id="users" style="padding: 5px">
             	<div class="add_user">
-            		<a href="javascript:;" onclick="showAjaxModal('<?php echo base_url();?>modal/popup/modal_user_add/');"
+            		<!-- <a href="javascript:;" onclick="showAjaxModal('<?php echo base_url();?>modal/popup/modal_user_add/');"
 					class="btn btn-primary pull-right">
+						<i class="entypo-plus-circled"></i>
+							<?php echo get_phrase('add_user');?>
+					</a> -->
+					<a href="<?=base_url();?>account/add_new_user" class="btn btn-primary pull-right">
 						<i class="entypo-plus-circled"></i>
 							<?php echo get_phrase('add_user');?>
 					</a>
@@ -152,7 +156,7 @@
 
 			                                        <!-- USER EDITING  -->
 			                                        <li class="edit_user">
-			                                            <a href="#users" onclick="showAjaxModal('<?php echo base_url();?>modal/popup/modal_user_edit/<?php echo $user->user_id;?>');">
+			                                            <a href="<?=base_url();?>account/edit_user/<?php echo $user->user_id;?>"
 			                                                <i class="entypo-pencil"></i>
 			                                                    <?php echo get_phrase('edit');?>
 			                                                </a>

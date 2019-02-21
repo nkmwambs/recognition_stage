@@ -28,7 +28,7 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('gender');?></label>
                                 <div class="col-sm-5">
-                                    <select class="form-control select2" name="gender" required="required">
+                                    <select class="form-control selectpicker"  data-live-search="true" name="gender" required="required">
                                     	<option value=""><?=get_phrase("select");?></option>
                                     	<option value="male"><?=get_phrase("male");?></option>
                                     	<option value="female"><?=get_phrase("female");?></option>
@@ -39,7 +39,7 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('email');?></label>
                                 <div class="col-sm-5">
-                                    <input type="text"  class="form-control" name="email" id="email" required="required" placeholder="<?=get_phrase("email");?>"/>
+                                    <input type="email"  class="form-control" name="email" id="email" required="required" placeholder="<?=get_phrase("email");?>"/>
                                 </div>
                             </div>
                             
@@ -64,7 +64,7 @@
                                 <div class="col-sm-5">
                                 	<?php if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") !== 'vote' ){?>
                             
-                                    <select class="form-control select2" name="country_id" id="country_id" required="required">
+                                    <select class="form-control selectpicker" data-live-search="true" name="country_id" id="country_id" required="required">
                                     	<option value=""><?=get_phrase("select");?></option>
                                     	<?php
                                     	
@@ -105,7 +105,7 @@
                                     		$roles = $this->crud_model->get_results_by_id("role");
 											//print_r($roles);
 									?>		
-                                    <select class="form-control select2" name="role_id"  required="required">
+                                    <select class="form-control selectpicker" data-live-search="true" name="role_id"  required="required">
                                     	<option value=""><?=get_phrase("select");?></option>
                                     	<?php
 
@@ -122,7 +122,7 @@
                              <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('manager');?></label>
                                 <div class="col-sm-5">
-                                    <select class="form-control select2" name="manager_id"  required="required">
+                                    <select class="form-control selectpicker" data-live-search="true" name="manager_id"  required="required">
                                     	<option value="0"><?=get_phrase("not_set");?></option>
                                     	<?php 
                                     		$this->db->join("role","role.role_id=user.role_id");
@@ -140,7 +140,7 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('profile');?></label>
                                 <div class="col-sm-5">
-                                    <select class="form-control select2" name="profile_id" required="required">
+                                    <select class="form-control selectpicker" data-live-search="true" name="profile_id" required="required">
                                     	<option value=""><?=get_phrase("select");?></option>
                                     	<?php
                                     		$profiles = $this->db->get_where("profile",array("assignable"=>1))->result_object();
@@ -181,6 +181,10 @@
 
 
 <script>
+
+//$(document).ready(function(){
+	$('.selectpicker').selectpicker();
+//});
 
 $("#email,#phone,#employee_id").change(function(){
 	authenticate_user_add($(this));
@@ -229,5 +233,6 @@ $("#country_id").change(function(){
 		}
 	});
 });
+
 
 </script>

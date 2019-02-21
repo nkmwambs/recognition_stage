@@ -222,46 +222,46 @@ class Crud_model extends CI_Model {
 	}
 	
 	function user_teams_to_vote($user_id=""){
+		
+		/**
+		 * A sub query string to get teams of the logged in user
+		 */
+		$logged_in_user_teams_sub_query = " team.team_id NOT IN (SELECT team_id FROM teamset WHERE user_id = $user_id)";
+		
+		/**
+		 * Object returning teams in a country but not associated to the logged in user
+		 */
+		$this->db->select(array('user_id','team.team_id'));
+		$this->db->join('teamset','teamset.team_id=team.team_id');
+		$this->db->group_by('team.team_id');
+		$this->db->where($logged_in_user_teams_sub_query);
+		$country_teams = $this->db->get_where("team",
+		array("team.country_id"=>$this->session->country_id,"teamset.user_id<>"=>$user_id));
+
+		/**
+		 * Building an array of team_ids and use them to build a where clause query string
+		 */
+		$team_ids_array = array();
 		$scope_cond = "";
-		$user_country = $this->db->get_where("user",array("user_id"=>$user_id))->row()->country_id;
-		
-		$team_ids = array();
-		
-		if($this->db->get_where("teamset",array("user_id<>"=>$user_id))->num_rows() > 0){
-		
-			$country_teams = $this->db->get_where("team",array("country_id"=>$user_country));
 			
 			if($country_teams->num_rows() > 0){
 				
-				foreach($country_teams->result_object() as $team){
-					
-					if($this->db->get_where("teamset",array("user_id"=>$user_id,"team_id"=>$team->team_id))->num_rows() === 0){
-						$team_ids[] = $team->team_id;
-					}
-				}
-				
+					$team_ids_array = array_column($country_teams->result_array(), "team_id");// Array of team_ids
+
+					$scope_cond .= '(';
+					$cnt = 1;
+						foreach($team_ids_array as $team_id){
+							if($cnt === count($team_ids_array)){
+								$scope_cond  .= "team_id = ".$team_id.")";
+							}elseif($cnt !== count($team_ids_array)){
+								$scope_cond  .= "team_id = ".$team_id." or ";	
+							}
+																		
+						$cnt++;
+					}				
 				
 			}
 			
-			
-			$scope_cond .= '(';
-			$cnt = 1;
-				foreach($team_ids as $team_id){
-					// $this->db->where(array("country_id"=>$country_id));
-					if($cnt === count($team_ids)){
-						$scope_cond  .= "team_id = ".$team_id.")";
-					}elseif($cnt === 1 && $cnt !== count($team_ids)){
-						$scope_cond  .= "team_id = ".$team_id." or ";	
-					}else{
-						$scope_cond  .= "team_id = ".$team_id." or ";
-					}
-																
-				$cnt++;
-			}
-															
-		 $scope_cond .= '';
-			
-		}
 		return $scope_cond;	
 	} 
 	
@@ -281,7 +281,7 @@ class Crud_model extends CI_Model {
 		$this->db->join('user','user.user_id=scope.user_id'); 
 		$this->db->join('scope_country','scope_country.scope_id=scope.scope_id');
 		$user_ids = $this->db->get_where("scope",array("scope_country.country_id"=>$country_id,
-		"two_way"=>1,"type<>"=>"admin",'user.auth'=>1))->result_object();
+		"type<>"=>"admin",'user.auth'=>1))->result_object();
 		
 		/**
 		 * Loop the users as you build query string 
@@ -507,5 +507,206 @@ class Crud_model extends CI_Model {
 		
 		return in_array($privilege, $user_previledges) ? true : false; 
 
+	}
+	
+	/**
+	 * list_potential_nominees_per_category: Lists users/Teams/department depending on the category table 
+	 * unit field
+	 * @param String $unit_table_name 
+	 * @param Object $category
+	 * @return Object - Holds potential_nominees
+	 */
+	
+	function list_potential_nominees_per_category($unit_table_name,$category){
+		$scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id,'two_way'=>1));
+		
+
+		/** Set country scope filter if a user has scope set **/
+
+		if($scope->num_rows() >0 ){
+			//Condition string to be used in a query where clause 
+			$cond = $this->crud_model->country_scope_where($this->session->login_user_id,$scope->row()->type);
+		}
+
+		/** Add Unit filter controls here - Start 
+		 * The below if block sets the where conditions to determine the users to be 
+		 * listed in  the dropdown in the GUI 
+		 * **/
+
+		if($unit_table_name === "user"){
+					/** User Filters Set here
+												 *
+												 * Users cannot nominate themselves
+												 * Cannot vote inactive users
+												 * Users can only nominate users in the country and those assigned to the countries with Scope type of Both or Vote and Two Way set to Yes
+												 * Users can nominate other country staff if have a scope of either Two Way set as yes or no and Type set as Voting.
+												 *
+												 * **/
+
+												 /**
+												  * Prevent listing yourself to the moninate unit dropdown and Inactive Users
+												  * Filter users from other countries with the current user country within their scope and of type not equal to admin and scope two way set as yes
+												  * Show scoped users only for categories with visibility set as All i.e. 1
+												  * **/
+
+												 /** Set Manager User List here. Find managers categories (assignemnt == 2 ) 
+												  * and then set users as the nominees fot the manager**/
+												if($category->assignment == '2'){
+													/** Only show staff that are managed by the current user for categories that 
+													 * require managers contribution **/
+													$this->db->where(array("manager_id"=>$this->session->login_user_id));
+												}else{
+													/** List all staff for the country and those with scope to the country for voting **/
+													 $cond2 = "user_id != ".$this->session->login_user_id." AND auth = 1";
+													if($category->visibility === '1'){
+														$user_ids_query = $this->crud_model->users_with_country_scope_for_voting($this->session->country_id);
+														if($user_ids_query !==""){
+															$cond2 = $user_ids_query." or ".$cond2;
+														}
+
+													}
+													$this->db->order_by("country_id,firstname");
+													$this->db->where($cond2);
+												}
+
+												 /** Prevent listing users from other countries if the current logged user have scope set**/
+
+												 if($scope->num_rows() > 0){
+												 	$this->db->where($cond);
+
+												 }else{
+												 	$this->db->where(array("country_id"=>$this->session->country_id));
+												 }
+												
+
+											}
+
+											if($unit_table_name === "team"){
+												/** Team Filters Set here
+												 * A user can only nominate a team from his or her residence country
+												 * A user is not allowed to nominate teams the belong to
+												 *
+												 * **/
+
+
+												 /** Only list the current users country teams **/
+												 
+												 /**
+												  * If a user do not belong to any team, then get all the special teams 
+												  * in the country of residence.
+												  */
+												 	$special_team_query_string = " country_id = ".$this->session->country_id;
+													$model_team_query_string = $this->crud_model->user_teams_to_vote($this->session->login_user_id);
+													if( $model_team_query_string !==""){
+														$special_team_query_string = $model_team_query_string;
+													}
+
+													$this->db->order_by("name");
+												 	$this->db->where($special_team_query_string);
+
+
+											}
+
+											if($unit_table_name === "department"){
+												/** Department Filters Set here**/
+													$user_department_id = $this->db->get_where("role",array("role_id"=>$this->session->role_id))->row()->department_id;
+													$this->db->order_by("name");
+													$this->db->where(array("department_id<>"=>$user_department_id));
+											}
+
+											 /** Add Unit filter controls here - End **/
+
+											
+				return $this->db->get($unit_table_name)->result_object();
+	}
+
+	function nomination_units_select_field($unit_table_name,$category,$units,$results){
+		$options ='<select class="form-control nominate validate" id="'.$category->category_id.'">';
+											
+			$options .='<option value="0">'.get_phrase("no_viable_option").'</option>';
+
+			if(count($results) > 0){
+					$select_none_viable = "";
+						foreach($units as $unit){
+							$options_html = "";
+								if($unit_table_name === "user"){
+									$options_html = $unit->firstname.' '.$unit->lastname.' ['.$this->crud_model->get_type_name_by_id("country",$unit->country_id).']';
+								}else{
+									$options_html = $unit->name;
+								}
+	
+								$val = $unit_table_name;
+								$id = $unit_table_name.'_id';
+								$show_choice = "";
+								$selected = "";
+	
+								foreach($results as $result){
+									if($category->category_id === $result->category_id){
+										$unit_trace = $this->crud_model->get_type_name_by_id('unit',$result->nominated_unit);
+											if($unit_trace === $unit_table_name && $result->nominee_id !== '0'){
+												$show_choice = $this->crud_model->get_type_name_by_id($unit_table_name,$result->nominee_id,$id);
+											}elseif($unit_trace === $unit_table_name && $result->nominee_id === '0') {
+												$show_choice = '0';
+												$select_none_viable ="selected='selected'";
+											}
+									}
+								}
+
+								if($show_choice === $unit->$id ){
+									$selected ="selected='selected'";
+								}
+
+								$options .= '<option value="'.$unit->$id.'" '.$selected.'>'.$options_html.'</option>';
+							}
+							
+							$options .='<option value="0" '.$select_none_viable.'>'.get_phrase("no_viable_option").'</option>';
+					}else{
+
+						foreach($units as $unit){
+							$options_html = "";
+								if($unit_table_name === "user"){
+									$options_html = $unit->firstname.' '.$unit->lastname.' ['.$this->crud_model->get_type_name_by_id("country",$unit->country_id).']';
+								}else{
+									$options_html = $unit->name;
+								}
+					
+							$val = $unit_table_name;
+							$id = $unit_table_name.'_id';
+							$options .= '<option value="'.$unit->$id.'">'.$options_html.'</option>';
+
+						}
+
+						$options .='<option value="0">'.get_phrase("no_viable_option").'</option>';
+					}
+			$options .="</select>";
+											
+			return $options;								
+	}
+
+	function get_team_name_of_the_logged_in_user(){
+		$team_str = get_phrase("not_set");
+		$this->db->join('teamset','teamset.team_id=team.team_id');
+		$teamset = $this->db->get_where("team",array("user_id"=>$this->session->login_user_id));
+
+						
+		if($teamset->num_rows() > 0){
+				$team_str = implode(',',array_column($teamset->result_array(), 'name'));
+		}
+		
+		return $team_str;
+	}
+	
+	function get_scope_countries_names_of_logged_in_user(){
+		$country_string = "";
+		$this->db->select('country.name');
+		$this->db->join('country','country.country_id=scope_country.country_id');
+		$this->db->join('scope','scope.scope_id=scope_country.scope_id');
+		$countries = $this->db->get_where("scope_country",array("scope.user_id"=>$this->session->login_user_id));
+					
+		if($countries->num_rows() > 0){
+			$country_string = implode(",", array_column($countries->result_array(), 'name'));
+		}
+					
+		return $country_string;	
 	}
 }

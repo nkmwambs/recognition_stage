@@ -1,5 +1,5 @@
 <?php 
-$edit_data		=	$this->db->get_where('user' , array('user_id' => $param2) )->result_object();
+$edit_data		=	$this->db->get_where('user' , array('user_id' => $user_id) )->result_object();
 //print_r($edit_data);
 foreach ( $edit_data as $row):
 ?>
@@ -14,7 +14,7 @@ foreach ( $edit_data as $row):
             	</div>
             </div>
 			<div class="panel-body">
-                    <?php echo form_open(base_url() . 'account/manage_users/edit_user/'.$param2.'/#users' , array('id'=> 'frm_edit_user',  'class' => 'form-horizontal form-groups-bordered validate','target'=>'_top', 'enctype' => 'multipart/form-data'));?>
+                    <?php echo form_open(base_url() . 'account/manage_users/edit_user/'.$user_id.'/#users' , array('id'=> 'frm_edit_user',  'class' => 'form-horizontal form-groups-bordered validate','target'=>'_top', 'enctype' => 'multipart/form-data'));?>
                                                             
                             <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('first_name');?></label>
@@ -33,7 +33,7 @@ foreach ( $edit_data as $row):
                             <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('gender');?></label>
                                 <div class="col-sm-5">
-                                    <select class="form-control selectpicker" name="gender">
+                                    <select class="form-control selectpicker" data-live-search="true" name="gender">
                                     	<option><?=get_phrase("select");?></option>
                                     	<option value="male" <?php if($row->gender === "male") echo "selected";?>><?=get_phrase("male");?></option>
                                     	<option value="female" <?php if($row->gender === "female") echo "selected";?>><?=get_phrase("female");?></option>
@@ -41,10 +41,10 @@ foreach ( $edit_data as $row):
                                 </div>
                             </div>
                             
-                            <div class="form-group <?php if($this->session->login_user_id === $param2) echo "self_update";?>">
+                            <div class="form-group <?php if($this->session->login_user_id === $user_id) echo "self_update";?>">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('email');?></label>
                                 <div class="col-sm-5">
-                                    <input type="text"  class="form-control" value="<?=$row->email;?>" name="email" required="required" placeholder="<?=get_phrase("email");?>"/>
+                                    <input type="mail"  class="form-control" value="<?=$row->email;?>" name="email" required="required" placeholder="<?=get_phrase("email");?>"/>
                                 </div>
                             </div>
                             
@@ -67,7 +67,7 @@ foreach ( $edit_data as $row):
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('country');?></label>
                                 <div class="col-sm-5">
                                 	 <?php if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") !== 'vote' ){?>
-                                    <select class="form-control selectpicker" name="country_id">
+                                    <select class="form-control selectpicker" data-live-search="true" name="country_id">
                                     	<option><?=get_phrase("select");?></option>
                                     	<?php
                                     		$countries = $this->crud_model->get_results_by_id("country");
@@ -87,10 +87,10 @@ foreach ( $edit_data as $row):
                             </div>
                             
                             
-                            <div class="form-group <?php if($this->session->login_user_id === $param2) echo "self_update";?>">
+                            <div class="form-group <?php if($this->session->login_user_id === $user_id) echo "self_update";?>">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('role');?></label>
                                 <div class="col-sm-5">
-                                    <select class="form-control selectpicker" name="role_id">
+                                    <select class="form-control selectpicker" data-live-search="true" name="role_id">
                                     	<option><?=get_phrase("select");?></option>
                                     	<?php
                                     		$roles = $this->db->get("role")->result_object();
@@ -108,7 +108,7 @@ foreach ( $edit_data as $row):
                             <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('manager');?></label>
                                 <div class="col-sm-5">
-                                    <select class="form-control selectpicker" name="manager_id">
+                                    <select class="form-control selectpicker" data-live-search="true" name="manager_id">
                                     	<option value="0"><?=get_phrase("select");?></option>
                                     	<?php 
                                     		$this->db->join("role","role.role_id=user.role_id");
@@ -123,10 +123,10 @@ foreach ( $edit_data as $row):
                                 </div>
                             </div>
                             
-                            <div class="form-group <?php if($this->session->login_user_id === $param2) echo "self_update";?>">
+                            <div class="form-group <?php if($this->session->login_user_id === $user_id) echo "self_update";?>">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('profile');?></label>
                                 <div class="col-sm-5">
-                                    <select class="form-control selectpicker" name="profile_id">
+                                    <select class="form-control selectpicker" data-live-search="true" name="profile_id">
                                     	<option><?=get_phrase("select");?></option>
                                     	<?php
                                     		$profiles = $this->crud_model->get_results_by_id("profile");
