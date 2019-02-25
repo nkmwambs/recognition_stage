@@ -746,32 +746,59 @@ class Surveys extends CI_Controller
 
 	}
 
-	public function survey_results($param1="",$param2="",$param3=""){
+	public function survey_results($survey_id="",$param2=""){
 		if ($this->session->userdata('user_login') != 1)
             redirect(base_url(), 'refresh');
 
-		if($param1=="") redirect(base_url().'surveys/survey_setting', 'refresh');
+		if($survey_id=="") redirect(base_url().'surveys/survey_setting', 'refresh');
 		
 		$survey = array();
-		$survey_arr = $this->db->get_where("survey",array("survey_id"=>$param1));
+		$survey_arr = $this->db->get_where("survey",array("survey_id"=>$survey_id));
 		$results = array();
+		$set_default_country = $this->session->country_id;
+		$set_default_unit = 0; // Select all
 		
 		if($survey_arr->num_rows() > 0){
 			$survey = $survey_arr->row();
-			if(isset($_POST['country_id'])){
-				$this->db->join("user","user.user_id=result.user_id");
-				$this->db->join("tabulate","tabulate.result_id=result.result_id");
-				$results = $this->db->get_where("result",array("survey_id"=>$param1,"result.country_id"=>$_POST['country_id']))->result_object();
+			
+			// $this->db->join("user","user.user_id=result.user_id");
+			// $this->db->join("tabulate","tabulate.result_id=result.result_id");
+			// $this->db->where(array("survey_id"=>$survey_id,"result.country_id"=>$set_default_country));
+			// $results = $this->db->get("result")->result_object();	
+			
+			if($this->input->post('country_id')){
+					
+				$set_default_country = $this->input->post('country_id');
+				
+				$this->db->where(array("survey_id"=>$survey_id,"result.country_id"=>$set_default_country));
+
 			}else{
+				$this->db->where(array("survey_id"=>$survey_id,"result.country_id"=>$set_default_country));
+			}
+				
+			if($this->input->post('unit_id')){
+				$set_default_unit = $this->input->post('unit_id');
+				
+				$this->db->where(array("survey_id"=>$survey_id));
+				
+				if ($_POST['unit_id'] != 0) $this->db->where(array("tabulate.nominated_unit "=>$set_default_unit));
+				
+			}
+			
+							
 				$this->db->join("user","user.user_id=result.user_id");
 				$this->db->join("tabulate","tabulate.result_id=result.result_id");
-					//$this->db->where($this->crud_model->country_scope_where($this->session->login_user_id,'admin'));
-				$this->db->where(array("survey_id"=>$param1,"result.country_id"=>$this->session->country_id));
-				$results = $this->db->get("result")->result_object();
-			}
+				$results = $this->db->get_where("result")->result_object();
 			
 		}
 
+		//Check the scope the logged in user
+		$user_scope = $this->crud_model->scope_countries($this->session->login_user_id);
+		
+		$page_data['user_has_scope'] = count($user_scope)>0?true:false;
+		$page_data['default_unit'] = $set_default_unit;
+		$page_data['default_country'] = $set_default_country;
+		$page_data['units'] = $this->db->order_by('unit_id','DESC')->get_where('unit',array('unit_id>'=>1))->result_object();
 		$page_data['results']  =  $results;
 		$page_data['survey']  =  $survey;
 		$page_data['view_type']  = "surveys";

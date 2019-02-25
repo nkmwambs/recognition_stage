@@ -13,38 +13,61 @@ if(count($results)>0){
             </div>
 			<div class="panel-body">
 				
+			<div class="row">
 				
-				<form action="<?=base_url();?>surveys/survey_results/<?=$results[0]->survey_id;?>/search" method="POST">
-					
-				<div class="row">
-					<div class="col-sm-2">
-						<span><?=get_phrase("select_country");?></span>
-					</div>
-					<div class="col-sm-8">
-						<select class="form-control" id="" name="country_id">
-							<option value=""><?=get_phrase("select");?></option>
-							<?php
-								$this->db->where($this->crud_model->country_scope_where($this->session->login_user_id));
-								$countries = $this->db->get("country");
-								if($countries->num_rows() > 0 ){
-									foreach($countries->result_object() as $country){
-							?>
-									<option value="<?=$country->country_id;?>"><?=$country->name;?></option>	
-							<?php
+				
+				<!-- <form action="<?=base_url();?>surveys/survey_results/<?=$results[0]->survey_id;?>/search" method="POST"> -->					
+				<?php echo form_open(base_url() . 'surveys/survey_results/'.$results[0]->survey_id , array('id'=> 'frm_search',  'class' => 'form-vertical form-groups-bordered validate','target'=>'_top', 'enctype' => 'multipart/form-data'));?>
+					<div class="form-group">
+						
+						<label class="control-label col-xs-2"><?=get_phrase('results_filters');?></label>
+						<?php
+							if($user_has_scope){
+						?>
+						<div class="col-xs-4">
+							<select class="form-control" id="" name="country_id">
+								<option value="0"><?=get_phrase("select_all_countries");?></option>
+								<?php
+									$this->db->where($this->crud_model->country_scope_where($this->session->login_user_id));
+									$countries = $this->db->get("country");
+									if($countries->num_rows() > 0 ){
+										foreach($countries->result_object() as $country){
+								?>
+										<option value="<?=$country->country_id;?>" <?php if($default_country == $country->country_id) echo 'selected'; ?>><?=$country->name;?></option>	
+								<?php
+										}
 									}
-								}
-							?>
-						</select>
+								?>
+							</select>
+						</div>
+						<?php
+							}
+						?>
+					
+						
+						<div class="col-xs-4">
+							<select class="form-control" id="" name="unit_id">
+								<option value="0"><?=get_phrase('select_all_units');?></option>
+								<?php
+									foreach($units as $unit){
+								?>
+									<option value="<?=$unit->unit_id;?>" <?php if($default_unit == $unit->unit_id) echo "selected"; ?>><?=ucfirst($unit->name);?></option>
+								<?php
+									}
+								?>
+							</select>
+						</div>
+					
+					
+					<div class="col-xs-2">
+						<button class="btn btn-default"><?=get_phrase('search');?></button>
 					</div>
 					
-					<div class="col-sm-2">
-						<button type="submit" class="btn btn-default"><?=get_phrase('search');?></button>
-					</div>
-				</div>
-				
+					</div>	
 				</form>
 				
-				
+				</div>
+		
 				<hr />
 				
 				<table class="table table-striped" id="table_export">
