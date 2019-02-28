@@ -1,6 +1,4 @@
-<?php
-if(count($results)>0){
-?>
+
 <div class="row">
 	
 	<div class="col-md-12">
@@ -17,14 +15,14 @@ if(count($results)>0){
 				
 				
 				<!-- <form action="<?=base_url();?>surveys/survey_results/<?=$results[0]->survey_id;?>/search" method="POST"> -->					
-				<?php echo form_open(base_url() . 'surveys/survey_results/'.$results[0]->survey_id , array('id'=> 'frm_search',  'class' => 'form-vertical form-groups-bordered validate','target'=>'_top', 'enctype' => 'multipart/form-data'));?>
+				<?php echo form_open(base_url() . 'surveys/survey_results/'.$survey_id , array('id'=> 'frm_search',  'class' => 'form-vertical form-groups-bordered validate','target'=>'_top', 'enctype' => 'multipart/form-data'));?>
 					<div class="form-group">
 						
 						<label class="control-label col-xs-2"><?=get_phrase('results_filters');?></label>
 						<?php
 							if($user_has_scope){
 						?>
-						<div class="col-xs-4">
+						<div class="col-xs-2">
 							<select class="form-control" id="" name="country_id">
 								<option value="0"><?=get_phrase("select_all_countries");?></option>
 								<?php
@@ -45,13 +43,49 @@ if(count($results)>0){
 						?>
 					
 						
-						<div class="col-xs-4">
+						<div class="col-xs-2">
 							<select class="form-control" id="" name="unit_id">
 								<option value="0"><?=get_phrase('select_all_units');?></option>
 								<?php
 									foreach($units as $unit){
 								?>
-									<option value="<?=$unit->unit_id;?>" <?php if($default_unit == $unit->unit_id) echo "selected"; ?>><?=ucfirst($unit->name);?></option>
+									<option value="<?=$unit->unit_id;?>" <?php if($default_unit_id == $unit->unit_id) echo "selected"; ?>><?=ucfirst($unit->name);?></option>
+								<?php
+									}
+								?>
+							</select>
+						</div>
+						
+						<div class="col-xs-2">
+							<select class="form-control" id="" name="contribution_id">
+								<option value="0"><?=get_phrase('select_all_voters');?></option>
+								<?php
+									foreach($staff_positions as $staff_position){
+								?>
+									<option value="<?=$staff_position->contribution_id;?>" <?php if($default_staff_position_id == $staff_position->contribution_id) echo "selected"; ?>><?=ucfirst($staff_position->name);?></option>
+								<?php
+									}
+								?>
+							</select>
+						</div>
+						
+						<div class="col-xs-2">
+							<select class="form-control" id="" name="category_id">
+								<option value="0"><?=get_phrase('select_all_categories');?></option>
+								<?php
+									foreach($all_categories as $grouping_name=>$categories){
+								?>
+									
+									<optgroup label="<?=$grouping_name;?>">
+										<?php
+											foreach($categories as $category){
+										?>
+											<option value="<?=$category->category_id;?>" <?php if($default_category_id == $category->category_id ) echo "selected"; ?> ><?=$category->name;?></option>
+										<?php
+											}
+										?>
+									</optgroup>
+									
 								<?php
 									}
 								?>
@@ -70,7 +104,7 @@ if(count($results)>0){
 		
 				<hr />
 				
-				<table class="table table-striped" id="table_export">
+				<table class="table table-striped datatable" id="table_export">
 					<thead>
 						<tr>
 							<!-- <th><?=get_phrase("voter_staff_number");?></th>
@@ -91,7 +125,7 @@ if(count($results)>0){
 					
 					<tbody>
 						<?php 
-							if(count($results) > 0){
+							//if(count($results) > 0){
 							foreach($results as $result){
 								
 						?>
@@ -131,11 +165,6 @@ if(count($results)>0){
 							</tr>
 				
 						<?php 
-							}
-							}else{
-						?>	
-							<tr><td colspan="10"><?=get_phrase("no_data_found");?></td></tr>		
-						<?php		
 							}	
 						?>			
 					</tbody>
@@ -147,23 +176,7 @@ if(count($results)>0){
 	</div>
 </div>		
 
-<?php
-}else{
-?>	
-<div class="row">
-	<div class="col-sm-12">
-		<a href="<?=base_url();?>surveys/survey_setting" class="btn btn-default"><?=get_phrase("back");?></a>
-	</div>	
-</div>
-<hr />
-<div class="row">
-	<div class="col-sm-12">
-		<div class="well"><?=get_phrase("no_results_found");?></div>
-	</div>
-</div>
-<?php	
-}
-?>
+
 
 <script>
 	$(document).ready(function(){

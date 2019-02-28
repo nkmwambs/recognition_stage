@@ -314,7 +314,7 @@ class Crud_model extends CI_Model {
 	 * ex. Staff Category, Manager Recognition group
 	 */
 
-	function categories_in_grouping($user_id="",$staff_position=""){
+	function categories_in_grouping($user_id="",$staff_position="",$use_grouping_name = false){
 		
 		$show_categories = array();
 		
@@ -323,17 +323,20 @@ class Crud_model extends CI_Model {
 		/**
 		 * A Where condintion string to be used in the db query
 		 */	
-		$condition_string = " status = 1 AND visibility IN (1,$user_country)";	
+		$condition_string = " category.status = 1 AND category.visibility IN (1,$user_country)";	
 								
 		/**
 		 * Appends staff position to Where condintion string where the user is a staff
 		 */
 		if($staff_position == 1){
-			$condition_string .= " AND assignment = $staff_position";				
+			$condition_string .= " AND category.assignment = $staff_position";				
 		}
 		
 		//A query to return categories	
 		$this->db->where($condition_string);
+		$this->db->select(array('category_id','category.name','category.description',
+		'category.grouping_id','category.visibility','category.assignment','category.unit','category.status','grouping.name as grouping_name'));
+		$this->db->join('grouping','grouping.grouping_id=category.grouping_id');
 		$categories = $this->db->get("category"); 
 		
 		/**
@@ -342,9 +345,16 @@ class Crud_model extends CI_Model {
 
 		if($categories->num_rows() > 0){
 			//Get categories grouped in groups ex. Staff Categories
-			foreach($categories->result_object() as $category){
-				$show_categories[$category->grouping_id][] = $category;
+			if($use_grouping_name){
+				foreach($categories->result_object() as $category){
+					$show_categories[$category->grouping_name][] = $category;
+				}
+			}else{
+				foreach($categories->result_object() as $category){
+					$show_categories[$category->grouping_id][] = $category;
+				}
 			}
+			
 		}
 	
 		return $show_categories;

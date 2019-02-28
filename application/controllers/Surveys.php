@@ -27,6 +27,8 @@ class Surveys extends CI_Controller
        /*cache control*/
 		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
 		$this->output->set_header('Pragma: no-cache');
+		
+		if($this->session->first_login_attempt) redirect(base_url() . 'account/manage_profile', 'refresh');
 
     }
 
@@ -709,7 +711,6 @@ class Surveys extends CI_Controller
 
 		$data['result_id'] = $result->result_id;
 		$data['category_id'] = $category_id;
-		//$data['country_id'] = $this->db->get_where("user",array("user_id"=>$voting_user_id))->row()->country_id;
 		$data['nominated_unit'] = $category->unit;
 		$data['nominee_id'] = $nominee_id;
 		$data['created_by'] = $voting_user_id;
@@ -720,6 +721,7 @@ class Surveys extends CI_Controller
 			$this->db->insert("tabulate",$data);
 
 		}else{
+			$data['comment'] = get_phrase('no_viable_option');
 			$this->db->where(array("result_id"=>$result->result_id,"category_id"=>$category_id));
 			$this->db->update("tabulate",$data);
 		}
@@ -756,15 +758,14 @@ class Surveys extends CI_Controller
 		$survey_arr = $this->db->get_where("survey",array("survey_id"=>$survey_id));
 		$results = array();
 		$set_default_country = $this->session->country_id;
-		$set_default_unit = 0; // Select all
+		$set_default_unit_id = 0;
+		$set_default_staff_position_id = 0;
+		$set_default_category_id = 0;
 		
 		if($survey_arr->num_rows() > 0){
 			$survey = $survey_arr->row();
 			
-			// $this->db->join("user","user.user_id=result.user_id");
-			// $this->db->join("tabulate","tabulate.result_id=result.result_id");
-			// $this->db->where(array("survey_id"=>$survey_id,"result.country_id"=>$set_default_country));
-			// $results = $this->db->get("result")->result_object();	
+			$this->db->where(array("result.survey_id"=>$survey_id));
 			
 			if($this->input->post('country_id')){
 					
@@ -777,18 +778,38 @@ class Surveys extends CI_Controller
 			}
 				
 			if($this->input->post('unit_id')){
-				$set_default_unit = $this->input->post('unit_id');
+				$set_default_unit_id = $this->input->post('unit_id');
 				
-				$this->db->where(array("survey_id"=>$survey_id));
-				
-				if ($_POST['unit_id'] != 0) $this->db->where(array("tabulate.nominated_unit "=>$set_default_unit));
+				if ($this->input->post('unit_id') != 0) $this->db->where(
+				array("tabulate.nominated_unit "=>$set_default_unit_id));
 				
 			}
 			
-							
-				$this->db->join("user","user.user_id=result.user_id");
-				$this->db->join("tabulate","tabulate.result_id=result.result_id");
-				$results = $this->db->get_where("result")->result_object();
+			if($this->input->post('contribution_id')){
+				$set_default_staff_position_id = $this->input->post('contribution_id');
+				
+				if ($this->input->post('contribution_id') != 0){
+					
+					$this->db->where(array('category.assignment'=>$this->input->post('contribution_id')));	
+				} 
+				
+			}
+			
+			if($this->input->post('category_id')){
+				$set_default_category_id = $this->input->post('category_id');
+				
+				if ($this->input->post('category_id') != 0){
+					
+					$this->db->where(array('category.category_id'=>$this->input->post('category_id')));	
+				} 
+				
+			}
+			
+						
+			$this->db->join("user","user.user_id=result.user_id");
+			$this->db->join("tabulate","tabulate.result_id=result.result_id");
+			$this->db->join('category','category.category_id=tabulate.category_id');	
+			$results = $this->db->get_where("result",array('nominee_id>'=>0))->result_object();
 			
 		}
 
@@ -796,11 +817,16 @@ class Surveys extends CI_Controller
 		$user_scope = $this->crud_model->scope_countries($this->session->login_user_id);
 		
 		$page_data['user_has_scope'] = count($user_scope)>0?true:false;
-		$page_data['default_unit'] = $set_default_unit;
+		$page_data['default_unit_id'] = $set_default_unit_id;
+		$page_data['default_staff_position_id'] = $set_default_staff_position_id;
 		$page_data['default_country'] = $set_default_country;
+		$page_data['default_category_id'] = $set_default_category_id;
 		$page_data['units'] = $this->db->order_by('unit_id','DESC')->get_where('unit',array('unit_id>'=>1))->result_object();
+		$page_data['staff_positions'] = $this->db->order_by('contribution_id','DESC')->get('contribution')->result_object();
+		$page_data['all_categories'] = $this->crud_model->categories_in_grouping($this->session->login_user_id,2,true);
 		$page_data['results']  =  $results;
 		$page_data['survey']  =  $survey;
+		$page_data['survey_id'] = $survey_id;
 		$page_data['view_type']  = "surveys";
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase(__FUNCTION__);

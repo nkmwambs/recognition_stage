@@ -26,6 +26,8 @@ class Dashboard extends CI_Controller
        /*cache control*/
 		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
 		$this->output->set_header('Pragma: no-cache');
+		
+		if($this->session->first_login_attempt) redirect(base_url() . 'account/manage_profile', 'refresh');
 
     }
 

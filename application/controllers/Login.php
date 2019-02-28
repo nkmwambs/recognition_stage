@@ -29,8 +29,12 @@ class Login extends CI_Controller {
     //Default function, redirects to logged in user area
     public function index() {
 
-        if ($this->session->userdata('user_login') == 1)  
+        if ($this->session->userdata('user_login') == 1 && !$this->session->first_login_attempt) {
         	redirect(base_url() . 'surveys/nominate', 'refresh');
+        }elseif($this->session->first_login_attempt){
+        	redirect(base_url() . 'account/manage_profile', 'refresh');
+        }
+        	
 
         $this->load->view('backend/login');
     }
@@ -55,16 +59,8 @@ class Login extends CI_Controller {
         echo json_encode($response);
     }
 
-    //Validating login from ajax request
-    function validate_login($email = '', $password = '') {
-        $credential = array('email' => $email,"auth"=>1,"password"=>md5($password));
-
-
-        // Checking login credential for admin
-        $query = $this->db->get_where('user', $credential);
-        if ($query->num_rows() > 0) {
-			
-		    $row = $query->row();
+	function create_user_session ($row,$first_login_attempt = false){
+			//$row = $query->row();
 			$role = $this->db->get_where("role",array("role_id"=>$row->role_id))->row();
 			
 		    $this->session->set_userdata('user_login', '1');
@@ -80,20 +76,41 @@ class Login extends CI_Controller {
 			$this->session->set_userdata('department_id', $role->department_id);
 			$this->session->set_userdata('department_name', $this->crud_model->get_type_name_by_id('department',$role->department_id));
 			$this->session->set_userdata('profile_name', $this->crud_model->get_type_name_by_id('profile',$row->profile_id));
-			$this->session->set_userdata('country_name',$this->crud_model->get_type_name_by_id("country",$row->country_id));
+			$this->session->set_userdata('country_name',$this->crud_model->get_type_name_by_id("country",$row->country_id));			
 			
+			$this->session->set_userdata('first_login_attempt',$first_login_attempt);
 			
-			// $scope = $this->db->get_where("scope",array("user_id"=>$row->user_id));
-// 			
-			// $this->session->set_userdata('two_way', $scope->two_way);
-			// $this->session->set_userdata('scope_type', $scope->type);
-			
+			return 'success';
+	}
+    //Validating login from ajax request
+    function validate_login($email = '', $password = '') {
+        $credential = array('email' => $email,"auth"=>1,"password"=>md5($password),'first_login_attempt'=>0);
+
+
+        // Checking login credential for admin
+        $query = $this->db->get_where('user', $credential);
+		
+        if ($query->num_rows() > 0) {
+			$row = $query->row();
+		  	return $this->create_user_session($row); 
 						
-            return 'success';
+        }else{
+        	
+			$split_email = explode("@", $email);
+			
+        	$query = $this->db->get_where('user', array('email'=>$email,'first_login_attempt'=>1));
+			
+			if($query->num_rows() > 0 && strtolower($split_email[0]) == strtolower($password)){
+				$row = $query->row();
+				return $this->create_user_session($row,true);		
+			}
         }
-
        
-
+		/**
+		 * If the if conditions above are not met, the method returns invalid back to the calling 
+		 * ajax method bound to the key $login_status = invalid
+		 * Invalid success returns to the login page.
+		 **/ 
         return 'invalid';
     }
 

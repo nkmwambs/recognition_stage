@@ -30,11 +30,27 @@
 		<div class="main-content">
 		
 			<?php include 'header.php';?>
-			
-					<h3 style="">
-				       <i class="entypo-right-circled"></i> 
-							<?php echo $page_title;?>
-				    </h3>
+				<hr />
+					<div class="row">
+						<div class="col-xs-6">
+							<h3 style="" class="pull-left">
+						       <i class="entypo-right-circled"></i> 
+									<?php echo $page_title;?>
+						    </h3>
+						  </div>
+						  
+						  <div class="col-xs-6 pull-right;">
+						  		<!-- <span title="<?=get_phrase('back');?>" style="cursor: pointer;font-weight: bold;" onclick="javascript:go_back();" class="fa fa-reply pull-right"> <?=get_phrase('go_back');?> </span> -->
+						  		
+						  		<div class="btn-group pull-right">
+						  			<button class="btn btn-default" title="<?=get_phrase('back');?>" onclick="javascript:go_back();"><i class="fa fa-backward"></i></button>
+						  			<button class="btn btn-default" title="<?=get_phrase('forward');?>" onclick="javascript:go_forward();"><i class="fa fa-forward"></i></button>
+						  		</div>
+						  </div>  
+						    
+						
+					</div>
+					
 				<hr />
 				<div class="page-content">	
 		           <!--Showing Progress GIF. Must be available in evert form-->

@@ -128,7 +128,7 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 									</h4>
 								</div>
 								
-								<div id="collapse_<?=$grouping_id;?>" class="panel-collapse collapse <?php if($grouping_cnt == 0) echo "in";?>">
+								<div id="collapse_<?=$grouping_id;?>" class="panel-collapse collapse">
 									<div class="panel-body">
 										<table class="table table-striped">
 											<thead>
@@ -280,17 +280,14 @@ $(document).ready(function(){
 	
 	$.each($(".nominate"),function(i,el){
 			if($(el).val() == "0"){
-				$("#comment_"+$(el).attr("id")).val("No viable option");
+				$("#comment_"+$(el).attr("id")).val("<?=get_phrase('no_viable_option');?>");
 			}else{
-				$("#comment_"+$(el).attr("id")).removeAttr("readonly");
-				if($("#comment_"+$(el).attr("id")).val() == 'No viable option'){
-					$("#comment_"+$(el).attr("id")).val(" ");
-				}
-				
+				$("#comment_"+$(el).attr("id")).removeAttr("readOnly");
 			}
 	});
 });
 
+	
 	$("#submit_vote").click(function(ev){
 
 		var req_validate = $(".comment");
@@ -330,16 +327,17 @@ $(document).ready(function(){
 
 		var url = "<?=base_url();?>surveys/post_nomination_choice/" + category_id + '/' + nominee_id + '/' + user_id;
 
+		if($(this).val() !== "0"){
+			$("#comment_"+category_id).removeAttr("readOnly");
+			$("#comment_"+category_id).val("");
+		}else{
+			$("#comment_"+category_id).prop("readOnly",'readOnly');
+			$("#comment_"+category_id).val("<?=get_phrase('no_viable_option');?>");
+		}
+		
 
 		$.ajax({
-			url:url,
-			success:function(response){
-				//alert(response);
-				$("#comment_"+category_id).removeAttr("readOnly");
-			},
-			error:function(){
-
-			}
+			url:url
 		});
 
 		ev.preventDefault();

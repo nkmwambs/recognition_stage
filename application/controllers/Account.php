@@ -846,28 +846,53 @@ public function mail_templates(){
         $this->load->view('backend/index', $page_data);
 	}
 	
-	function edit_user_profile($param1=""){
-			
-			$data = array();
-			
-			$msg = get_phrase('no_changes_made');
-			
-			if(!preg_match('/^[a-f0-9]{32}$/', $this->input->post("password"))){
-				$data['password'] = md5($this->input->post("password"));
-			}
-			
-			if($this->db->get_where("user",array("user_id"=>$this->session->login_user_id))->row()->phone !== $this->input->post("phone")){
-				$data['phone'] = $this->input->post("phone");
-			}
-			
-			
-			if(count($data)>0){
-				$this->db->where(array("user_id"=>$this->session->login_user_id));
-				$this->db->update("user",$data);
-				$msg = get_phrase('update_successful');
-			}
-			
-			echo $msg;
+	function edit_user_profile(){
+		
+		/**Update the password
+		* Update the first_login_attepmt field in user table to zero if first_login_attepmt is true
+		 * */
+		$this->db->where(array('user_id'=>$this->session->login_user_id));
+		$data['password'] = md5($this->input->post('password'));
+		if($this->session->first_login_attempt) {
+			//Update first_login_attempt session to false
+			$this->session->set_userdata('first_login_attempt',false);
+			$data['first_login_attempt'] = 0;
+		}
+		
+		$this->db->update('user',$data);
+		
+		$return_url = base_url().'surveys/nominate';
+		
+		if($this->db->affected_rows() > 0){
+			$this->session->set_flashdata('flash_message',get_phrase('password_has_been_changed'));
+		}else{
+			$this->session->set_flashdata('flash_message',get_phrase('password_has_not_been_changed'));
+			$return_url = base_url().'account/manage_profile';
+		}
+		
+		
+		echo $return_url;
+		
+			// $data = array();
+// 			
+			// $msg = get_phrase('no_changes_made');
+// 			
+			// if(!preg_match('/^[a-f0-9]{32}$/', $this->input->post("password"))){
+				// $data['password'] = md5($this->input->post("password"));
+			// }
+// 			
+			// if($this->db->get_where("user",array("user_id"=>$this->session->login_user_id))->row()->phone !== $this->input->post("phone")){
+				// $data['phone'] = $this->input->post("phone");
+			// }
+// 			
+// 			
+			// if(count($data)>0){
+				// $this->db->where(array("user_id"=>$this->session->login_user_id));
+				// $this->db->update("user",$data);
+				// $msg = get_phrase('update_successful');
+			// }
+// 			
+			// echo $msg;
 		}
 	
 	function mail_tags_readonly($value, $primary_key) {
