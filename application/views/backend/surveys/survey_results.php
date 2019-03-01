@@ -126,6 +126,7 @@
 					<tbody>
 						<?php 
 							//if(count($results) > 0){
+							//print_r($results);
 							foreach($results as $result){
 								
 						?>
@@ -138,7 +139,19 @@
 								<td><?=$result->last_modified_date;?></td>
 								<td><?=$this->crud_model->get_type_name_by_id("category",$result->category_id);?></td>
 								<td><?php $category = $this->db->get_where("category",array("category_id"=>$result->category_id))->row(); echo $this->crud_model->get_type_name_by_id("contribution",$category->assignment);?></td>
-								<td><?=$unit = $this->crud_model->get_type_name_by_id("unit",$category->unit)?></td>
+								<?php
+									$comment = "";
+									$subteam = "";
+									$comment_subteam = explode("|", $result->comment);
+									
+									if(count($comment_subteam) > 1){
+										$comment = $comment_subteam[1];
+										$subteam = " - ".$comment_subteam[0];
+									}else{
+										$comment = $comment_subteam[0];
+									}
+								?>
+								<td><?=ucfirst($unit = $this->crud_model->get_type_name_by_id("unit",$category->unit));?></td>
 								
 									<?php
 										$nominee_name = get_phrase("no_viable_option");
@@ -159,9 +172,9 @@
 										
 									?>
 								
-								<td><?=$nominee_name;?></td>
+								<td><?=$nominee_name;?>  <?=$subteam;?></td>
 								<td><?=$nominee_country;?></td>
-								<td><?=$this->db->get_where("tabulate",array("category_id"=>$result->category_id,"result_id"=>$result->result_id))->row()->comment;?></td>
+								<td><?=$comment;?></td>
 							</tr>
 				
 						<?php 
