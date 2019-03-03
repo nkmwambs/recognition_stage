@@ -17,7 +17,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | environments.
 |
 */
-$config['base_url'] = 'http://localhost/recognition/';
+$config['base_url'] = 'https://www.compassion-africa.org/sandbox/';
 
 /*
 |--------------------------------------------------------------------------
