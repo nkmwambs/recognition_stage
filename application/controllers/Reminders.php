@@ -54,7 +54,7 @@ class Reminders extends CI_Controller {
 		if($cron_times->num_rows() > 0){
 			foreach($cron_times->result_object() as $cron){
 				
-				if($cron->days_to_closure == $days_to_go || $cron->days_to_closure  == 0){
+				if($cron->days_to_closure == $days_to_go || $cron->days_to_closure  == -1){
 					
 					if($cron->notify_based_on_vote_not_submitted == 0){
 						$this->email_model->manage_account_email($user_id,$cron->template_trigger,true);
