@@ -136,6 +136,13 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 													<th><?=get_phrase("category");?></th>
 													<th><?=get_phrase("visibility");?></th>
 													<th><?=get_phrase("nominate_unit");?></th>
+													<?php
+														if($grouping_id == 4){
+													?>
+														<th><?=get_phrase('sub_team');?></th>
+													<?php
+														}
+													?>
 													<th><?=get_phrase("comment");?></th>
 												</tr>
 											</thead>
@@ -165,14 +172,33 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 																 * Loops $controller_nominees as it populates the comments of the nominees
 																 */
 																$comment = "";
+																$subteam = "";
 																if(count($controller_nominees) > 0){
 																	foreach($controller_nominees as $nominee){
 																		if($nominee->category_id === $category->category_id){
-																			$comment .= $nominee->comment;
+																			$comment_subteam = explode("|", $nominee->comment);
+																			if(count($comment_subteam) > 1){
+																				$comment = $comment_subteam[1];
+																				$subteam = $comment_subteam[0];
+																			}else{
+																				$comment = $comment_subteam[0];
+																			}
+																			
 																			break;
 																		}
 																		
 																	}
+																}
+															
+																if($grouping_id == 4){
+																	$disabled = "disabled = 'disabled'";
+																	if($category->category_id == $nominee->category_id && $nominee->nominee_id != 0){
+																		$disabled = "";
+																	}
+															?>
+																<td><input type="text" <?=$disabled;?> class="form-control subteam" value="<?=$subteam;?>" name="" id="subteam_<?=$category->category_id;?>" placeholder="<?=get_phrase('specify_a_sub_team,_if_any');?>"/></td>
+															<?php
+																//print_r($controller_nominees);
 																}
 															?>
 															<td>
@@ -286,7 +312,7 @@ $(document).ready(function(){
 			}
 	});
 });
-
+	
 	
 	$("#submit_vote").click(function(ev){
 
@@ -324,16 +350,24 @@ $(document).ready(function(){
 		var category_id = $(this).attr('id');
 		var nominee_id = $(this).val();
 		var user_id = '<?=$this->session->login_user_id;?>';
+		
 
 		var url = "<?=base_url();?>surveys/post_nomination_choice/" + category_id + '/' + nominee_id + '/' + user_id;
 
 		if($(this).val() !== "0"){
+			//Toggle sub team to enable
+			$("#subteam_"+category_id).removeAttr('disabled');
+			
 			$("#comment_"+category_id).removeAttr("readOnly");
 			$("#comment_"+category_id).val("");
 		}else{
+			//Toggle sub team to disenable
+			$("#subteam_"+category_id).prop('disabled','disabled');
+			
 			$("#comment_"+category_id).prop("readOnly",'readOnly');
 			$("#comment_"+category_id).val("<?=get_phrase('no_viable_option');?>");
 		}
+		
 		
 
 		$.ajax({
@@ -343,14 +377,21 @@ $(document).ready(function(){
 		ev.preventDefault();
 	});
 
-	$(".comment").change(function(ev){
-		var comment = $(this).val();
+
+
+	$(".comment, .subteam").change(function(ev){
 		var id = $(this).attr("id");
 		var category_id = id.split("_")[1];
-		var comment = $(this).val();
+		
+		var comment = $("#comment_"+category_id).val();
+		var subteam = $("#subteam_"+category_id).val();
+		
 		var user_id = '<?=$this->session->login_user_id;?>';
-		//alert(comment);
-		var data = {"category_id":category_id,"comment":comment,"user_id":user_id}
+		var appended_comment = subteam+"|"+comment;
+		
+		//alert(appended_comment);
+		
+		var data = {"category_id":category_id,"comment":appended_comment,"user_id":user_id}
 
 		var url = "<?=base_url();?>surveys/post_nomination_comment";
 
