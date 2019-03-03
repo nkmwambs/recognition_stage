@@ -29,7 +29,8 @@ class Surveys extends CI_Controller
 		$this->output->set_header('Pragma: no-cache');
 		
 		if($this->session->first_login_attempt) redirect(base_url() . 'account/manage_profile', 'refresh');
-
+		
+		//$this->send_survey_invitation();
     }
 
     /***default functin, redirects to login page if no admin logged in yet***/
@@ -477,23 +478,40 @@ class Surveys extends CI_Controller
 		$all_active_surveys = $this->db->get_where("survey",array("status"=>"1"))->num_rows();
 
 		if($all_active_surveys == 0){
-      $post_array['start_date'] = date("Y-m-d",strtotime($post_array['start_date']));
-      $post_array['end_date'] = date("Y-m-d",strtotime($post_array['end_date']));
-			return $this->db->insert("survey",$post_array);
+      		$post_array['start_date'] = date("Y-m-d",strtotime($post_array['start_date']));
+      		$post_array['end_date'] = date("Y-m-d",strtotime($post_array['end_date']));
+			$this->db->insert("survey",$post_array);
+			$this->email_model->send_batch_emails('survey_invite');
 		}else{
-      return false;
-    }
+      		return false; 
+    	}
 
+	}
+	
+	function send_survey_invitation(){
+		$valid_for_email_notification_obj = $this->db->get_where('user',array('auth'=>1,"email_notify"=>1));
+		
+		$template_trigger = "survey_invite";
+		
+		if($valid_for_email_notification_obj->num_rows() > 0){
+			foreach($valid_for_email_notification_obj->result_object()  as $user){
+				$this->email_model->manage_account_email($user->user_id,$template_trigger);
+			}
+		}
 	}
 
 	function insert_survey_audit_parameters($post_array,$primary_key){
+		
+		//Send Invite email
+		$this->send_survey_invitation();
+		
 		$post_array['created_by'] = $this->session->login_user_id;
 		$post_array['created_date'] = date('Y-m-d h:i:s');
 		$post_array['last_modified_by'] = $this->session->login_user_id;
 
 		$this->db->where(array("survey_id"=>$primary_key));
 		$this->db->update("survey",$post_array);
-
+		
 		return true;
 	}
 

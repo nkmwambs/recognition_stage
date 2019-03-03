@@ -215,6 +215,18 @@
 	                                <span><i class="entypo-popup"></i><?php echo get_phrase('mail_templates'); ?></span>
 	                            </a>
 	                    </li>
+	                    
+	                    <li class="mail_templates <?php if ($page_name == 'tests') echo 'active'; ?>">
+	                        	<a href="<?php echo base_url();?>Tests/testing_email_templates">
+	                                <span><i class="entypo-lamp"></i><?php echo get_phrase('preview_mail_template'); ?></span>
+	                            </a>
+	                    </li>
+	                    
+	                    <li class="mail_templates <?php if ($page_name == 'schedule_emails') echo 'active'; ?>">
+	                        	<a href="<?php echo base_url();?>account/schedule_emails">
+	                                <span><i class="entypo-clock"></i><?php echo get_phrase('schedule_emails'); ?></span>
+	                            </a>
+	                    </li>
 
                     </ul>
                 </li>
@@ -231,13 +243,13 @@
         
         <!--Admin Tests-->
 		
-		<li class="tests <?php if ($page_name == 'tests') echo 'active'; ?> ">
+		<!-- <li class="tests <?php if ($page_name == 'tests') echo 'active'; ?> ">
             <a href="<?php echo base_url();?>Tests/testing_email_templates">
                 <i class="entypo-code"></i>
                 <span><?php echo get_phrase('tests'); ?></span>
             </a>
         </li>
-        
+         -->
            
     </ul>
 
