@@ -35,11 +35,11 @@
 */
 
 // The following values will probably need to be changed.
-$db['default']['dsn'] = 'mysql:host=localhost;dbname=compatl8_recognition';
+$db['default']['dsn'] = 'mysql:host=localhost;dbname=compassi_recogsandbox';
 $db['default']['hostname'] = "localhost";
-$db['default']['username'] = "root";
-$db['default']['password'] = "";
-$db['default']['database'] = "compatl8_recognition";
+$db['default']['username'] = "compassi_recog";
+$db['default']['password'] = "@Compassion123";
+$db['default']['database'] = "compassi_recogsandbox";
 
 
 // The following values can probably stay the same.
