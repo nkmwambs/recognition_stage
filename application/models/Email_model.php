@@ -177,12 +177,8 @@ class Email_model extends CI_Model {
 		}
 
  	}
-// 	
-// <<<<<<< HEAD
-	//Sending batch email to users with email notify set to on
 
-	//Send batch email
-// >>>>>>> 49436e428bb70dacc54f5b5b9a66b08b0c46d793
+	//Sending batch email to users with email notify set to on
 	
 	function send_batch_emails($template_trigger = ""){
 		$users  = $this->db->get_where("user",array("auth"=>1,"email_notify"=>1))->result_object();  
