@@ -177,10 +177,16 @@ class Email_model extends CI_Model {
 		}
 
  	}
+<<<<<<< HEAD
 
 	//Sending batch email to users with email notify set to on
 
 
+=======
+	
+	//Send batch email
+	
+>>>>>>> 49436e4... Set up system GUI to make email cron tasks - Update template table with run_as_scheduled field type int default 0 size 5
 	function send_batch_emails($template_trigger = ""){
 		$users  = $this->db->get_where("user",array("auth"=>1,"email_notify"=>1))->result_object();  
 			
