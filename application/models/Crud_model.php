@@ -544,6 +544,8 @@ class Crud_model extends CI_Model {
 		 * **/
 
 		if($unit_table_name === "user"){
+			$this->db->select(array('user.user_id','user.firstname','user.lastname','user.role_id',
+							'user.country_id','user.email','user.manager_id'));
 					/** User Filters Set here
 												 *
 												 * Users cannot nominate themselves
@@ -562,9 +564,24 @@ class Crud_model extends CI_Model {
 												 /** Set Manager User List here. Find managers categories (assignemnt == 2 ) 
 												  * and then set users as the nominees fot the manager**/
 												if($category->assignment == '2'){
-													/** Only show staff that are managed by the current user for categories that 
-													 * require managers contribution **/
-													$this->db->where(array("manager_id"=>$this->session->login_user_id));
+													/** 
+													  check if manager login is NOT last in the management hierchy and he/she is not allowed to vote to a cross in 
+													 in the manager recogition section OR is last in the management hierachy and NOT allowed to vote across.
+													 * 
+													 * The default the manager is NOT last in management hierachy and is allowed to vote across depertments in the scope
+													 */ 
+													 
+													
+													if($this->session->last_line_manager == 0 && $this->session->vote_all_in_user_scope == 0)
+													{
+														$this->db->join('role','role.role_id=user.role_id');
+														$this->db->join('department','department.department_id=role.department_id');
+														$this->db->where(array('department.department_id'=>$this->session->department_id));
+													}
+													elseif($this->session->last_line_manager == 1 && $this->session->vote_all_in_user_scope == 0){
+														$this->db->where(array('manager_id'=>$this->session->login_user_id));
+													}
+												
 												}else{
 													/** List all staff for the country and those with scope to the country for voting **/
 													 $cond2 = "user_id != ".$this->session->login_user_id." AND auth = 1";

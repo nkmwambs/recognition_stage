@@ -78,6 +78,9 @@ class Login extends CI_Controller {
 			$this->session->set_userdata('profile_name', $this->crud_model->get_type_name_by_id('profile',$row->profile_id));
 			$this->session->set_userdata('country_name',$this->crud_model->get_type_name_by_id("country",$row->country_id));			
 			
+			$this->session->set_userdata('vote_all_in_user_scope',$role->vote_all_in_user_scope);
+			$this->session->set_userdata('last_line_manager',$role->last_line_manager);
+			
 			$this->session->set_userdata('first_login_attempt',$first_login_attempt);
 			
 			return 'success';
