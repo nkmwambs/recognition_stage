@@ -126,7 +126,6 @@
 					<tbody>
 						<?php 
 							//if(count($results) > 0){
-							//print_r($results);
 							foreach($results as $result){
 								
 						?>
@@ -137,21 +136,9 @@
 								<td><?=$result->status === '0' ? get_phrase("in_progress"):get_phrase("completed");?></td>
 								<td><?=$result->created_date;?></td>
 								<td><?=$result->last_modified_date;?></td>
-								<td><?=$this->crud_model->get_type_name_by_id("category",$result->category_id);?></td>
-								<td><?php $category = $this->db->get_where("category",array("category_id"=>$result->category_id))->row(); echo $this->crud_model->get_type_name_by_id("contribution",$category->assignment);?></td>
-								<?php
-									$comment = "";
-									$subteam = "";
-									$comment_subteam = explode("|", $result->comment);
-									
-									if(count($comment_subteam) > 1){
-										$comment = $comment_subteam[1];
-										$subteam = " - ".$comment_subteam[0];
-									}else{
-										$comment = $comment_subteam[0];
-									}
-								?>
-								<td><?=ucfirst($unit = $this->crud_model->get_type_name_by_id("unit",$category->unit));?></td>
+								<td><?=$result->category_name;?></td>
+								<td><?=$result->assignment;?></td>
+								<td><?=$unit = $result->unit;?></td>
 								
 									<?php
 										$nominee_name = get_phrase("no_viable_option");
@@ -162,17 +149,28 @@
 											$nominee_country = $this->crud_model->get_type_name_by_id("country",$user->country_id);
 											 if($unit === "user") {
 											 	$nominee = $this->db->get_where("user",array("user_id"=>$result->nominee_id))->row(); 
-											 	$nominee_name = $nominee->firstname.' '.$nominee->lastname;
-												$nominee_country = $this->db->get_where("country",array("country_id"=>$nominee->country_id))->row()->name;
-											 	
+											 	 if(isset($nominee->firstname)){
+													$nominee_name = $nominee->firstname.' '.$nominee->lastname;
+													$nominee_country = $this->db->get_where("country",array("country_id"=>$nominee->country_id))->row()->name; 	
+												 } 
 											 }else{
-											 	 $nominee_name = $this->db->get_where($unit,array($unit.'_id'=>$result->nominee_id))->row()->name;
+											 	 if($this->db->get_where($unit,array($unit.'_id'=>$result->nominee_id))->num_rows() > 0) 
+											 	 	$nominee_name = $this->db->get_where($unit,array($unit.'_id'=>$result->nominee_id))->row()->name;
 											 }		
+										}
+										
+										$comment = $result->comment;
+																				
+										$comment_with_sub_team_exploded = explode("|",$comment);
+										
+										if(isset($comment_with_sub_team_exploded[1])){
+											$nominee_name = $nominee_name.": ".$comment_with_sub_team_exploded[0];
+											$comment = $comment_with_sub_team_exploded[1];
 										}
 										
 									?>
 								
-								<td><?=$nominee_name;?>  <?=$subteam;?></td>
+								<td><?=$nominee_name;?></td>
 								<td><?=$nominee_country;?></td>
 								<td><?=$comment;?></td>
 							</tr>

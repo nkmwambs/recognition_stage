@@ -12,7 +12,7 @@
  * 
  */
 $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id,'two_way'=>1));
-
+//print_r($controller_groupings);
 ?>
 
 <div class="row">
@@ -346,11 +346,12 @@ $(document).ready(function(){
 	});
 
 
+
 	$(".nominate").change(function(ev){
 		var category_id = $(this).attr('id');
 		var nominee_id = $(this).val();
 		var user_id = '<?=$this->session->login_user_id;?>';
-		
+		//alert(user_id);
 
 		var url = "<?=base_url();?>surveys/post_nomination_choice/" + category_id + '/' + nominee_id + '/' + user_id;
 
@@ -360,18 +361,26 @@ $(document).ready(function(){
 			
 			$("#comment_"+category_id).removeAttr("readOnly");
 			$("#comment_"+category_id).val("");
+			$("#subteam_"+category_id).val("");
 		}else{
 			//Toggle sub team to disenable
 			$("#subteam_"+category_id).prop('disabled','disabled');
 			
 			$("#comment_"+category_id).prop("readOnly",'readOnly');
 			$("#comment_"+category_id).val("<?=get_phrase('no_viable_option');?>");
+			$("#subteam_"+category_id).val("");
 		}
 		
 		
 
 		$.ajax({
-			url:url
+			url:url,
+			success:function(resp){
+				//alert(resp);
+			},
+			error:function(){
+				
+			}
 		});
 
 		ev.preventDefault();
@@ -379,15 +388,23 @@ $(document).ready(function(){
 
 
 
-	$(".comment, .subteam").change(function(ev){
+$(".comment, .subteam").change(function(ev){
 		var id = $(this).attr("id");
 		var category_id = id.split("_")[1];
 		
 		var comment = $("#comment_"+category_id).val();
-		var subteam = $("#subteam_"+category_id).val();
+
+		var appended_comment = comment;
+		
+		if($("#subteam_"+category_id).length > 0){
+			var subteam = $("#subteam_"+category_id).val();
+			
+			if(subteam!==""){
+				appended_comment = subteam+"|"+comment;
+			}
+		}
 		
 		var user_id = '<?=$this->session->login_user_id;?>';
-		var appended_comment = subteam+"|"+comment;
 		
 		//alert(appended_comment);
 		

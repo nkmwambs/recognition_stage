@@ -2,6 +2,32 @@
 //print_r($results);
 ?>
 <div class="row">
+	<div class='col-xs-6'>
+		<?php echo form_open(base_url() . 'surveys/votes/', array('id'=> 'frm_edit_grouping',  'class' => 'form-horizontal form-groups-bordered validate','target'=>'_top', 'enctype' => 'multipart/form-data'));?>
+	     <div class='form-group'>
+	     	<label class='col-xs-4 control-label'><?=get_phrase("select_survey_period");?></label>
+	     	<div class="col-xs-6">
+	     		<select class='form-control' name='survey_id'>
+	     			<option value=''><?=get_phrase('select_survey_period');?></option>
+	     			<?php
+	     			foreach ($all_surveys as $survey) {
+					 ?> 
+					 <option value='<?=$survey->survey_id;?>' <?php if($selected_survey_id==$survey->survey_id) echo 'selected'; ?>><?=date('jS F Y',strtotime($survey->start_date)).' - '.date('jS F Y',strtotime($survey->end_date));?></option>	
+					<?php
+					 }
+	     			?>
+	     		</select>
+	     	</div>
+	     	<div class='col-xs-2'>
+	     		<button type='submit' class='btn btn-success'><?=get_phrase('go')?></button>
+	     	</div>
+	     </div>
+	 	</form>
+	</div>
+	
+</div>
+<hr />
+<div class="row">
 	<div class="col-sm-12">
 		<table class="table table-striped datatable">
 			<thead>

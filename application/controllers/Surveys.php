@@ -302,7 +302,7 @@ class Surveys extends CI_Controller
 		$crud->field_type('action_on_active_votes', 'dropdown',array('0'=>get_phrase('no_action'),"1"=>get_phrase('force_delete'),"2"=>get_phrase("force_submit")));
 
 		/**Select Fields to Show in the Grid **/
-		$crud->columns(array('start_date','end_date','country_id',"allow_user_edit","action_on_active_votes",'votes','status'));
+		$crud->columns(array('start_date','end_date','country_id',"allow_user_edit","action_on_active_votes",'status'));
 
 		/** Show add/edit fields**/
 		$crud->fields(array('start_date','end_date','allow_user_edit','action_on_active_votes','status'));
@@ -532,12 +532,13 @@ class Surveys extends CI_Controller
 	     if ($this->session->userdata('user_login') != 1)
             redirect(base_url(), 'refresh');
 		
-		//$countries  = $this->crud_model->scope_countries($this->session->login_user_id,true);
+		$survey_id = !$this->input->post()?$this->db->get_where('survey',array('status'=>1))->row()->survey_id:$this->input->post('survey_id');
+
 		$this->db->join('survey','survey.survey_id=result.survey_id');
 		$this->db->join('country','country.country_id=result.country_id');
 		$this->db->select(array('country.name','count("userid") as count','result.status'));
 		$this->db->group_by('result.country_id,result.status');
-		$results_raw = $this->db->get_where('result',array('survey.status'=>1))->result_object();
+		$results_raw = $this->db->get_where('result',array('survey.survey_id'=>$survey_id))->result_object();
 			
 		$results = array();
 		
@@ -547,8 +548,9 @@ class Surveys extends CI_Controller
 				$status = 'submitted';
 			}
 			$results[$row->name][$status] = $row->count;
-		}	
-		
+		}
+        $page_data['selected_survey_id']=$survey_id;	
+		$page_data['all_surveys']=$this->db->select(array('survey_id','start_date','end_date'))->get('survey')->result_object();
 		$page_data['results'] = $results;	
         $page_data['page_name']  = "votes";
         $page_data['view_type']  = "surveys";
@@ -663,6 +665,7 @@ class Surveys extends CI_Controller
 				$data['created_by'] = $param2;
 				$data['last_modified_by'] = $param2;
 				$this->db->insert("result",$data);
+				$this->email_model->manage_account_email($this->session->login_user_id,'vote_initiated'); 
 			}else{
 				$msg = get_phrase("failed");
 			}
@@ -680,6 +683,7 @@ class Surveys extends CI_Controller
 				$this->db->where(array("result_id"=>$result->row()->result_id));
 				$data['status'] = "1";
 				$this->db->update("result",$data);
+				$this->email_model->manage_account_email($this->session->login_user_id,'vote_submitted'); 
 
 			}else{$msg = get_phrase("failed");}
 
@@ -705,7 +709,9 @@ class Surveys extends CI_Controller
 
 		$page_data['controller_nominees']  = array();
 		
+		//$this->db->join('survey','survey.survey_id=result_id');
 		$this->db->join('result','result.result_id=tabulate.result_id');
+		
 		$nominees_before_voting_object =  $this->db->get_where("tabulate",
 			array("result.user_id"=>$this->session->login_user_id,"result.status"=>'0'));
 
@@ -823,10 +829,16 @@ class Surveys extends CI_Controller
 				
 			}
 			
+			$this->db->select(array('result.result_id','result.survey_id','result.user_id','result.country_id','result.status',
+			'result.created_date','result.created_by','result.last_modified_by','result.last_modified_date',
+			'tabulate.category_id','category.name as category_name','contribution.name as assignment',
+			'unit.name as unit','tabulate.nominated_unit','tabulate.nominee_id','tabulate.comment'));
 						
-			$this->db->join("user","user.user_id=result.user_id");
+			
 			$this->db->join("tabulate","tabulate.result_id=result.result_id");
-			$this->db->join('category','category.category_id=tabulate.category_id');	
+			$this->db->join('category','category.category_id=tabulate.category_id');
+			$this->db->join("contribution","contribution.contribution_id=category.assignment");
+			$this->db->join("unit","unit.unit_id=tabulate.nominated_unit");	
 			$results = $this->db->get_where("result",array('nominee_id>'=>0))->result_object();
 			
 		}

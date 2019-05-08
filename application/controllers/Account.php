@@ -515,7 +515,7 @@ public function insert_role_audit_parameters($post_array,$primary_key){
             redirect(base_url(), 'refresh');
 		
 		$page_data['user_id'] = $user_id;
-		$page_data['view_type']  =  __CLASS__;
+		$page_data['view_type']  =  lcfirst(__CLASS__);
 		$page_data['page_name']  = __FUNCTION__;
         $page_data['page_title'] = get_phrase(__FUNCTION__);
         $this->load->view('backend/index', $page_data);		
@@ -773,46 +773,6 @@ function authenticate_user_add(){
 	 echo $return_duplicate_false_tag;
 }
 
-public function schedule_emails(){
-			if ($this->session->userdata('user_login') != 1)
-            redirect(base_url(), 'refresh');
-
-		/**Instatiate CRUD**/
-		$crud = new grocery_CRUD();
-
-		/**Set theme to flexigrid**/
-		$crud->set_theme('flexigrid');//flexigrid
-
-
-		/** Grid Subject **/
-		$crud->set_subject(get_phrase('email_schedule'));
-
-		/**Select Category Table**/
-		$crud->set_table('notify_cron');
-		
-		//Set email template dropdown
-		$crud->set_relation('template_id', "template", 'name',array('run_as_scheduled'=>1));
-		
-		//Set notify_based_on_vote_not_submitted and status dropdown choices
-		$range = range(0, 30);
-		$days_to_closure = array("-1"=>"Every Day");
-		$days_to_closure = array_merge($days_to_closure,$range);
-		$crud->field_type('notify_based_on_vote_not_submitted', 'dropdown',array('0'=>"No",'1'=>"Yes"));
-		$crud->field_type('status', 'dropdown',array('1'=>"Active",'0'=>"Inactive"));
-		$crud->field_type('days_to_closure', 'dropdown',$days_to_closure);
-		
-		//Set required fields
-		$crud->required_fields(array('template_id','days_to_closure'));
-		
-
-		$output = $crud->render();
-		$page_data['view_type']  = "account";
-		$page_data['page_name']  = __FUNCTION__;
-        $page_data['page_title'] = get_phrase(__FUNCTION__);
-		$output = array_merge($page_data,(array)$output);
-        $this->load->view('backend/index', $output);
-}
-
 public function mail_templates(){
 		if ($this->session->userdata('user_login') != 1)
             redirect(base_url(), 'refresh');
@@ -833,18 +793,27 @@ public function mail_templates(){
 		$crud->callback_edit_field('mail_tags', array($this,"mail_tags_readonly"));	//template_name_readonly
 		$crud->callback_edit_field('name', array($this,"template_name_readonly"));
 		$crud->callback_edit_field('template_trigger', array($this,"template_trigger_readonly"));
-		$crud->callback_edit_field('run_as_scheduled', array($this,"run_template_as_scheduled"));
 		/** Related Tables to Category **/
 		//$crud->set_relation('country_id','country','name');
 		//$crud->set_relation('created_by','user','firstname');
-		$crud->set_relation('template_id','notify_cron','days_to_closure ');
-		
-		//Set a drop down for run_as_scheduled
-		$crud->field_type('run_as_scheduled', 'dropdown',array('1'=>'Yes','0'=>'No'));
-		
-		$crud->columns(array('name','mail_tags','template_subject','template_body','run_as_scheduled'));
-		$crud->edit_fields(array('name','mail_tags','template_subject','template_body'));
+		//$crud->set_relation('last_modified_by','user','firstname');
 
+
+		/** Populate Status Type **/
+		//$crud->field_type('status', 'dropdown',array('0'=>"inactive","1"=>"active"));
+
+		/**Select Fields to Show in the Grid **/
+		//$crud->columns(array('start_date','end_date','country_id','status'));
+
+		/** Show add/edit fields**/
+		//$crud->fields(array('start_date','end_date','status'));
+
+
+		/** Set required fields **/
+		//$crud->required_fields(array('start_date','end_date','country_id','status'));
+
+		/** Set Field Label **/
+		//$crud->display_as("country_id",get_phrase("country"));
 
 		/**Callbacks**/
 		$crud->callback_after_insert(array($this,'insert_survey_audit_parameters'));
@@ -930,17 +899,13 @@ public function mail_templates(){
 			$tags_array = explode(",", $value);
 			$tag_str = "";
 			foreach($tags_array as $tag){
-				$tag_str .= "<div class='label label-primary'>".$tag."</div><br/>";
+				$tag_str .= "<div class='label label-primary'>".$tag."</div>&nbsp;";
 			}
 			return $tag_str;
 	}
 
 	function template_name_readonly($value, $primary_key) {
 			return '<span>'.$value.'</span>';
-	}
-	
-	function run_template_as_scheduled($value, $primary_key){
-		
 	}
 
 	function template_trigger_readonly($value, $primary_key) {
