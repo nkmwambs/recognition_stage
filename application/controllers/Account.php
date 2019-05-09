@@ -308,19 +308,26 @@ class Account extends CI_Controller
 		//$crud->set_relation_n_n("members", "user", "role_id","role_id","email");
 		//$crud->set_relation_n_n("members", "teamset", "user", "team_id", "user_id", "email");
 		/**Select Fields to Show in the Grid **/
-		$crud->columns(array("name","contribution","department_id"));
+		$crud->columns(array("name","contribution","department_id",'vote_all_in_user_scope','last_line_manager','is_bt_role'));
+		
+		//dropdown for vote_all_in_user_scope and last_line_manager
+		$crud->set_relation('vote_all_in_user_scope','yes_no_option','name');
+		$crud->set_relation('last_line_manager','yes_no_option','name');
+		$crud->set_relation('is_bt_role','yes_no_option','name');
 
 		/**Give columns user friendly labels**/
 		$crud->display_as('contribution_id',get_phrase('contribution'))
-				->display_as('department_id',get_phrase('department'));
+				->display_as('department_id',get_phrase('department'))
+				->display_as('is_bt_role',get_phrase('transinational_role?'));
 
 		/**Callbacks**/
 		$crud->callback_after_insert(array($this,'insert_role_audit_parameters'));
 		$crud->callback_after_update(array($this,'update_role_audit_parameters'));
+		//$crud->callback_insert(array($this,'catch_invalid_last_line_manager_and_vote_all_in_scope_choice'));
 
 		/** Hide fields from add and edit forms**/
-		$crud->add_fields(array("name","contribution","department_id"));
-		$crud->edit_fields(array("name","contribution","department_id"));
+		$crud->add_fields(array("name","contribution","department_id",'vote_all_in_user_scope','last_line_manager','is_bt_role'));
+		$crud->edit_fields(array("name","contribution","department_id",'vote_all_in_user_scope','last_line_manager','is_bt_role'));
 
 		/** Assign Privileges **/
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_role")) $crud->unset_add();
@@ -336,6 +343,17 @@ class Account extends CI_Controller
 		$output = array_merge($page_data,(array)$output);
         $this->load->view('backend/index', $output);
 	}
+private  function catch_invalid_last_line_manager_and_vote_all_in_scope_choice($post_array)
+{
+	if($post_array['last_line_manager']==2 && $post_array['vote_all_in_user_scope']==2)
+	{
+		return false;
+	}
+else{
+	return $this->db->insert('role',$post_array);
+}
+	//return true;
+}
 
 public function insert_role_audit_parameters($post_array,$primary_key){
 		$post_array['created_by'] = $this->session->login_user_id;

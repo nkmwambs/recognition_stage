@@ -68,7 +68,8 @@ class Login extends CI_Controller {
 		    $this->session->set_userdata('name', $row->firstname);
 			$this->session->set_userdata('login_type', $role->name);
 			$this->session->set_userdata('role_name', $role->name);	
-			$this->session->set_userdata('profile_id', $row->profile_id);	
+			$this->session->set_userdata('profile_id', $row->profile_id);
+			$this->session->set_userdata('manager_id', $row->manager_id);	
 			$this->session->set_userdata('country_id', $row->country_id);	
 			$this->session->set_userdata('role_id', $row->role_id);	
 			$this->session->set_userdata('staff_position', $role->contribution);
@@ -80,6 +81,7 @@ class Login extends CI_Controller {
 			
 			$this->session->set_userdata('vote_all_in_user_scope',$role->vote_all_in_user_scope);
 			$this->session->set_userdata('last_line_manager',$role->last_line_manager);
+			$this->session->set_userdata('is_bt_role', $row->is_bt_role);	
 			
 			$this->session->set_userdata('first_login_attempt',$first_login_attempt);
 			
