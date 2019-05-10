@@ -554,6 +554,8 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 			$data['phone'] = $this->input->post('phone');
 			$data['employee_id'] = $this->input->post('employee_id');
 			$data['role_id'] = $this->input->post('role_id');
+			$data['manage_staff_in_your_country'] = $this->input->post('manage_staff_in_your_country');
+			
 			$data['profile_id'] = $this->input->post('profile_id');
 			$data['manager_id'] = $this->input->post('manager_id');
 			$data['auth'] = "1";
@@ -597,6 +599,7 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 			$data['profile_id'] = $this->input->post('profile_id');
 			$data['manager_id'] = $this->input->post('manager_id');
 			$data['country_id'] = $this->input->post('country_id');
+			$data['manage_staff_in_your_country'] = $this->input->post('manage_staff_in_your_country');
 
 			$this->db->update('user',$data);
 			

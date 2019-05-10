@@ -59,6 +59,11 @@ $user = $this->db->get_where("user",array("user_id"=>$param2))->row();
 					</tr>
 					
 					<tr>
+						<td><?=get_phrase("manage_staff_in_resident_country?");?></td>
+						<td><?=$user->manage_staff_in_your_country?get_phrase("no"):get_phrase("yes");?></td>
+					</tr>
+					
+					<tr>
 						<td><?=get_phrase("profile");?></td>
 						<td><?=$this->crud_model->get_type_name_by_id("profile",$user->profile_id);?></td>
 					</tr>

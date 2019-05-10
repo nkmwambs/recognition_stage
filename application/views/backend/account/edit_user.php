@@ -106,6 +106,20 @@ foreach ( $edit_data as $row):
                             </div>
                             
                             <div class="form-group">
+                                <label class="col-sm-3 control-label"><?php echo get_phrase('manage_staff_in_resident_country?');?></label>
+                                <div class="col-sm-5">
+                                		
+                                    <select class="form-control selectpicker" data-live-search="true" name="manage_staff_in_your_country"  required="required">
+                                    	<option value=""><?=get_phrase("select");?></option>
+                                    	
+                                    	<option value="1" <?php if($row->manage_staff_in_your_country==1) echo 'selected';?>><?=get_phrase("No");?></option>
+                                    	<option value="2" <?php if($row->manage_staff_in_your_country==2) echo 'selected';?>><?=get_phrase("Yes");?></option>
+        
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('manager');?></label>
                                 <div class="col-sm-5">
                                     <select class="form-control selectpicker" data-live-search="true" name="manager_id">

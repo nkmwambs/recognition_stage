@@ -577,9 +577,12 @@ class Crud_model extends CI_Model {
 														$this->db->join('role','role.role_id=user.role_id');
 														$this->db->join('department','department.department_id=role.department_id');
 														$this->db->where(array('department.department_id'=>$this->session->department_id, 
-														'user.user_id!='=>$this->session->login_user_id, 'user.auth'=>1, 
-														'user.user_id<>'=>$this->session->manager_id, 'user.role_id<>'=>$this->session->role_id));
+														'user.user_id<>'=>$this->session->login_user_id, 'user.auth'=>1, 
+														'user.user_id<>'=>$this->session->manager_id, 'user.role_id<>'=>$this->session->role_id, 'manager_id<>'=>$this->session->manager_id));
+														//$this->db->where_in('country_id'=>);
+														
 													}
+													
 													elseif(($this->session->last_line_manager == 2 && $this->session->vote_all_in_user_scope == 1)||($this->session->last_line_manager == 2 && $this->session->vote_all_in_user_scope == 2)){
 														//The OR part in the condition is invalid but this case it forces user not set	'vote_all_in_user_scope' and 'last_line_manager' value=2
 														$this->db->where(array('manager_id'=>$this->session->login_user_id));
@@ -590,10 +593,14 @@ class Crud_model extends CI_Model {
 														$this->db->where(array('role.is_bt_role'=>1, 
 														'user.user_id!='=>$this->session->login_user_id, 'user.auth'=>1, 'user.user_id<>'=>$this->session->manager_id));
 													}
+                                                    //Removes staffs of your country if not manager
+													if($this->session->manage_staff_in_your_country == 1){
+															$this->db->where(array('country_id<>'=>$this->session->country_id));
+													}
 												
 												}else{
 													/** List all staff for the country and those with scope to the country for voting **/
-													 $cond2 = "user_id != ".$this->session->login_user_id." AND auth = 1";
+													 $cond2 = "user_id <> ".$this->session->login_user_id." AND auth = 1";
 													if($category->visibility === '1'){
 														$user_ids_query = $this->crud_model->users_with_country_scope_for_voting($this->session->country_id);
 														if($user_ids_query !==""){
