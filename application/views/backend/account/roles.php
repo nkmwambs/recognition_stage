@@ -19,7 +19,11 @@ foreach($css_files as $file): ?>
 	$(document).ready(function(){
 		$('#field-last_line_manager, #field-vote_all_in_user_scope').addClass('last_line_vote_all');
 		$('#last_line_manager_field_box, #vote_all_in_user_scope_field_box, #is_bt_role_field_box').addClass('special_settings');
-		$('.special_settings').css('display','none');	
+		
+		if($('#field-contribution').val() == 1){
+			$('.special_settings').css('display','none');
+		})
+			
 	});
 	
 	/*Trigger the display of the hide fields:last_line_manager_field_box, 
