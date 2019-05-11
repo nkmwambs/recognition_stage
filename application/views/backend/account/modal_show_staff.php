@@ -13,6 +13,8 @@
             	</div>
             </div>
 			<div class="panel-body">
+				<?php echo $this->crud_model->get_type_name_by_id('user',$param2,'firstname').' '.get_phrase('staff_list');?>
+				<hr />
 				<table class="table table-striped">
 					<thead>
 						<tr>
