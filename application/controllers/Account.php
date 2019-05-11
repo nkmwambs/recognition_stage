@@ -19,6 +19,7 @@ class Account extends CI_Controller
 		parent::__construct();
 		$this->load->database();
         $this->load->library('session');
+		$this->load->model('user_model','user');
 
 		/** System Feature Session Tag **/
 		$this->session->set_userdata('view_type', "account");
@@ -28,6 +29,39 @@ class Account extends CI_Controller
 		$this->output->set_header('Pragma: no-cache');
 
     }
+	
+	public function ajax_list()
+	{
+		$list = $this->user->get_datatables();
+		$data = array();
+		$no = $_POST['start'];
+		foreach ($list as $user) {
+			
+			$row = array();
+			
+			$user_data['user'] = $user;
+			$row[] = $this->load->view('backend/account/user_table_action_list',$user_data,true);
+			$row[] = $user->firstname;
+			$row[] = $user->lastname;
+			$row[] = $user->email;
+			$row[] = $user->name;//$this->crud_model->get_type_name_by_id('country',$user->country_id);
+			$row[] = $this->crud_model->get_type_name_by_id('role',$user->role_id);
+			$row[] = $this->crud_model->get_type_name_by_id('profile',$user->profile_id);
+			$row[] = $user->auth == 1?get_phrase('active'):get_phrase('suspended');
+			
+			$data[] = $row;
+		}
+
+		$output = array(
+						"draw" => $_POST['draw'],
+						"recordsTotal" => $this->user->count_all(),
+						//"recordsTotal" => $this->user->count_filtered(),
+						"recordsFiltered" => $this->user->count_filtered(),
+						"data" => $data,
+				);
+		//output to json format
+		echo json_encode($output);
+	}
 
     /***default functin, redirects to login page if no admin logged in yet***/
     public function index()

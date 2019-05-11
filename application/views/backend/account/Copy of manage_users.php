@@ -120,9 +120,8 @@
 					</a>
 				</div>
 				<br><hr>
-				<?php echo form_open('' , array('id'=>'form-filter','class' => 'form-vertical form-groups-bordered validate', 'enctype' => 'multipart/form-data'));?>
 
-				<table class="table table-striped" id="table_export">
+				<table class="table table-striped datatable" id="table_export">
 					<thead>
 						<tr>
 							<th><?php echo get_phrase('action');?></th>
@@ -135,9 +134,78 @@
 							<th><?php echo get_phrase('status');?></th>
 						</tr>
 					</thead>
-					
+					<tbody>
+						<?php
+							foreach($users as $user):
+						?>
+							<tr>
+								<td>
+									 <div class="btn-group">
+			                                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+			                                        Action <span class="caret"></span>
+			                                    </button>
+			                                    <ul class="dropdown-menu dropdown-default pull-left" role="menu">
+
+			                                        <li>
+			                                            <a href="#users" onclick="showAjaxModal('<?php echo base_url();?>modal/popup/modal_view_account/<?php echo $user->user_id;?>');">
+			                                                <i class="entypo-eye"></i>
+			                                                    <?php echo get_phrase('view');?>
+			                                                </a>
+			                                        </li>
+			                                        <li class="divider"></li>
+
+			                                        <!-- USER EDITING  -->
+			                                        <li class="edit_user">
+			                                            <a href="<?=base_url();?>account/edit_user/<?php echo $user->user_id;?>"
+			                                                <i class="entypo-pencil"></i>
+			                                                    <?php echo get_phrase('edit');?>
+			                                                </a>
+			                                        </li>
+			                                        <li class="divider update_user"></li>
+
+			                                         <li class="change_scope">
+			                                            <a href="#users" onclick="showAjaxModal('<?php echo base_url();?>modal/popup/modal_scope_assignment/<?php echo $user->user_id;?>');">
+			                                                <i class="entypo-level-down"></i>
+			                                                    <?php echo get_phrase('change_scope');?>
+			                                                </a>
+			                                        </li>
+			                                        <li class="divider change_scope"></li>
+
+
+			                                        <!-- SUSPEND USER  -->
+			                                        <li class="suspend_user">
+			                                            <a  href="#users" onclick="confirm_action('<?php echo base_url();?>account/manage_users/user_suspend/<?php echo $user->user_id;?>');">
+			                                                <i class="<?php if($user->auth === '1' ){echo "entypo-cancel";}else{echo "entypo-check";};?>"></i>
+			                                                    <?php if($user->auth === '1') {echo get_phrase('suspend');}else{echo  get_phrase('activate');};?>
+			                                                </a>
+			                                        </li>
+
+			                                        <li class="divider suspend_user"></li>
+
+			                                        <!-- USER DELETION  -->
+			                                        <li class="delete_user" >
+			                                            <a href="#users" onclick="confirm_dialog('<?php echo base_url();?>account/manage_users/user_delete/<?php echo $user->user_id;?>');">
+			                                                <i class="entypo-trash"></i>
+			                                                    <?php echo get_phrase('delete');?>
+			                                                </a>
+			                                        </li>
+			                                    </ul>
+			                                </div>
+								</td>
+								<td><?=$user->firstname;?></td>
+								<td><?=$user->lastname;?></td>
+								<td><?=$user->email;?></td>
+								<td><?=$this->crud_model->get_type_name_by_id("country",$user->country_id);?></td>
+								<td><?=$this->crud_model->get_type_name_by_id("role",$user->role_id);?></td>
+								<td><?=$this->crud_model->get_type_name_by_id("profile",$user->profile_id);?></td>
+								<td><?=$user->auth==='1'?get_phrase("active"):get_phrase("suspended");?></td>
+							</tr>
+
+						<?php
+							endforeach;
+						?>
+            		</tbody>
 				</table>
-				</form>
          </div>
 
 		</div>
@@ -160,53 +228,18 @@
 			    $("a[href='" + anchor + "']").tab("show");
 
 		});
-		   
-		   
-		var datatable = $('#table_export,table.display').DataTable({
+
+
+
+		var datatable = $('#table_export').DataTable({
 		       dom: '<Bf><"col-sm-12"rt><ip>',
 		       //sDom:'r',
 		       pagingType: "full_numbers",
 		       buttons: [
 		           'csv', 'excel', 'print'
 		       ],
-		       stateSave: true,
-		       oLanguage: {
-			        sProcessing: "<img src='<?php echo base_url();?>uploads/preloader4.gif'>"
-			    },
-			   processing: true, //Feature control the processing indicator.
-		       serverSide: true, //Feature control DataTables' server-side processing mode.
-		       order: [], //Initial no order.
-		
-		       // Load data for the table's content from an Ajax source
-		       "ajax": {
-		           "url": "<?php echo base_url();?>account/ajax_list",
-		           "type": "POST",
-		           "data": function(data){
-		           		var x = $("#form-filter").serializeArray();
+		       stateSave: true
 
-					    $.each(x, function(i, field){
-					            data[field.name] = field.value;
-					     });
-		           }
-		       },
-		
-		       //Set column definition initialisation properties.
-		       "columnDefs": [
-			       	{ 
-			           "targets": [ 0 ], //first column / numbering column
-			           "orderable": false, //set not orderable
-			           "class": "details-control"
-			       	},
-			       	{ 
-			           "targets": [2,3], //first column / numbering column
-			           "orderable": false //set not orderable
-			       	},
-			       	{
-                		"targets": [1,2,3,4,5,6],
-                		"visible": false,
-                		
-            		}
-		       ]
 		   });
 
 
