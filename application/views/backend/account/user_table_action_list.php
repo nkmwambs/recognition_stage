@@ -3,14 +3,27 @@
 		Action <span class="caret"></span>
 	</button>
 			<ul class="dropdown-menu dropdown-default pull-left" role="menu">
-			     <li>
+			     <li class="">
 			         <a href="#users" onclick="showAjaxModal('<?php echo base_url();?>modal/popup/modal_view_account/<?php echo $user->user_id;?>');">
 			                <i class="entypo-eye"></i>
 			                    <?php echo get_phrase('view');?>
 			         </a>
 			      </li>
 			      <li class="divider"></li>
-
+			      
+			      <?php 
+			      	if($this->db->get_where('role',array('contribution'=>2,'role_id'=>$user->role_id))->num_rows() > 0){
+			      ?>
+			      <li class="">
+			         <a href="#users" onclick="showAjaxModal('<?php echo base_url();?>modal/popup/modal_show_staff/<?php echo $user->user_id;?>');">
+			                <i class="entypo-users"></i>
+			                    <?php echo get_phrase('show_staff');?>
+			         </a>
+			      </li>
+			      <li class="divider"></li>
+					<?php
+					}
+					?>			
 			      <!-- USER EDITING  -->
 			      <li class="edit_user">
 			          <a href="<?=base_url();?>account/edit_user/<?php echo $user->user_id;?>"

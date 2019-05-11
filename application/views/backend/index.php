@@ -64,6 +64,6 @@
 	</div>
     <?php include 'modal.php';?>
     <?php include 'includes_bottom.php';?>
-    <script src="<?=base_url();?>assets/js/ci-custom-ajax.js"></script>
+    <!-- <script src="<?=base_url();?>assets/js/ci-custom-ajax.js"></script> -->
 </body>
 </html>

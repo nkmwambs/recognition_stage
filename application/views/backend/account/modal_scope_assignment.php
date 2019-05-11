@@ -106,7 +106,6 @@
 					 	
 					 	
 						$countries = $this->crud_model->get_results_by_id("country");
-						//print_r($selected_countries);
 					 	
 					 	echo form_open(base_url() . 'account/manage_users/assign_scope/'.$param2 , array('id'=> 'frm_scope',  'class' => 'form-horizontal form-groups-bordered validate','target'=>'_top', 'enctype' => 'multipart/form-data'));?>		
 							<div class="form-group">
@@ -166,7 +165,7 @@
 							
 							 <div class="form-group">
 	                            <div class="col-sm-offset-3 col-sm-5">
-	                                <div class="btn btn-info btn-icon submit"><i class="fa fa-save"></i><?php echo get_phrase('save');?></div>
+	                                <div class="btn btn-info btn-icon"><i class="fa fa-save"></i><?php echo get_phrase('save');?></div>
 	                            </div>
 	                        </div>
 							
