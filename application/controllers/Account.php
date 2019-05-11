@@ -44,7 +44,7 @@ class Account extends CI_Controller
 			$row[] = $user->firstname;
 			$row[] = $user->lastname;
 			$row[] = $user->email;
-			$row[] = $user->name;//$this->crud_model->get_type_name_by_id('country',$user->country_id);
+			$row[] = $this->crud_model->get_type_name_by_id('country',$user->country_id);
 			$row[] = $this->crud_model->get_type_name_by_id('role',$user->role_id);
 			$row[] = $this->crud_model->get_type_name_by_id('profile',$user->profile_id);
 			$row[] = $user->auth == 1?get_phrase('active'):get_phrase('suspended');

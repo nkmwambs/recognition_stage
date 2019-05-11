@@ -185,23 +185,7 @@
 		           }
 		       },
 		
-		       //Set column definition initialisation properties.
-		       "columnDefs": [
-			       	{ 
-			           "targets": [ 0 ], //first column / numbering column
-			           "orderable": false, //set not orderable
-			           "class": "details-control"
-			       	},
-			       	{ 
-			           "targets": [2,3], //first column / numbering column
-			           "orderable": false //set not orderable
-			       	},
-			       	{
-                		"targets": [1,2,3,4,5,6],
-                		"visible": false,
-                		
-            		}
-		       ]
+		       
 		   });
 
 

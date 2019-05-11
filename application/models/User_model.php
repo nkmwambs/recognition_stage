@@ -3,10 +3,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class User_model extends CI_Model {
 	
-	var $first_join = 'country';
+	//var $first_join = 'country';
 	var $table = 'user';
-	var $column_order = array(null, 'firstname','lastname','email','country.name','role_id','profile_id','auth'); //set column field database for datatable orderable
-	var $column_search = array('firstname','lastname','email','country.name','role_id','profile_id','auth'); //set column field database for datatable searchable 
+	var $column_order = array(null, 'firstname','lastname','email','country_id','role_id','profile_id','auth'); //set column field database for datatable orderable
+	var $column_search = array('firstname','lastname','email','country_id','role_id','profile_id','auth'); //set column field database for datatable searchable 
 	var $order = array('user_id' => 'asc'); // default order 
 
 	public function __construct()
@@ -17,7 +17,7 @@ class User_model extends CI_Model {
 
 	private function _get_datatables_query()
 	{	
-		$this->db->join('country','country.country_id=user.country_id');	 
+		//$this->db->join('country','country.country_id=user.country_id');	 
 		$this->db->from($this->table);
 
 		$i = 0;
