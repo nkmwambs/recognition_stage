@@ -126,7 +126,7 @@ foreach ( $edit_data as $row):
                                     	<option value="0"><?=get_phrase("select");?></option>
                                     	<?php 
                                     		$this->db->join("role","role.role_id=user.role_id");
-											$this->db->where(array("contribution"=>"2"));
+											$this->db->where(array("contribution"=>"2",'auth'=>1));
                                     		$managers = $this->db->get("user")->result_object();
                                     		
 											foreach($managers as $manager){	
