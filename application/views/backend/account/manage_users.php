@@ -121,8 +121,7 @@
 					<thead>
 						<tr>
 							<th><?php echo get_phrase('action');?></th>
-							<th><?php echo get_phrase('first_name');?></th>
-							<th><?php echo get_phrase('last_name');?></th>
+							<th><?php echo get_phrase('user_name');?></th>
 							<th><?php echo get_phrase('email');?></th>
 							<th><?php echo get_phrase('country');?></th>
 							<th><?php echo get_phrase('role');?></th>
