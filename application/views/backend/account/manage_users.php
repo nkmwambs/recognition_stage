@@ -126,6 +126,7 @@
 							<th><?php echo get_phrase('email');?></th>
 							<th><?php echo get_phrase('country');?></th>
 							<th><?php echo get_phrase('role');?></th>
+							<th><?php echo get_phrase('manager');?></th>
 							<th><?php echo get_phrase('profile');?></th>
 							<th><?php echo get_phrase('status');?></th>
 						</tr>
