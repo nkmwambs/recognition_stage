@@ -78,10 +78,14 @@ class Crud_model extends CI_Model {
 	 */
 	function scope_countries($user_id="",$show_your_country = false){
 		//Retrieve a record showing users ability to vote/ voted/admininster other countries data
-		$scope = $this->db->get_where("scope",array("user_id"=>$user_id));		
+		// $this->db->join('scope_country','scope_country.scope_id=scope.scope_id');
+		// $country_scope = $this->db->get_where("scope",array("user_id"=>$user_id));		
+	
+		$country_scope_str = "SELECT * FROM scope JOIN scope_country ON scope.scope_id = scope_country.scope_id  WHERE user_id = ".$user_id;
+		$country_scope = $this->db->query($country_scope_str);
 		
 		//Getting user resident country id
-		$user_country_id = $this->db->get_where("user",array("user_id"=>$user_id))->row()->country_id;
+		$user_country_id = $this->db->get_where("user",array("user.user_id"=>$user_id))->row()->country_id;
 	
 		$country_ids = array();
 		
@@ -89,21 +93,17 @@ class Crud_model extends CI_Model {
 		 * Add your resident country in the array $country_ids if the $show_your_country == true
 		 */
 		if($show_your_country === true){
-			$country_ids[] = $user_country_id;
+			$country_ids[0] = $user_country_id;
 		}
 		
 		//If $scope->num_rows() > 0, user has ability to vote or be voted by other country users
 		
-		if($scope->num_rows() > 0){
-			
-			$countries_to_be_voted_in = $this->db->get_where("scope_country",array("scope_id"=>$scope->row()->scope_id))
-			->result_object();
-			
-			foreach($countries_to_be_voted_in as $country){
+		if($country_scope->num_rows() > 0){			
+			foreach($country_scope->result_object() as $country){
 				$country_ids[] = $country->country_id;
 			}
-			
 		}	
+		
 				
 		return $country_ids;
 	}
@@ -179,21 +179,23 @@ class Crud_model extends CI_Model {
 			$cnt = 1;
 				foreach($country_ids as $country_id){
 					
-					if($cnt === count($country_ids)){
+					if($cnt == count($country_ids)){
 						/**
 					 	* Turn true when your scope type is admin or last loop instance 
 					 	* when count == size of array of country ids
 					 	*/
-						$scope_cond  .= "country_id = ".$country_id.")";
-					}elseif($cnt !== count($country_ids)){
+						$scope_cond  .= "country_id = '".$country_id."')";
+					}elseif($cnt < count($country_ids)){
 						/**
 						 * Turn true when your scope type is vote/both but in the first to n-1 loop
 					 	*/
-						$scope_cond  .= "country_id = ".$country_id." or ";	
+						$scope_cond  .= "country_id = '".$country_id."' or ";	
 					}
 																
 				$cnt++;
 			}
+				
+		//$scope_cond = "(country_id = 25 or country_id=28)";
 															
 		return $scope_cond;													
 
@@ -528,15 +530,8 @@ class Crud_model extends CI_Model {
 	 */
 	
 	function list_potential_nominees_per_category($unit_table_name,$category){
-		$scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id,'two_way'=>1));
-		
-
-		/** Set country scope filter if a user has scope set **/
-
-		if($scope->num_rows() >0 ){
-			//Condition string to be used in a query where clause 
-			$cond = $this->crud_model->country_scope_where($this->session->login_user_id,$scope->row()->type);
-		}
+		$this->db->join('scope_country','scope_country.scope_id=scope.scope_id');
+		$scope = $this->db->get_where("scope",array("scope.user_id"=>$this->session->login_user_id,'two_way'=>1));
 
 		/** Add Unit filter controls here - Start 
 		 * The below if block sets the where conditions to determine the users to be 
@@ -570,7 +565,7 @@ class Crud_model extends CI_Model {
 													 * 
 													 * The default the manager is NOT last in management hierachy and is allowed to vote across depertments in the scope
 													 */ 
-													 
+													// $this->db->where(array('manager_id'=>$this->session->login_user_id));
 													
 													if($this->session->last_line_manager == 1 && $this->session->vote_all_in_user_scope == 1)
 													{
@@ -579,11 +574,10 @@ class Crud_model extends CI_Model {
 														$this->db->where(array('department.department_id'=>$this->session->department_id, 
 														'user.user_id<>'=>$this->session->login_user_id, 'user.auth'=>1, 
 														'user.user_id<>'=>$this->session->manager_id, 'user.role_id<>'=>$this->session->role_id, 'manager_id<>'=>$this->session->manager_id));
-														//$this->db->where_in('country_id'=>);
-														
+																												
 													}
 													
-													elseif(($this->session->last_line_manager == 2 && $this->session->vote_all_in_user_scope == 1)||($this->session->last_line_manager == 2 && $this->session->vote_all_in_user_scope == 2)){
+													elseif(($this->session->last_line_manager == 2 && $this->session->vote_all_in_user_scope == 1)){
 														//The OR part in the condition is invalid but this case it forces user not set	'vote_all_in_user_scope' and 'last_line_manager' value=2
 														$this->db->where(array('manager_id'=>$this->session->login_user_id));
 													}
@@ -591,7 +585,9 @@ class Crud_model extends CI_Model {
 														
 														$this->db->join('role','role.role_id=user.role_id');
 														$this->db->where(array('role.is_bt_role'=>1, 
-														'user.user_id!='=>$this->session->login_user_id, 'user.auth'=>1, 'user.user_id<>'=>$this->session->manager_id));
+														'user.user_id!='=>$this->session->login_user_id, 'user.auth'=>1, 
+														'user.user_id<>'=>$this->session->manager_id));
+														
 													}
                                                     //Removes staffs of your country if not manager
 													if($this->session->manage_staff_in_your_country == 1){
@@ -600,7 +596,7 @@ class Crud_model extends CI_Model {
 												
 												}else{
 													/** List all staff for the country and those with scope to the country for voting **/
-													 $cond2 = "user_id <> ".$this->session->login_user_id." AND auth = 1";
+													 $cond2 = "user.user_id <> ".$this->session->login_user_id;
 													if($category->visibility === '1'){
 														$user_ids_query = $this->crud_model->users_with_country_scope_for_voting($this->session->country_id);
 														if($user_ids_query !==""){
@@ -608,19 +604,21 @@ class Crud_model extends CI_Model {
 														}
 
 													}
-													$this->db->order_by("country_id,firstname");
+													$this->db->order_by("user.country_id,user.firstname");
 													$this->db->where($cond2);
+													
+													
+													 if($scope->num_rows() > 0){
+													 	$cond = $this->crud_model->country_scope_where($this->session->login_user_id,$scope->row()->type);
+													 	
+													 	$this->db->where($cond);
+	
+													 }else{
+													 	$this->db->where(array("country_id"=>$this->session->country_id));
+													 }
+													 
+													 
 												}
-
-												 /** Prevent listing users from other countries if the current logged user have scope set**/
-
-												 if($scope->num_rows() > 0){
-												 	$this->db->where($cond);
-
-												 }else{
-												 	$this->db->where(array("country_id"=>$this->session->country_id));
-												 }
-												
 
 											}
 
@@ -752,4 +750,30 @@ class Crud_model extends CI_Model {
 					
 		return $country_string;	
 	}
+	
+	function get_user_scope_country_array($user_id){
+		
+		$country_array = array();
+		
+		$this->db->select(array('country.country_id','country.name'));
+		$this->db->join('country','country.country_id=scope_country.country_id');
+		$this->db->join('scope','scope.scope_id=scope_country.scope_id');
+		$countries = $this->db->get_where("scope_country",array("scope.user_id"=>$user_id,'country.name<>'=>'All'))->result_object();
+		
+		$this->db->select(array('country.country_id','country.name'));
+		$this->db->join('country','country.country_id=user.country_id');
+		$user_country = $this->db->get_where('user',array('user.user_id'=>$user_id))->row();
+		
+		
+		$country_array[$user_country->country_id] = $user_country->name;
+		
+		foreach($countries as $country){
+			$country_array[$country->country_id] = $country->name;
+		}	
+				
+		return $country_array;
+		
+	}
+	
 }
+

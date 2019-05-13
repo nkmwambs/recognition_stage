@@ -1,6 +1,6 @@
 <?php 
 $edit_data		=	$this->db->get_where('user' , array('user_id' => $user_id) )->result_object();
-//print_r($edit_data);
+print_r($this->crud_model->get_user_scope_country_array($this->session->login_user_id));
 foreach ( $edit_data as $row):
 ?>
 <div class="row">
@@ -66,19 +66,28 @@ foreach ( $edit_data as $row):
                             <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('country');?></label>
                                 <div class="col-sm-5">
-                                	 <?php if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") !== 'vote' ){?>
-                                    <select class="form-control selectpicker" data-live-search="true" name="country_id">
-                                    	<option><?=get_phrase("select");?></option>
+                                	 <?php 
+                                	 $scope_type = $this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type");
+                                	
+									//print_r($this->crud_model->get_user_scope_country_array($this->session->login_user_id));
+									
+                                	if($scope_type != 'vote' ){?>
+                                	
+                                    <select class="form-control selectpicker" data-live-search="true" name="country_id" id="country_id" required="required">
+                                    	<option value=""><?=get_phrase("select");?></option>
                                     	<?php
-                                    		$countries = $this->crud_model->get_results_by_id("country");
-											
-											foreach($countries as $country):
+                                    		//$this->db->where($this->crud_model->country_scope_where($this->session->country_id,$scope_type));
+                                    		$country_records = $this->crud_model->get_user_scope_country_array($this->session->login_user_id);
+                                    		
+											foreach($country_records as $key=>$value):
                                     	?>
-                                    		<option value="<?=$country->country_id;?>" <?php if($row->country_id === $country->country_id) echo "selected";?> ><?=$country->name;?></option>
+                                    		<option value="<?=$key;?>"  <?php if($row->country_id === trim($key)) echo "selected";?> ><?=$value;?></option>
                                     	<?php
                                     		endforeach;
+										
                                     	?>
                                     </select>
+                                    
                                     <?php }else{?>
                                     	<input type="text" readonly="readonly" class="form-control" value="<?=$this->crud_model->get_type_name_by_id("country",$row->country_id);?>" />
                                     		<input type="hidden"  value="<?=$row->country_id;?>" name="country_id"  />
@@ -90,7 +99,7 @@ foreach ( $edit_data as $row):
                             <div class="form-group <?php if($this->session->login_user_id === $user_id) echo "self_update";?>">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('role');?></label>
                                 <div class="col-sm-5">
-                                    <select class="form-control selectpicker" data-live-search="true" name="role_id">
+                                    <select class="form-control selectpicker" data-live-search="true" name="role_id" id="role_id">
                                     	<option><?=get_phrase("select");?></option>
                                     	<?php
                                     		$roles = $this->db->get("role")->result_object();
@@ -109,7 +118,8 @@ foreach ( $edit_data as $row):
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('manage_staff_in_resident_country?');?></label>
                                 <div class="col-sm-5">
                                 		
-                                    <select class="form-control selectpicker" data-live-search="true" name="manage_staff_in_your_country"  required="required">
+                                    <select class="form-control selectpicker" data-live-search="true"
+                                     name="manage_staff_in_your_country" id="manage_staff"  required="required">
                                     	<option value=""><?=get_phrase("select");?></option>
                                     	
                                     	<option value="1" <?php if($row->manage_staff_in_your_country==1) echo 'selected';?>><?=get_phrase("No");?></option>

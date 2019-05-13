@@ -1,3 +1,6 @@
+<?php
+//echo $this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type");
+?>
 <div class="row">
 	
 	<div class="col-md-12">
@@ -62,16 +65,21 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('country');?></label>
                                 <div class="col-sm-5">
-                                	<?php if($this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type") !== 'vote' ){?>
+                                	<?php 
+                                	$scope_type = $this->crud_model->get_field_value("scope","user_id",$this->session->login_user_id,"type");
+                                	
+									//print_r($this->crud_model->get_user_scope_country_array($this->session->login_user_id));
+									
+                                	if($scope_type != 'vote' ){?>
                             
                                     <select class="form-control selectpicker" data-live-search="true" name="country_id" id="country_id" required="required">
                                     	<option value=""><?=get_phrase("select");?></option>
                                     	<?php
-                                    	
-                                    		$countries = $this->db->get_where("country",array("country_id"=>$this->session->country_id))->result_object();//$this->crud_model->get_results_by_id("country");
-											foreach($countries as $country):
+                                    		//$this->db->where($this->crud_model->country_scope_where($this->session->country_id,$scope_type));
+                                    		$countries = $this->crud_model->get_user_scope_country_array($this->session->login_user_id);
+											foreach($countries as $country_id=>$country_name):
                                     	?>
-                                    		<option value="<?=$country->country_id;?>"><?=$country->name;?></option>
+                                    		<option value="<?=$country_id;?>"><?=$country_name;?></option>
                                     	<?php
                                     		endforeach;
 										

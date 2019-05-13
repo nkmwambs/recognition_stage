@@ -968,4 +968,8 @@ public function mail_templates(){
 	}
 
 	/** AJAX LOADED CONTENT END**/
+	
+	function get_user_role_contribution($role_id){
+		echo $this->db->get_where('role',array('role_id'=>$role_id))->row()->contribution;
+	}
 }
