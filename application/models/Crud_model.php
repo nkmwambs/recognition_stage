@@ -584,7 +584,7 @@ class Crud_model extends CI_Model {
 													else{
 														
 														$this->db->join('role','role.role_id=user.role_id');
-														$this->db->where(array('role.is_bt_role'=>1, 
+														$this->db->where(array('role.is_bt_role'=>1,'country_id'=>$this->session->country_id, 
 														'user.user_id!='=>$this->session->login_user_id, 'user.auth'=>1, 
 														'user.user_id<>'=>$this->session->manager_id));
 														
