@@ -1,4 +1,6 @@
 <?php
+//$this->db->select(array('user_id','firstname','lastname'));
+//print_r($this->db->get_where('user',array('manager_id'=>169))->result_object());
 /**
  * Creates an object for users who have a ability to vote or be voted or 
  * administrate the system aoutside the country the user resides in.

@@ -537,7 +537,7 @@ class Crud_model extends CI_Model {
 		 * The below if block sets the where conditions to determine the users to be 
 		 * listed in  the dropdown in the GUI 
 		 * **/
-		$result = "";
+
 		if($unit_table_name === "user"){
 			$this->db->select(array('user.user_id','user.firstname','user.lastname','user.role_id',
 							'user.country_id','user.email','user.manager_id'));
@@ -559,38 +559,40 @@ class Crud_model extends CI_Model {
 												 /** Set Manager User List here. Find managers categories (assignemnt == 2 ) 
 												  * and then set users as the nominees fot the manager**/
 												if($category->assignment == '2'){
+													/** 
+													  check if manager login is NOT last in the management hierchy and he/she is not allowed to vote to a cross in 
+													 in the manager recogition section OR is last in the management hierachy and NOT allowed to vote across.
+													 * 
+													 * The default the manager is NOT last in management hierachy and is allowed to vote across depertments in the scope
+													 */ 
+													// $this->db->where(array('manager_id'=>$this->session->login_user_id));
 													
-												/**
-												 *--------------------------------------------------------------------------------------
-												 * Manager Types:
-												 * 
-												 * Type (a) Ex. National Director:
-												 * 
-												 * i. 	Manage users in the his/her country 
-												 * ii. 	Can nominate across departments
-												 * iii. Can only nominate non BT roles
-												 * iv.  Is not the last line manager
-												 * 
-												 * Type (b) Ex. Snr Program Support Manager
-												 * 
-												 * i. 	Manage user in her/his country
-												 * ii. 	Can only nominate staff in his/her department
-												 * iii.	Can only nominate non BT roles
-												 * iv. 	Is not the last line manager
-												 * 
-												 * Type (c) Ex. Mgr of Supporter Engagement
-												 * 
-												 * i.  	Manage user in her/his country
-												 * ii. 	Can only nominate staff in his/her department
-												 * iii. Can only nominate non BT roles
-												 * iv. 	Is not the last line manager
-												 *
-												 * List staff for manager recognition based on the following manager types
-												 * 
-												 *--------------------------------------------------------------------------------------
-												 * */
-												
-												$result =  $this->staff_hierachy($this->session->login_user_id);
+													if($this->session->last_line_manager == 1 && $this->session->vote_all_in_user_scope == 1)
+													{
+														$this->db->join('role','role.role_id=user.role_id');
+														$this->db->join('department','department.department_id=role.department_id');
+														$this->db->where(array('department.department_id'=>$this->session->department_id, 
+														'user.user_id<>'=>$this->session->login_user_id, 'user.auth'=>1, 
+														'user.user_id<>'=>$this->session->manager_id, 'user.role_id<>'=>$this->session->role_id, 'manager_id<>'=>$this->session->manager_id));
+																												
+													}
+													
+													elseif(($this->session->last_line_manager == 2 && $this->session->vote_all_in_user_scope == 1)){
+														//The OR part in the condition is invalid but this case it forces user not set	'vote_all_in_user_scope' and 'last_line_manager' value=2
+														$this->db->where(array('manager_id'=>$this->session->login_user_id));
+													}
+													else{
+														
+														$this->db->join('role','role.role_id=user.role_id');
+														$this->db->where(array('role.is_bt_role'=>1,'country_id'=>$this->session->country_id, 
+														'user.user_id!='=>$this->session->login_user_id, 'user.auth'=>1, 
+														'user.user_id<>'=>$this->session->manager_id));
+														
+													}
+                                                    //Removes staffs of your country if not manager
+													if($this->session->manage_staff_in_your_country == 1){
+															$this->db->where(array('country_id<>'=>$this->session->country_id));
+													}
 												
 												}else{
 													/** List all staff for the country and those with scope to the country for voting **/
@@ -614,8 +616,7 @@ class Crud_model extends CI_Model {
 													 }else{
 													 	$this->db->where(array("country_id"=>$this->session->country_id));
 													 }
-													
-													$result = $this->db->get($unit_table_name)->result_object(); 
+													 
 													 
 												}
 
@@ -644,7 +645,7 @@ class Crud_model extends CI_Model {
 													$this->db->order_by("name");
 												 	$this->db->where($special_team_query_string);
 
-													$result = $this->db->get($unit_table_name)->result_object();
+
 											}
 
 											if($unit_table_name === "department"){
@@ -652,13 +653,12 @@ class Crud_model extends CI_Model {
 													$user_department_id = $this->db->get_where("role",array("role_id"=>$this->session->role_id))->row()->department_id;
 													$this->db->order_by("name");
 													$this->db->where(array("department_id<>"=>$user_department_id));
-													$result = $this->db->get($unit_table_name)->result_object();
 											}
 
 											 /** Add Unit filter controls here - End **/
 
 											
-				return $result;
+				return $this->db->get($unit_table_name)->result_object();
 	}
 
 	function nomination_units_select_field($unit_table_name,$category,$units,$results){
@@ -773,65 +773,6 @@ class Crud_model extends CI_Model {
 				
 		return $country_array;
 		
-	}
-	
-	
-	
-	function staff_hierachy($manager_id){
-		
-		$this->db->select(array('user_id','firstname','lastname','country_id'));
-		$first_level_reportees = $this->db->get_where('user',array('manager_id'=>$manager_id,'auth'=>1))->result_array();
-		
-		$hierachy[] = $first_level_reportees; //Ex. Sr Mgr Prgm Support/ Sr Mgr Partnership
-		
-		foreach($first_level_reportees as $first_level_user){
-				
-			if($this->session->last_line_manager == 2) break;
-			
-			$this->db->select(array('user_id','firstname','lastname','country_id'));
-			$second_level_reportees = $this->db->get_where('user',array('manager_id'=>$first_level_user['user_id'],'auth'=>1))->result_array();
-			foreach($second_level_reportees as $user){
-				if(count($second_level_reportees)>0) array_push($hierachy[0], $user); else break;
-			}
-			
-			
-			foreach($second_level_reportees as $second_level_user){
-				$this->db->select(array('user_id','firstname','lastname','country_id'));
-				$third_level_reportees = $this->db->get_where('user',array('manager_id'=>$second_level_user['user_id'],'auth'=>1))->result_array();
-				foreach($third_level_reportees as $user){
-					if(count($third_level_reportees)>0) array_push($hierachy[0],$user); else break;
-				}
-				
-				
-				
-				foreach($third_level_reportees as $third_level_user){
-					$this->db->select(array('user_id','firstname','lastname','country_id'));
-					$forth_level_reportees = $this->db->get_where('user',array('manager_id'=>$third_level_user['user_id'],'auth'=>1))->result_array();
-					foreach($forth_level_reportees as $user){
-						if(count($forth_level_reportees)>0) array_push($hierachy[0],$user); else break;	
-					}
-					
-					
-					foreach($forth_level_reportees as $forth_level_user){
-						$this->db->select(array('user_id','firstname','lastname','country_id'));
-						$fifth_level_reportees = $this->db->get_where('user',array('manager_id'=>$forth_level_user['user_id'],'auth'=>1))->result_array();
-						foreach($fifth_level_reportees as $user){
-							if(count($fifth_level_reportees)>0) array_push($hierachy[0],$user); else break;							
-						}
-
-					}
-				}	
-			}
-			
-		}
-		
-		$finale = array();
-		
-		foreach($hierachy[0] as $item){
-			$finale[] = (object)$item;
-		}
-			
-		return $finale;	
 	}
 	
 }

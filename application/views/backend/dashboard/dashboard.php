@@ -1,5 +1,5 @@
 	<?php
-		//print_r($this->crud_model->list_potential_nominees_per_category('user',2));
+		//print_r($this->crud_model->staff_hierachy(490));
 
 		/** Active survey object **/
 		$active_surveys = $this->db->get_where("survey",array("status"=>'1'));
