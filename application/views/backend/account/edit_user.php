@@ -1,6 +1,6 @@
 <?php 
 $edit_data		=	$this->db->get_where('user' , array('user_id' => $user_id) )->result_object();
-print_r($this->crud_model->get_user_scope_country_array($this->session->login_user_id));
+//print_r($this->crud_model->get_user_scope_country_array($this->session->login_user_id));
 foreach ( $edit_data as $row):
 ?>
 <div class="row">
@@ -114,7 +114,7 @@ foreach ( $edit_data as $row):
                                 </div>
                             </div>
                             
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('manage_staff_in_resident_country?');?></label>
                                 <div class="col-sm-5">
                                 		
@@ -127,7 +127,7 @@ foreach ( $edit_data as $row):
         
                                     </select>
                                 </div>
-                            </div>
+                            </div> -->
                             
                             <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('manager');?></label>

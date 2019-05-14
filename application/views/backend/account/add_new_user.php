@@ -127,7 +127,7 @@
                                 </div>
                             </div>
                             
-                             <div class="form-group">
+                             <!-- <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('manage_staff_in_resident_country?');?></label>
                                 <div class="col-sm-5">
                                 		
@@ -139,7 +139,7 @@
         
                                     </select>
                                 </div>
-                            </div>
+                            </div> -->
                             
                              <div class="form-group">
                                 <label class="col-sm-3 control-label"><?php echo get_phrase('manager');?></label>
