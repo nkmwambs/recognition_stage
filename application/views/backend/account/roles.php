@@ -17,8 +17,8 @@ foreach($css_files as $file): ?>
 <script>
 //Hide the onload these fields: last_line_manager_field_box, vote_all_in_user_scope_field_box, is_bt_role_field_box
 	$(document).ready(function(){
-		$('#field-last_line_manager, #field-vote_all_in_user_scope').addClass('last_line_vote_all');
-		$('#last_line_manager_field_box, #vote_all_in_user_scope_field_box, #is_bt_role_field_box').addClass('special_settings');
+		$('#field-last_line_manager').addClass('last_line_vote_all');
+		$('#last_line_manager_field_box').addClass('special_settings');
 		$('.special_settings').css('display','none');	
 	});
 	
@@ -36,24 +36,5 @@ foreach($css_files as $file): ?>
 		}
 	});
 	
-	//
-	$('#field-last_line_manager, #field-vote_all_in_user_scope').change(function(ev){
-		//alert($(this).val());
-		var last_line_manager=$('#field-last_line_manager').val();
-		var vote_all_in_user_scope=$('#field-vote_all_in_user_scope').val();
-		
-		if(last_line_manager==2 && vote_all_in_user_scope==2)
-		{
-			
-			$(this).css('border','1px red solid');
-			
-			//Reset to default values of last line manager=1 and cannot vote across
-			$('#field-last_line_manager').val('2');
-			$('#field-vote_all_in_user_scope').val('1');
-			
-			alert('Last line manager can not be allowed to vote across departments');
-			
-		}
-		
-	});
+
 </script>

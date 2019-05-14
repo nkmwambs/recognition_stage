@@ -562,29 +562,7 @@ class Crud_model extends CI_Model {
 													
 												/**
 												 *--------------------------------------------------------------------------------------
-												 * Manager Types:
 												 * 
-												 * Type (a) Ex. National Director:
-												 * 
-												 * i. 	Manage users in the his/her country 
-												 * ii. 	Can nominate across departments
-												 * iii. Can only nominate non BT roles
-												 * iv.  Is not the last line manager
-												 * 
-												 * Type (b) Ex. Snr Program Support Manager
-												 * 
-												 * i. 	Manage user in her/his country
-												 * ii. 	Can only nominate staff in his/her department
-												 * iii.	Can only nominate non BT roles
-												 * iv. 	Is not the last line manager
-												 * 
-												 * Type (c) Ex. Mgr of Supporter Engagement
-												 * 
-												 * i.  	Manage user in her/his country
-												 * ii. 	Can only nominate staff in his/her department
-												 * iii. Can only nominate non BT roles
-												 * iv. 	Is not the last line manager
-												 *
 												 * List staff for manager recognition based on the following manager types
 												 * 
 												 *--------------------------------------------------------------------------------------
