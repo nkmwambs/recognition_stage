@@ -14,7 +14,7 @@
  * 
  */
 $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id,'two_way'=>1));
-
+//print_r($controller_groupings);
 ?>
 
 <div class="row">
@@ -22,7 +22,19 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 	<div class="col-sm-12">
 		
 		<?php
-			
+			/**
+			 * Before initiating a vote, the HRBPs should create special teams.
+			 */
+			if($this->db->get_where("team",array("country_id"=>$this->session->country_id))->num_rows() === 0){
+		?>
+						<div class="row">
+							<div class="col-sm-12" style="text-align: center;">
+								<div class="well"><?=get_phrase("your_HRBP_has_not_set_teams_in_your_country");?></div>
+							</div>
+						</div>
+		
+		<?php
+			}else{
 			/**
 			 * Check if an active survey exists. If no show the message there is no 
 			 * active survey or else check if a vote has been initiated
@@ -148,12 +160,6 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 														
 														//Create a potential nominees select tag
 														$units_select_tag = select_tag($unit_table_name,$category,$potential_nominees,$controller_nominees);
-														
-														if(count($potential_nominees[0]) == 0) {
-															$units_select_tag = get_phrase("missing_".$unit_table_name."s_for_nomination");
-														}
-													
-														
 												?>	
 														<tr>
 															<td>
@@ -162,7 +168,6 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 																</a>
 															</td>
 															<td><?=$this->crud_model->get_type_name_by_id("country",$category->visibility);?></td>
-															
 															<td><?=$units_select_tag;?></td>
 															<?php
 																/**
@@ -238,7 +243,7 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 				}
 			}
 			}
-		
+		}
 		?>
 	</div>
 </div>

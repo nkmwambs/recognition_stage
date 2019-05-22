@@ -283,24 +283,28 @@ class Crud_model extends CI_Model {
 		$this->db->join('user','user.user_id=scope.user_id'); 
 		$this->db->join('scope_country','scope_country.scope_id=scope.scope_id');
 		$user_ids = $this->db->get_where("scope",array("scope_country.country_id"=>$country_id,
-		"type<>"=>"admin",'user.auth'=>1))->result_object();
+		"type<>"=>"admin",'user.auth'=>1));
 		
 		/**
 		 * Loop the users as you build query string 
 		 */
+		$scope_cond = "";
+		
+		if($user_ids->num_rows()>0){
+			 
 		$scope_cond = '(';
 			$cnt = 1;
-				foreach($user_ids as $user){
-					if($cnt === count($user_ids)){
+				foreach($user_ids->result_object() as $user){
+					if($cnt === count($user_ids->result_object)){
 						$scope_cond  .= "user_id = ".$user->user_id.")";
-					}elseif($cnt !== count($user_ids)){
+					}elseif($cnt !== count($user_ids->result_object)){
 						$scope_cond  .= "user_id = ".$user->user_id." or ";	
 					}
 																
 				$cnt++;
 			}
 															
-		
+		}
 	
 		return $scope_cond;
 	} 
@@ -540,103 +544,91 @@ class Crud_model extends CI_Model {
 		$result = "";
 		if($unit_table_name === "user"){
 			$this->db->select(array('user.user_id','user.firstname','user.lastname','user.role_id',
-							'user.country_id','user.email','user.manager_id'));
-					/** User Filters Set here
-												 *
-												 * Users cannot nominate themselves
-												 * Cannot vote inactive users
-												 * Users can only nominate users in the country and those assigned to the countries with Scope type of Both or Vote and Two Way set to Yes
-												 * Users can nominate other country staff if have a scope of either Two Way set as yes or no and Type set as Voting.
-												 *
-												 * **/
-
-												 /**
-												  * Prevent listing yourself to the moninate unit dropdown and Inactive Users
-												  * Filter users from other countries with the current user country within their scope and of type not equal to admin and scope two way set as yes
-												  * Show scoped users only for categories with visibility set as All i.e. 1
-												  * **/
-
-												 /** Set Manager User List here. Find managers categories (assignemnt == 2 ) 
-												  * and then set users as the nominees fot the manager**/
-												if($category->assignment == '2'){
-													
-												/**
-												 *--------------------------------------------------------------------------------------
-												 * 
-												 * List staff for manager recognition based on the following manager types
-												 * 
-												 *--------------------------------------------------------------------------------------
-												 * */
+			'user.country_id','user.email','user.manager_id'));
+				/** User Filters Set here
+				*
+				* Users cannot nominate themselves
+				* Cannot vote inactive users
+				* Users can only nominate users in the country and those assigned to the countries with Scope type of Both or Vote and Two Way set to Yes
+				* Users can nominate other country staff if have a scope of either Two Way set as yes or no and Type set as Voting.
+				*
+				* Prevent listing yourself to the moninate unit dropdown and Inactive Users
+				* Filter users from other countries with the current user country within their scope and of type not equal to admin and scope two way set as yes
+				* Show scoped users only for categories with visibility set as All i.e. 1
+				*
+				* Set Manager User List here. Find managers categories (assignemnt == 2 ) 
+				* and then set users as the nominees fot the manager**/
+					if($category->assignment == '2'){
+						/**
+						 *--------------------------------------------------------------------------------------
+						 * 
+						 * List staff for manager recognition based on the following manager types
+						 * 
+						 *--------------------------------------------------------------------------------------
+						 * */
 												
-												$result =  $this->staff_hierachy($this->session->login_user_id);
+						$result =  $this->staff_hierachy($this->session->login_user_id);
 												
-												}else{
-													/** List all staff for the country and those with scope to the country for voting **/
-													 $cond2 = "user.user_id <> ".$this->session->login_user_id;
-													if($category->visibility === '1'){
-														$user_ids_query = $this->crud_model->users_with_country_scope_for_voting($this->session->country_id);
-														if($user_ids_query !==""){
-															$cond2 = $user_ids_query." or ".$cond2;
-														}
+					}else{
+						/** List all staff for the country and those with scope to the country for voting **/
+						$cond2 = "user.user_id <> ".$this->session->login_user_id;
+								if($category->visibility === '1'){
+									$user_ids_query = $this->crud_model->users_with_country_scope_for_voting($this->session->country_id);
+										if($user_ids_query !==""){
+											$cond2 = $user_ids_query." or ".$cond2;
+										}
+								}
 
-													}
-													$this->db->order_by("user.country_id,user.firstname");
-													$this->db->where($cond2);
+						$this->db->order_by("user.country_id,user.firstname");
+						$this->db->where($cond2);
+														
 													
-													
-													 if($scope->num_rows() > 0){
-													 	$cond = $this->crud_model->country_scope_where($this->session->login_user_id,$scope->row()->type);
-													 	
-													 	$this->db->where($cond);
-	
-													 }else{
-													 	$this->db->where(array("country_id"=>$this->session->country_id));
-													 }
-													
-													$result = $this->db->get($unit_table_name)->result_object(); 
-													 
-												}
+						 	if($scope->num_rows() > 0){
+							 	$cond = $this->crud_model->country_scope_where($this->session->login_user_id,$scope->row()->type);
+							 	$this->db->where($cond);
+							}else{
+							 	$this->db->where(array("country_id"=>$this->session->country_id));
+							}
+														
+						$result = $this->db->get($unit_table_name)->result_object(); 
+														 
+					}
 
-											}
+			}
 
-											if($unit_table_name === "team"){
-												/** Team Filters Set here
-												 * A user can only nominate a team from his or her residence country
-												 * A user is not allowed to nominate teams the belong to
-												 *
-												 * **/
+			if($unit_table_name === "team"){
+				/** Team Filters Set here
+				 * A user can only nominate a team from his or her residence country
+				* A user is not allowed to nominate teams the belong to
+				*
+				* Only list the current users country teams 
+				* If a user do not belong to any team, then get all the special teams 
+				* in the country of residence.
+				*/
+				$special_team_query_string = " country_id = ".$this->session->country_id;
+				$model_team_query_string = $this->crud_model->user_teams_to_vote($this->session->login_user_id);
+					if( $model_team_query_string !==""){
+						$special_team_query_string = $model_team_query_string;
+					}
+				
+				$this->db->order_by("name");
+				$this->db->where($special_team_query_string);
 
+				$result = $this->db->get($unit_table_name)->result_object();
+			}
 
-												 /** Only list the current users country teams **/
-												 
-												 /**
-												  * If a user do not belong to any team, then get all the special teams 
-												  * in the country of residence.
-												  */
-												 	$special_team_query_string = " country_id = ".$this->session->country_id;
-													$model_team_query_string = $this->crud_model->user_teams_to_vote($this->session->login_user_id);
-													if( $model_team_query_string !==""){
-														$special_team_query_string = $model_team_query_string;
-													}
+			if($unit_table_name === "department"){
+				/** Department Filters Set here**/
+				$user_department_id = $this->db->get_where("role",array("role_id"=>$this->session->role_id))->row()->department_id;
+				$this->db->order_by("name");
+				$this->db->where(array("department_id<>"=>$user_department_id));
+				$result = $this->db->get($unit_table_name)->result_object();
+			}
 
-													$this->db->order_by("name");
-												 	$this->db->where($special_team_query_string);
-
-													$result = $this->db->get($unit_table_name)->result_object();
-											}
-
-											if($unit_table_name === "department"){
-												/** Department Filters Set here**/
-													$user_department_id = $this->db->get_where("role",array("role_id"=>$this->session->role_id))->row()->department_id;
-													$this->db->order_by("name");
-													$this->db->where(array("department_id<>"=>$user_department_id));
-													$result = $this->db->get($unit_table_name)->result_object();
-											}
-
-											 /** Add Unit filter controls here - End **/
+			/** Add Unit filter controls here - End **/
 
 											
-				return $result;
+			return $result;
 	}
 
 	function nomination_units_select_field($unit_table_name,$category,$units,$results){
