@@ -51,11 +51,9 @@ class Reminders extends CI_Controller {
 		$this->db->join('template','template.template_id=notify_cron.template_id');
 		$cron_times = $this->db->get_where('notify_cron',array('status'=>1));
 		
-		if($days_to_go < 0 && $active_survey_obj->num_rows()>0){		
-			$this->crud_model->auto_create_new_survey();
-		}
 		
-		elseif($cron_times->num_rows() > 0){
+		
+		if($cron_times->num_rows() > 0){
 			foreach($cron_times->result_object() as $cron){
 				
 				if($cron->days_to_closure == $days_to_go || $cron->days_to_closure  == -1){
@@ -71,6 +69,8 @@ class Reminders extends CI_Controller {
 						}
 					}
 					
+				}elseif($days_to_go < 0 && $active_survey_obj->num_rows()>0){		
+					$this->crud_model->auto_create_new_survey();
 				}
 				
 			}
