@@ -68,6 +68,11 @@ class Reminders extends CI_Controller {
 					}
 					
 				}
+				elseif($days_to_go ==-1){
+					
+					$this->crud_model->auto_create_new_survey();
+					
+				}
 				
 			}
 		}

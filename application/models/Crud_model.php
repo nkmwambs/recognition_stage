@@ -803,6 +803,36 @@ class Crud_model extends CI_Model {
 			
 		return $finale;	
 	}
+   function auto_create_new_survey(){
+   	
+	$survey=$this->db->get_where('survey',array('status'=>1));
+	
+	$post_array=array();
+	
+	if($survey->num_rows()>0)
+	{
+		
+		$this->db->update('survey', array('status'=>0),array('status'=>1));
+		
+		$post_array['start_date'] = date("Y-m-d");
+		
+		$post_array['country_id']=1;
+		$post_array['allow_user_edit']=1;
+		$post_array['action_on_active_votes']=2;
+		$post_array['status']=1;		
+		$post_array['created_by']=0;		
+		$post_array['created_date']=date("Y-m-d h:i:s");
+		$post_array['last_modified_by']=0;
+		$post_array['last_modified_date']=date("Y-m-d h:i:s");
+		
+		$survey_duration=$this->db->get_where('settings',array('type'=>'survey_duration'))->row()->description;
+		
+      	$post_array['end_date'] = date("Y-m-d",strtotime('+'.$survey_duration.' months'));
+		$this->db->insert("survey",$post_array);
+		$this->email_model->send_batch_emails('survey_invite');
+	}
+
+   }
 	
 }
 
