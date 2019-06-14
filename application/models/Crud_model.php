@@ -811,8 +811,9 @@ class Crud_model extends CI_Model {
 	
 	if($survey->num_rows()>0)
 	{
-		
-		$this->db->update('survey', array('status'=>0),array('status'=>1));
+		$update_data['status'] = 0;	
+		$this->db->where(array('status'=>1));
+		$this->db->update('survey',$update_data);
 		
 		$post_array['start_date'] = date("Y-m-d");
 		
