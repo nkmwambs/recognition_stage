@@ -45,7 +45,7 @@ class Reminders extends CI_Controller {
 		$datetime2 = date_create($active_survey_obj->row()->end_date);
 		$interval = date_diff($datetime1, $datetime2);
 		
-		$days_to_go = $interval->format('%a');
+		$days_to_go = $interval->format('%r%a');
 		
 		//Get cron templates
 		$this->db->join('template','template.template_id=notify_cron.template_id');
