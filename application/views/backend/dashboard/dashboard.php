@@ -1,4 +1,14 @@
-	<?php						
+	<?php
+	
+		$user_id = 152;
+		
+		$this->db->select(array('tabulate.nominee_id'));
+		$this->db->join('result','result.result_id=tabulate.result_id');
+		$this->db->join('category','category.category_id=tabulate.category_id');	
+		$check_voted_user = $this->db->get_where('tabulate',
+		array('tabulate.nominee_id'=>$user_id,'category.unit'=>4));	
+		
+		print_r($check_voted_user->num_rows());						
 								
 		//print_r($this->crud_model->staff_hierachy(490));
 
