@@ -1,6 +1,6 @@
 	<?php
 	
-		$user_id = 152;
+		$user_id = 726;
 		
 		$this->db->select(array('tabulate.nominee_id'));
 
