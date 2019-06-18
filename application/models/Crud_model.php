@@ -831,6 +831,12 @@ class Crud_model extends CI_Model {
       	$post_array['end_date'] = date("Y-m-d",strtotime('+'.$survey_duration.' months'));
 		
 		$this->db->insert("survey",$post_array);
+		
+		//Check any submitted vote and submit it
+		$submit_data['status'] = 1;
+		$this->db->where(array('status'=>0));
+		$this->db->update('result',$submit_data);
+		
 		$this->email_model->send_batch_emails('survey_invite');
 	}
 
