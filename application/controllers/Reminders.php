@@ -61,7 +61,27 @@ class Reminders extends CI_Controller {
 				if($cron->days_to_closure == $days_to_go || $cron->days_to_closure  == -1){
 					
 					if($cron->notify_based_on_vote_not_submitted == 0){
-						$this->email_model->manage_account_email($user_id,$cron->template_trigger,true);
+						/*
+						 * Restrict users from receiving "notify_nominee" template email if they 
+						 * have not been voted in any category
+						 * 
+						 * - Check if if the iteration is on notify_nominee template
+						 * - If yes, 
+						 * 
+						 */
+						if($cron->template_trigger == 'notify_nominee'){
+							$this->db->select(array('tabulate.nominee_id'));
+							$this->db->join('result','result.result_id=tabulate.result_id');
+							$this->db->join('category','category.category_id=tabulate.category_id');	
+							$check_voted_user = $this->db->get_where('tabulate',array('tabulate.nominee_id'=>$user_id,'category.unit'=>4));	
+								
+							if($check_voted_user->num_rows()>0){
+								$this->email_model->manage_account_email($user_id,$cron->template_trigger,true);
+							}	
+						}else{
+							$this->email_model->manage_account_email($user_id,$cron->template_trigger,true);
+						} 		
+						
 					}else{
 						$check_unsubmitted_vote = $this->db->get_where('result',
 						array('user_id'=>$user_id,'survey_id'=>$active_survey_obj->row()->survey_id,'status'=>0));

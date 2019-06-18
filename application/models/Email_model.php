@@ -146,7 +146,7 @@ class Email_model extends CI_Model {
 		$datetime2 = date_create($active_survey_obj->row()->end_date);
 		$interval = date_diff($datetime1, $datetime2);
 		
-		$tags['{days_to_go}'] = $interval->format('%a');		
+		$tags['{days_to_go}'] = $interval->format('%r%a');		
 		
 		/**
 		 * 	$a = array( 'truck', 'vehicle', 'seddan', 'coupe' );
