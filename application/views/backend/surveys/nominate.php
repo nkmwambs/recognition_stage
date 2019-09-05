@@ -2,16 +2,16 @@
 //$this->db->select(array('user_id','firstname','lastname'));
 //print_r($this->db->get_where('user',array('manager_id'=>169))->result_object());
 /**
- * Creates an object for users who have a ability to vote or be voted or 
+ * Creates an object for users who have a ability to vote or be voted or
  * administrate the system aoutside the country the user resides in.
- * If the user is not found in this object, then he/she is restricted to 
- * vote or be voted in his/her country, He/has no ability to administrate 
+ * If the user is not found in this object, then he/she is restricted to
+ * vote or be voted in his/her country, He/has no ability to administrate
  * outside his country.
- * 
- * It determines the users you can vote for outside your country of residence if you exists 
- * in the scope table. With two way == 1 you can vote and be vote by the other country users whereas if 0, then 
+ *
+ * It determines the users you can vote for outside your country of residence if you exists
+ * in the scope table. With two way == 1 you can vote and be vote by the other country users whereas if 0, then
  * you can only be voted by other country users but you can't vote for them.
- * 
+ *
  */
 $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id,'two_way'=>1));
 
@@ -20,14 +20,14 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 <div class="row">
 
 	<div class="col-sm-12">
-		
+
 		<?php
-			
+
 			/**
-			 * Check if an active survey exists. If no show the message there is no 
+			 * Check if an active survey exists. If no show the message there is no
 			 * active survey or else check if a vote has been initiated
-			 */ 
-			 
+			 */
+
 			$active_survey = $this->db->get_where("survey",
 				array("status"=>"1",'end_date >'=>date('Y-m-d h:m:i')));
 
@@ -41,9 +41,9 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 		<?php
 			}else{
 
-				/** Check if a vote has been initiated for the current active survey. 
-				 * If no, show the start voting button 
-				 * 
+				/** Check if a vote has been initiated for the current active survey.
+				 * If no, show the start voting button
+				 *
 				 * */
 
 				$survey_result = $this->db->get_where("result",array("user_id"=>$this->session->login_user_id,
@@ -59,7 +59,7 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 		<?php
 				}else{
 
-				/** Check if a vote has not been submitted. If submitted check if the survey 
+				/** Check if a vote has not been submitted. If submitted check if the survey
 				 * allows edit and show the survey edit link
 				 *  Status = 1 => Vote has been submitted, 0=> Not submitted the vote
 				 * **/
@@ -67,33 +67,33 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 				$survey_result_voted = $this->db->get_where("result",
 				array("user_id"=>$this->session->login_user_id,"survey_id"=>$active_survey->row()->survey_id,
 				"status"=>'0'));// Returns not submitted votes
-				
+
 				/**
 				 * Return number of rows == 0 means the user has submitted their votes
 				 */
-				
+
 				if($survey_result_voted->num_rows() === 0 ){
 		?>
 				<div class="row">
 					<div class="col-sm-12" style="text-align: center;">
 						<div class="well"><?=get_phrase("you_have_already_participated_in_voting");?></div>
-						<?php 
+						<?php
 								/**
-								 * Check if the survey settings allows the user to edit 
+								 * Check if the survey settings allows the user to edit
 								 * the votes already submitted.
 								 * If allowed, the user is provided to renominate and vote.
 								 */
-								 
+
 								if($active_survey->row()->allow_user_edit == '1'){?>
-									<a href="<?=base_url();?>surveys/nominate/edit_nomination/<?=$active_survey->row()->survey_id;?>" 
+									<a href="<?=base_url();?>surveys/nominate/edit_nomination/<?=$active_survey->row()->survey_id;?>"
 										class="btn btn-primary btn-block"><?=get_phrase('re_do_nomination')?></a>
 									<?php }
 						?>
 					</div>
 				</div>
-		
-				
-				<?php		
+
+
+				<?php
 					}else{
 
 					//print_r($groupings);
@@ -102,9 +102,9 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 				<!-- Show nomination table if a vote has not been submitted -->
 					<div class="row">
 						<div class="col-xs-12">
-							
+
 						<div class="panel-group" id="accordion-test">
-						<?php 
+						<?php
 							$grouping_cnt = 0;
 							foreach($controller_groupings as $grouping_id=>$categories){
 						?>
@@ -112,12 +112,12 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 								<div class="panel-heading">
 									<h4 class="panel-title">
 										<a class="btn btn-icon btn-block" data-toggle="collapse" data-parent="#accordion-test" href="#collapse_<?=$grouping_id;?>">
-											<i class="fa fa-<?=$this->crud_model->get_type_name_by_id("grouping",$grouping_id,'fa-icon');?>"></i> 
+											<i class="fa fa-<?=$this->crud_model->get_type_name_by_id("grouping",$grouping_id,'fa-icon');?>"></i>
 											 <?=$this->crud_model->get_type_name_by_id("grouping",$grouping_id);?>
 										</a>
 									</h4>
 								</div>
-								
+
 								<div id="collapse_<?=$grouping_id;?>" class="panel-collapse collapse">
 									<div class="panel-body">
 										<table class="table table-striped">
@@ -137,24 +137,24 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 												</tr>
 											</thead>
 											<tbody>
-												<?php
+												<?php 
 													/** Populate nominating Units Select form control. Derived from the static table Unit**/
 													foreach($categories as $category){
 														//Get the table name of the units to nominate Ex. User/ Staff, Department, Team or Country
 														$unit_table_name = $this->db->get_where("unit",array("unit_id"=>$category->unit))->row()->name;
-														
+
 														//Get potential nominees
 														$potential_nominees = $this->crud_model->list_potential_nominees_per_category($unit_table_name,$category);
-														
+
 														//Create a potential nominees select tag
 														$units_select_tag = select_tag($unit_table_name,$category,$potential_nominees,$controller_nominees);
-														
+
 														if(count($potential_nominees[0]) == 0) {
 															$units_select_tag = get_phrase("missing_".$unit_table_name."s_for_nomination");
 														}
-													
-														
-												?>	
+
+
+												?>
 														<tr>
 															<td>
 																<a href="#" data-html="true" data-toggle="tooltip" title="<?=$category->description;?>">
@@ -162,7 +162,7 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 																</a>
 															</td>
 															<td><?=$this->crud_model->get_type_name_by_id("country",$category->visibility);?></td>
-															
+
 															<td><?=$units_select_tag;?></td>
 															<?php
 																/**
@@ -180,13 +180,13 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 																			}else{
 																				$comment = $comment_subteam[0];
 																			}
-																			
+
 																			break;
 																		}
-																		
+
 																	}
 																}
-															
+
 																if($grouping_id == 4){
 																	$disabled = "disabled = 'disabled'";
 																	if($category->category_id == $nominee->category_id && $nominee->nominee_id != 0){
@@ -199,32 +199,32 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 																}
 															?>
 															<td>
-																<textarea readonly="readonly" id="comment_<?=$category->category_id;?>" 
-																	class="form-control validate comment" 
+																<textarea readonly="readonly" id="comment_<?=$category->category_id;?>"
+																	class="form-control validate comment"
 																placeholder="<?=get_phrase("comment_here")?>"><?=$comment;?></textarea>
 															</td>
-														</tr>	
-												<?php	
+														</tr>
+												<?php
 													}
 												?>
-												
+
 											</tbody>
 										</table>
 									</div>
 								</div>
-								
+
 							</div>
-							
+
 						<?php
 							$grouping_cnt++;
 						}
-						?>	
+						?>
 						</div>
-					
-							
+
+
 						</div>
 					</div>
-							
+
 					<div class="row">
 						<div class='col-xs-12' style="text-align: center;">
 								<button id="submit_vote"  class="btn btn-success btn-icon">
@@ -232,19 +232,19 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 								</button>
 						</div>
 					</div>
-						
-					
+
+
 		<?php
 				}
 			}
 			}
-		
+
 		?>
 	</div>
 </div>
-	
+
 	<hr />
-	
+
 	<div class="row">
 		<div class="col-sm-12">
 			<div style="text-align: center;font-style: italic;font-weight: bold;" class="col-sm-12">
@@ -252,9 +252,9 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 			</div>
 		</div>
 	</div>
-	
+
 	<hr />
-	
+
 	<div class="row">
 		<div class="col-sm-6">
 			<div style="text-decoration: underline;font-weight: bold;" class="col-sm-12"><?=get_phrase("contribution");?>:</div>
@@ -265,15 +265,15 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 			<div class="col-sm-12"><span style="font-weight: bold;"><?=get_phrase("department");?>:</span> <?=$this->session->department_name;?></div>
 			<div class="col-sm-12"><span style="font-weight: bold;"><?=get_phrase("user_profile");?>:</span> <?=$this->session->profile_name;?></div>
 			<div class="col-sm-12">
-					<span style="font-weight: bold;"><?=get_phrase("teams");?>:</span> 
+					<span style="font-weight: bold;"><?=get_phrase("teams");?>:</span>
 					<!--List name of special teams for a logged in user -->
 					<?=$this->crud_model->get_team_name_of_the_logged_in_user();?>
 			</div>
-		</div>	
-	
+		</div>
+
 		<div class="col-sm-6">
 			<div style="text-decoration: underline;font-weight: bold;" class="col-sm-12"><?=get_phrase("scope");?>:</div>
-		
+
 			<?php
 
 				if($scope->num_rows() > 0 ){
@@ -292,7 +292,7 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 
 			<div class="col-sm-12">
 				<span style="font-weight: bold;"><?=get_phrase("your_country");?>:</span> <?=$this->session->country_name;?>
-			</div>	
+			</div>
 		</div>
 
 	</div>
@@ -300,7 +300,7 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 <script>
 
 $(document).ready(function(){
-	
+
 	$.each($(".nominate"),function(i,el){
 			if($(el).val() == "0"){
 				$("#comment_"+$(el).attr("id")).val("<?=get_phrase('no_viable_option');?>");
@@ -309,8 +309,8 @@ $(document).ready(function(){
 			}
 	});
 });
-	
-	
+
+
 	$("#submit_vote").click(function(ev){
 
 		var req_validate = $(".comment");
@@ -355,20 +355,20 @@ $(document).ready(function(){
 		if($(this).val() !== "0"){
 			//Toggle sub team to enable
 			$("#subteam_"+category_id).removeAttr('disabled');
-			
+
 			$("#comment_"+category_id).removeAttr("readOnly");
 			$("#comment_"+category_id).val("");
 			$("#subteam_"+category_id).val("");
 		}else{
 			//Toggle sub team to disenable
 			$("#subteam_"+category_id).prop('disabled','disabled');
-			
+
 			$("#comment_"+category_id).prop("readOnly",'readOnly');
 			$("#comment_"+category_id).val("<?=get_phrase('no_viable_option');?>");
 			$("#subteam_"+category_id).val("");
 		}
-		
-		
+
+
 
 		$.ajax({
 			url:url,
@@ -376,7 +376,7 @@ $(document).ready(function(){
 				//alert(resp);
 			},
 			error:function(){
-				
+
 			}
 		});
 
@@ -388,23 +388,23 @@ $(document).ready(function(){
 $(".comment, .subteam").change(function(ev){
 		var id = $(this).attr("id");
 		var category_id = id.split("_")[1];
-		
+
 		var comment = $("#comment_"+category_id).val();
 
 		var appended_comment = comment;
-		
+
 		if($("#subteam_"+category_id).length > 0){
 			var subteam = $("#subteam_"+category_id).val();
-			
+
 			if(subteam!==""){
 				appended_comment = subteam+"|"+comment;
 			}
 		}
-		
+
 		var user_id = '<?=$this->session->login_user_id;?>';
-		
+
 		//alert(appended_comment);
-		
+
 		var data = {"category_id":category_id,"comment":appended_comment,"user_id":user_id}
 
 		var url = "<?=base_url();?>surveys/post_nomination_comment";
