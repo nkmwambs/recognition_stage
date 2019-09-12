@@ -259,7 +259,7 @@ class Email_model extends CI_Model {
 			  ob_start();
 			  $this->email->print_debugger();
 			  $error = ob_end_clean();
-			  $errors = $error;
+			  $errors = json_encode($error);
 			}
 			$this->sent_emails_log($user_id,$template_trigger,$errors);
 
