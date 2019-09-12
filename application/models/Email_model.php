@@ -253,7 +253,7 @@ class Email_model extends CI_Model {
 			// 	//Log emails to sent_emails_log
 			// }
 
-			$errors = array();
+			$errors = "Success";
 			$r = $this->email->send(FALSE);
 			if (!$r) {
 			  ob_start();
