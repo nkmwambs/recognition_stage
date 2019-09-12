@@ -71,7 +71,7 @@ class Email_model extends CI_Model {
 		array('user_id'=>$user_id,'template_id'=>$template_id));
 
 		if($log_exists_obj->num_rows()>0){
-			$data['created_date'] = date('Y-m-d h:i:s');			
+			$data['created_date'] = date('Y-m-d h:i:s');
 			$this->db->where(array('user_id'=>$user_id,'template_id'=>$template_id));
 			$this->db->update('sent_emails_log',$data);
 		}else{
@@ -224,8 +224,11 @@ class Email_model extends CI_Model {
 	        $config['useragent']	= "CodeIgniter";
 	        $config['mailpath']		= "/usr/bin/sendmail"; // or "/usr/sbin/sendmail"
 	        $config['protocol']		= "smtp";
-	        $config['smtp_host']	= "localhost";
-	        $config['smtp_port']	= "25";
+	        $config['smtp_host']	= "compassion-africa.org";
+					$config['smtp_user'] = 'recognitionscheme@compassion-africa.org';
+					$config['smtp_pass'] = "@Compassion123";
+	        $config['smtp_port']	= "465";
+					$config['smtp_crypto'] = 'SSL';
 	        $config['mailtype']		= 'html';
 	        $config['charset']		= 'utf-8';
 	        $config['newline']		= "\r\n";
