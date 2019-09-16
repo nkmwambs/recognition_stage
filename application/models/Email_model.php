@@ -248,20 +248,20 @@ class Email_model extends CI_Model {
 
 			$msg	=	$this->msg."<br /><br /><br /><br /><br /><br /><br /><hr /><center><a href=\"https://www.compassion-africa.org\">&copy; 2018 ".get_phrase("AFR_staff_recognition_system")."</a></center>";
 			$this->email->message($msg);
-
+			$this->email->send();
 			// if(!$this->email->send()){
 			// 	//Log emails to sent_emails_log
 			// }
 
-			$errors = "Success";
-			$r = $this->email->send(FALSE);
-			if (!$r) {
-			  ob_start();
-			  $this->email->print_debugger();
-			  $error = ob_end_clean();
-			  $errors = json_encode($error);
-			}
-			$this->sent_emails_log($user_id,$template_trigger,$errors);
+			// $errors = "Success";
+			// $r = $this->email->send(FALSE);
+			// if (!$r) {
+			//   ob_start();
+			//   $this->email->print_debugger();
+			//   $error = ob_end_clean();
+			//   $errors = json_encode($error);
+			// }
+			// $this->sent_emails_log($user_id,$template_trigger,$errors);
 
 			return "Mail Sent";//echo $this->email->print_debugger();
 
