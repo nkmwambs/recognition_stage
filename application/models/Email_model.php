@@ -59,32 +59,32 @@ class Email_model extends CI_Model {
 	}
 
 	//Log user email sent history
-	private function sent_emails_log ($user_id,$template_trigger,$errors = "Success"){
-		$template = $this->db->get_where("template",
-		array("template_trigger"=>$template_trigger));
-
-		$template_id = $template->row()->template_id;
-
-		//Check if the log exists with the user_id and template_id
-
-		$log_exists_obj = $this->db->get_where('sent_emails_log',
-		array('user_id'=>$user_id,'template_id'=>$template_id));
-
-		if($log_exists_obj->num_rows()>0){
-			$data['created_date'] = date('Y-m-d h:i:s');
-			$data['errors'] = $errors;
-			$this->db->where(array('user_id'=>$user_id,'template_id'=>$template_id));
-			$this->db->update('sent_emails_log',$data);
-		}else{
-			$data['errors'] = $errors;
-			$data['user_id'] = $user_id;
-			$data['template_id'] = $template_id;
-			$data['created_date'] = date('Y-m-d h:i:s');
-
-			$this->db->insert('sent_emails_log',$data);
-		}
-
-	}
+	// private function sent_emails_log ($user_id,$template_trigger,$errors = "Success"){
+	// 	$template = $this->db->get_where("template",
+	// 	array("template_trigger"=>$template_trigger));
+	//
+	// 	$template_id = $template->row()->template_id;
+	//
+	// 	//Check if the log exists with the user_id and template_id
+	//
+	// 	$log_exists_obj = $this->db->get_where('sent_emails_log',
+	// 	array('user_id'=>$user_id,'template_id'=>$template_id));
+	//
+	// 	if($log_exists_obj->num_rows()>0){
+	// 		$data['created_date'] = date('Y-m-d h:i:s');
+	// 		$data['errors'] = $errors;
+	// 		$this->db->where(array('user_id'=>$user_id,'template_id'=>$template_id));
+	// 		$this->db->update('sent_emails_log',$data);
+	// 	}else{
+	// 		$data['errors'] = $errors;
+	// 		$data['user_id'] = $user_id;
+	// 		$data['template_id'] = $template_id;
+	// 		$data['created_date'] = date('Y-m-d h:i:s');
+	//
+	// 		$this->db->insert('sent_emails_log',$data);
+	// 	}
+	//
+	// }
 
 	/*** Mail Templates  ***/
 
@@ -217,19 +217,14 @@ class Email_model extends CI_Model {
 	}
 
 	/***custom email sender****/
-	function do_email($user_id = "",$template_trigger = "")
+	function do_email()
 	{
 			$config = array();
 	        $config['useragent']	= "CodeIgniter";
 	        $config['mailpath']		= "/usr/bin/sendmail"; // or "/usr/sbin/sendmail"
 	        $config['protocol']		= "smtp";
- 					$config['smtp_host']	= "localhost";
-				  // $config['smtp_host']	= "compassion-africa.org";
-					//$config['smtp_user'] = 'recognitionscheme@compassion-africa.org';
-					//$config['smtp_pass'] = "@Compassion123";
-	        // $config['smtp_port']	= "465";
-					$config['smtp_port']	= "25";
-					//$config['smtp_crypto'] = 'SSL';
+	        $config['smtp_host']	= "localhost";
+	        $config['smtp_port']	= "25";
 	        $config['mailtype']		= 'html';
 	        $config['charset']		= 'utf-8';
 	        $config['newline']		= "\r\n";
@@ -248,20 +243,8 @@ class Email_model extends CI_Model {
 
 			$msg	=	$this->msg."<br /><br /><br /><br /><br /><br /><br /><hr /><center><a href=\"https://www.compassion-africa.org\">&copy; 2018 ".get_phrase("AFR_staff_recognition_system")."</a></center>";
 			$this->email->message($msg);
-			$this->email->send();
-			// if(!$this->email->send()){
-			// 	//Log emails to sent_emails_log
-			// }
 
-			// $errors = "Success";
-			// $r = $this->email->send(FALSE);
-			// if (!$r) {
-			//   ob_start();
-			//   $this->email->print_debugger();
-			//   $error = ob_end_clean();
-			//   $errors = json_encode($error);
-			// }
-			// $this->sent_emails_log($user_id,$template_trigger,$errors);
+			$this->email->send();
 
 			return "Mail Sent";//echo $this->email->print_debugger();
 
