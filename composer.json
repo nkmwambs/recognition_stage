@@ -3,8 +3,7 @@
     "description": "This is a staff nomination project used across the Africa Region to nominate the best staff of the year based on HR defined categories",
     "type": "project",
     "require": {
-        "simplesamlphp/simplesamlphp": "^1.17",
-        "magium/active-directory": "^1.1"
+        "simplesamlphp/simplesamlphp": "^1.17"
     },
     "authors": [
         {
