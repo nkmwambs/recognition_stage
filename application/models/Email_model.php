@@ -38,7 +38,7 @@ class Email_model extends CI_Model {
 
 	function password_reset_email($new_password = '' , $email = '' , $fsockopen = true)
 	{
-		$query			=	$this->db->get_where(users , array('email' => $email));
+		$query			=	$this->db->get_where(user , array('email' => $email));
 		if($query->num_rows() > 0)
 		{
 
