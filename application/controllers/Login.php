@@ -183,8 +183,8 @@ public $auth;
 
 
         // send new password to user email
-        //$this->email_model->password_reset_email($new_password , $email);
-        $this->email_model->manage_account_email($query->row()->user_id,"password_reset",true,$new_password);
+        $this->email_model->password_reset_email($new_password , $email);
+        //$this->email_model->manage_account_email($query->row()->user_id,"password_reset",true,$new_password);
 
         $resp['submitted_data'] = $_POST;
 
