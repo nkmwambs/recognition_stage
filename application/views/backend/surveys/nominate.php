@@ -137,7 +137,7 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 												</tr>
 											</thead>
 											<tbody>
-												<?php 
+												<?php
 													/** Populate nominating Units Select form control. Derived from the static table Unit**/
 													foreach($categories as $category){
 														//Get the table name of the units to nominate Ex. User/ Staff, Department, Team or Country
@@ -149,7 +149,12 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 														//Create a potential nominees select tag
 														$units_select_tag = select_tag($unit_table_name,$category,$potential_nominees,$controller_nominees);
 
-														if(count($potential_nominees[0]) == 0) {
+														if(is_array($potential_nominees) || is_object($potential_nominees)) {
+															
+															if(sizeof($potential_nominees[0]) == 0){
+																	$units_select_tag = get_phrase("missing_".$unit_table_name."s_for_nomination");
+																}
+														}else{
 															$units_select_tag = get_phrase("missing_".$unit_table_name."s_for_nomination");
 														}
 
