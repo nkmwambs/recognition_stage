@@ -21,6 +21,7 @@ class Login extends CI_Controller {
         $this->load->model('crud_model');
         $this->load->database();
         $this->load->library('session');
+        $this->config->load('sso');
 
         /* cache control */
     		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
@@ -35,13 +36,13 @@ class Login extends CI_Controller {
 
         if ($this->session->userdata('user_login') == 1 && !$this->session->first_login_attempt) {
         	redirect(base_url() . 'surveys/nominate', 'refresh');
-        }elseif($this->session->first_login_attempt){
+        }elseif($this->session->first_login_attempt && $this->session->userdata('user_login') == 1){
         	redirect(base_url() . 'account/manage_profile', 'refresh');
         }
 
         if($this->db->get_where('settings',array('type'=>'ssoservice_activated'))
         ->row()->description == 1 && !$this->session->sso_login){
-            redirect($this->config->item->idpEntity,'refresh');
+            redirect($this->config->item('idpEntity'),'refresh');
         }
 
         if($this->session->sso_login == 1){

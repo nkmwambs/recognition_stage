@@ -9,7 +9,8 @@ class SingleSignOnService extends CI_Controller{
       function __construct() {
           parent::__construct();
           $this->auth =  new \SimpleSAML\Auth\Simple('default-sp');
-          $this->load->library('encryption');
+          //$this->load->library('encryption');
+          $this->config->load('sso');
       }
 
       function index(){
@@ -19,7 +20,7 @@ class SingleSignOnService extends CI_Controller{
       function getAttributes(){
 
         if (!$this->auth->isAuthenticated()) {
-            header('location:'.$this->config->item->idpEntity);
+            header('location:'.$this->config->item('idpEntity'));
         }else{
           $attributes = $this->auth->getAttributes();
 
