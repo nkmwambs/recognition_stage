@@ -83,6 +83,8 @@ class Login extends CI_Controller {
 
         redirect(base_url().'login', 'refresh');
 
+      }else{
+         $this->load->view('backend/sso_error_message');
       }
 
   }
