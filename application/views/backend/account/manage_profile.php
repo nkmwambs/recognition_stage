@@ -60,7 +60,7 @@
 
 
 					</div>
-					<div class="tab-pane" id="general_information">
+					<div class="tab-pane <?php if($this->session->sso_login == 1){echo "active";};?>" id="general_information">
 										 <div class="form-group">
 			                                <label class="col-sm-3 control-label"><?php echo get_phrase('full_name');?></label>
 			                                <div class="col-sm-5">
