@@ -21,7 +21,7 @@
 							<span class="hidden-xs"><?=get_phrase('change_password');?> <i class="fa fa-lock"></i></span>
 						</a>
 					</li>
-					<li>
+					<li class="<?php if($this->session->sso_login == 1){echo "active";};?>">
 						<a href="#general_information" data-toggle="tab">
 							<span class="visible-xs"><i class="entypo-user"></i></span>
 							<span class="hidden-xs"><?=get_phrase('general_information');?> <i class="fa fa-user"></i></span>
