@@ -11,24 +11,23 @@ if (!defined('BASEPATH'))
  *	NKarisa@ke.ci.org
  */
 
-//require_once('saml2/libautoload.php');
+
+require_once ('vendor/autoload.php');
 
 class Login extends CI_Controller {
-
-public $auth;
 
     function __construct() {
         parent::__construct();
         $this->load->model('crud_model');
         $this->load->database();
         $this->load->library('session');
-        //$this->auth = new \SimpleSAML\Auth\Simple('default-sp');
+
         /* cache control */
-		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
-		$this->output->set_header('Pragma: no-cache');
-		//$this->db->cache_on();
-		//$this->output->cache(60);
-		$this->db->cache_delete_all();
+    		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+    		$this->output->set_header('Pragma: no-cache');
+    		//$this->db->cache_on();
+    		//$this->output->cache(60);
+    		$this->db->cache_delete_all();
     }
 
     //Default function, redirects to logged in user area
@@ -38,6 +37,11 @@ public $auth;
         	redirect(base_url() . 'surveys/nominate', 'refresh');
         }elseif($this->session->first_login_attempt){
         	redirect(base_url() . 'account/manage_profile', 'refresh');
+        }
+
+        if($this->db->get_where('settings',array('type'=>'ssoservice_activated'))
+        ->row()->description == 1 && !$this->session->sso_login){
+            redirect($this->config->item->idpEntity,'refresh');
         }
 
         if($this->session->sso_login == 1){
@@ -68,26 +72,22 @@ public $auth;
         echo json_encode($response);
     }
 
-  function SingleSignOnService(){
-    //if (!$this->auth->isAuthenticated()) {
-        //redirect(base_url().'login', 'refresh');
-    //}else{
-
-      //$attributes = $this->auth->getAttributes();
+  function getSSOService($encrypted_email){
 
       $this->session->set_userdata('sso_login', '1');
 
-      if($this->validate_login($_POST['email']) == 'success'){
+      $email = \Base32\Base32::decode(urldecode($encrypted_email));
+
+      if($this->validate_login($email) == 'success'){
 
         redirect(base_url().'login', 'refresh');
 
       }
-    //}
 
   }
 
 	function create_user_session ($row,$first_login_attempt = false){
-			//$row = $query->row();
+
 			$role = $this->db->get_where("role",array("role_id"=>$row->role_id))->row();
 
 		    $this->session->set_userdata('user_login', '1');
