@@ -137,7 +137,7 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 												</tr>
 											</thead>
 											<tbody>
-												<?php 
+												<?php
 													/** Populate nominating Units Select form control. Derived from the static table Unit**/
 													foreach($categories as $category){
 														//Get the table name of the units to nominate Ex. User/ Staff, Department, Team or Country
@@ -193,7 +193,12 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 																		$disabled = "";
 																	}
 															?>
-																<td><input type="text" <?=$disabled;?> class="form-control subteam" value="<?=$subteam;?>" name="" id="subteam_<?=$category->category_id;?>" placeholder="<?=get_phrase('specify_a_sub_team,_if_any');?>"/></td>
+																<td>
+																	<!-- <input type="text" <?=$disabled;?> class="form-control subteam" value="<?=$subteam;?>" name="" id="subteam_<?=$category->category_id;?>" placeholder="<?=get_phrase('specify_a_sub_team,_if_any');?>"/> -->
+																	<select class="form-control subteam" id="subteam_<?=$category->category_id;?>">
+																			<option value=""><?=get_phrase('no_viable_option');?></option>
+																	</select>
+																</td>
 															<?php
 																//print_r($controller_nominees);
 																}
@@ -354,18 +359,23 @@ $(document).ready(function(){
 
 		if($(this).val() !== "0"){
 			//Toggle sub team to enable
-			$("#subteam_"+category_id).removeAttr('disabled');
+			//$("#subteam_"+category_id).removeAttr('disabled');
+
+			//Invoke ajax to get list of managers/ sub functional teams in the department (Enhancement)
+			$.get('<?=base_url();?>surveys/get_managers_in_a_department/'+$(this).val(),function(resp){
+					$("#subteam_"+category_id).html(resp);
+			});
 
 			$("#comment_"+category_id).removeAttr("readOnly");
 			$("#comment_"+category_id).val("");
 			$("#subteam_"+category_id).val("");
 		}else{
 			//Toggle sub team to disenable
-			$("#subteam_"+category_id).prop('disabled','disabled');
+			//$("#subteam_"+category_id).prop('disabled','disabled');
 
 			$("#comment_"+category_id).prop("readOnly",'readOnly');
 			$("#comment_"+category_id).val("<?=get_phrase('no_viable_option');?>");
-			$("#subteam_"+category_id).val("");
+			//$("#subteam_"+category_id).val("");
 		}
 
 
@@ -383,9 +393,27 @@ $(document).ready(function(){
 		ev.preventDefault();
 	});
 
+$(".subteam").change(function(){
+		alert($(this).val());
+		var id = $(this).attr("id");
+		var category_id = id.split("_")[1];
+		var user_id = '<?=$this->session->login_user_id;?>';
+		var data = {"category_id":category_id,"manager_id":$(this).val(),"user_id":user_id}
+		var url = '<?=base_url();?>surveys/post_subteam_manager_id/'+$(this).val();
+		$.ajax({
+			url:url,
+			type:'POST',
+			data:data,
+			success:function(){
 
+			},
+			error:function(){
 
-$(".comment, .subteam").change(function(ev){
+			}
+		});
+});
+
+$(".comment").change(function(ev){
 		var id = $(this).attr("id");
 		var category_id = id.split("_")[1];
 
@@ -393,13 +421,13 @@ $(".comment, .subteam").change(function(ev){
 
 		var appended_comment = comment;
 
-		if($("#subteam_"+category_id).length > 0){
-			var subteam = $("#subteam_"+category_id).val();
-
-			if(subteam!==""){
-				appended_comment = subteam+"|"+comment;
-			}
-		}
+		// if($("#subteam_"+category_id).length > 0){
+		// 	var subteam = $("#subteam_"+category_id).val();
+		//
+		// 	if(subteam!==""){
+		// 		appended_comment = subteam+"|"+comment;
+		// 	}
+		// }
 
 		var user_id = '<?=$this->session->login_user_id;?>';
 
@@ -426,8 +454,5 @@ $(".comment, .subteam").change(function(ev){
 		ev.preventDefault();
 
 	});
-
-
-
     //$('select').trigger('change');
 </script>

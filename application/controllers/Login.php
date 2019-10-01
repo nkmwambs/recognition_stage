@@ -176,9 +176,15 @@ public $auth;
         $query = $this->db->get_where('user' , array('email' => $email));
         if ($query->num_rows() > 0)
         {
+
+            //Set the first_login_attempt to 0 when the user requests for a password reset
+            //Update the password
+
             $this->db->where('email' , $email);
-            $this->db->update('user' , array('password' => md5($new_password)));
+            $this->db->update('user' , array('password' => md5($new_password),'first_login_attempt'=>0));
             $resp['status']         = 'true';
+
+
         }
 
 

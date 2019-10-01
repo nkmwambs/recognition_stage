@@ -844,4 +844,34 @@ class Crud_model extends CI_Model {
 
    }
 
+   function get_managers(){
+     $country_id = $this->session->country_id;
+
+     // Get all users in the country
+     // Get distinct the manager ids of the users
+     $country_users_managers = $this->db->select('distinct(manager_id)')->get_where('user',
+     array('country_id'=>$country_id,'manager_id<>'=>0))->result_object();
+
+     //Get a string of all manager ids separated by commas
+      $manager_ids_array = array_column($country_users_managers,'manager_id');
+
+     //Filter managers resident in the country
+     // Retrieve the details of the managers (department, firstname, lastname, department_id)
+     $this->db->select(array('user_id','firstname','lastname','department.department_id as department_id','department.name as department'));
+     $this->db->where_in('user_id',$manager_ids_array);
+     $this->db->join('role','role.role_id=user.role_id');
+     $this->db->join('department','department.department_id=role.department_id');
+     $managers_in_the_country = $this->db->get_where('user',
+     array('country_id'=>$country_id))->result_object();
+
+
+     //Group the details by department
+     $managers_in_the_country_grouped_by_department = array();
+     foreach ($managers_in_the_country as $manager) {
+        $managers_in_the_country_grouped_by_department[$manager->department_id][$manager->user_id] = substr(trim($manager->firstname),0,1).'.'.$manager->lastname.'\'s Team ('.$manager->department.')';
+     }
+
+     return $managers_in_the_country_grouped_by_department;
+   }
+
 }
