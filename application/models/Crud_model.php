@@ -826,13 +826,26 @@ class Crud_model extends CI_Model {
 
 	}
 
+   /*This a private method gets user_ids of managers in country of logged in user
+   * Pamerater: takes no parameters
+   * Return value: result_object 
+   * Authors: Karisa & Onduso
+   * 
+   */
+
 	private function country_user_manager() {
 
 		//Get distinct the manager ids of the users
 
 		return $this -> db -> select('distinct(manager_id)') -> get_where('user', array('country_id' => $this -> session -> country_id, 'manager_id<>' => 0)) -> result_object();
 	}
-
+	
+  /*This a public method gets all managers
+   * Pamerater: takes no parameters
+   * Return value: array
+   * Authors: Karisa & Onduso
+   * 
+   */
 	function get_managers() {
 
 		//Get all users in the country

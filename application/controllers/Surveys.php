@@ -893,14 +893,20 @@ class Surveys extends CI_Controller
         $page_data['page_title'] = get_phrase(__FUNCTION__);
         $this->load->view('backend/index', $page_data);
 	}
-
-  //Get the list of managers in department
-
+  /*This method gets managers in a department in the country of logged in user
+   * Pamerater: department_id
+   * Return value: sting
+   * Authors: Karisa & Onduso
+   * 
+   */
   function get_managers_in_a_department($department_id = ""){
-
+    	
+    //Get the all managers
     $managers = $this->crud_model->get_managers()[$department_id];
 
-    $options = "<option value='0'>Entire Department</option>";
+    $options = "<option value='0'>".get_phrase('no_viable_option')."</option>";
+	
+    $options .= "<option value='1'>Entire Department</option>";
 
     foreach ($managers as $manager_id => $team_label) {
       $options .= "<option value='".$manager_id."'>".$team_label."</option>";

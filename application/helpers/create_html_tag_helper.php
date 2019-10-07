@@ -90,7 +90,7 @@ if ( ! function_exists('select_tag_department_subteam'))
 		$select_option .='<option value="0">'.get_phrase('no_viable_option').' </option>';
 		
 		if($department_id>0){
-	 		$select_option .= "<option value='0'>Entire Department</option>";
+	 		$select_option .= "<option value='1'>Entire Department</option>";
 			
              $selected="";
 			 

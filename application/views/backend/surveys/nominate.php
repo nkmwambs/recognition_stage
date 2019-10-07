@@ -363,10 +363,7 @@ $(document).ready(function(){
 	$(".nominate").change(function(ev){
 		var category_id = $(this).attr('id');
 		var nominee_id = $(this).val();
-		
-		alert(nominee_id) ;
-		
-		
+				
 		var user_id = '<?=$this->session->login_user_id;?>';
 		//alert(user_id);
 
@@ -392,8 +389,6 @@ $(document).ready(function(){
 			$("#comment_"+category_id).prop("readOnly",'readOnly');
 			$("#comment_"+category_id).val("<?=get_phrase('no_viable_option');?>");
 		}
-
-
 
 		$.ajax({
 			url:url,
@@ -442,17 +437,8 @@ $(".comment").change(function(ev){
 
 		var appended_comment = comment;
 
-		// if($("#subteam_"+category_id).length > 0){
-		// 	var subteam = $("#subteam_"+category_id).val();
-		//
-		// 	if(subteam!==""){
-		// 		appended_comment = subteam+"|"+comment;
-		// 	}
-		// }
 
 		var user_id = '<?=$this->session->login_user_id;?>';
-
-		//alert(appended_comment);
 
 		var data = {"category_id":category_id,"comment":appended_comment,"user_id":user_id}
 
