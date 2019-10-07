@@ -858,43 +858,4 @@ class Crud_model extends CI_Model {
 		return $managers_in_the_country_grouped_by_department;
 	}
 
-	// /*
-	 // * A method of getting all the saved subteams
-	 // * Created by: Onduso
-	 // * Parameters: logged in user
-	 // * Return: array
-	 // * */
-	// function get_entered_subteam($logged_user) {
-// 
-		// $sub_teams_manager_ids = $this -> db -> select(array('category_id', 'subteam_manager_id')) 
-		// -> get_where('tabulate', array('created_by' => $logged_user, 'nominated_unit' => 2))->result_array();
-//         
-        // $rebuild_array=array();
-// 		
-	    // foreach ($sub_teams_manager_ids as $inner_array) {
-//         	
-            // $rebuild_array[$inner_array['subteam_manager_id']]=$inner_array;
-        // }
-		// //return $sub_teams_manager_ids -> result_array();
-		// return $rebuild_array;
-// 
-	// }
-// 
-	// function get_manager_name_with_ids_in_tabulate($where_in_str) {
-// 
-// 
-        // $manager_ids_in_country=$this->country_user_manager();
-// 		
-		// $this -> db -> select(array('firstname', 'lastname','user_id'));
-		// $this -> db -> where_in('user_id', $where_in_str);
-		// $names_and_ids=$this -> db -> get_where('user',array('country_id' => $this -> session -> country_id))->result_array();
-// 		
-		// $subteam_key_array=array();
-// 		
-		// foreach ($names_and_ids as $names_and_id) {
-			// $subteam_key_array[$names_and_id['user_id']]=$names_and_id;
-		// }
-		// return $subteam_key_array;
-	// }
-
 }
