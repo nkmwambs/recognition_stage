@@ -759,7 +759,7 @@ class Surveys extends CI_Controller
     $category_id = $_POST['category_id'];
 	$user_id = $_POST['user_id'];
     $manager_id = $_POST['subteam_manager_id'];
-    
+   echo $manager_id;
     $data['subteam_manager_id'] = $manager_id; 
 
     $this->db->join('survey','survey.survey_id=result.survey_id');
@@ -778,7 +778,7 @@ class Surveys extends CI_Controller
 			$this->db->update("tabulate",$data);
 		}
 		
-		echo $user_id;
+		//echo $user_id;
   }
 
 	function post_nomination_comment(){
@@ -904,9 +904,9 @@ class Surveys extends CI_Controller
     //Get the all managers
     $managers = $this->crud_model->get_managers()[$department_id];
 
-    $options = "<option value='0'>".get_phrase('select_subteam')."</option>";
+    $options = "<option value='no_subteam'>".get_phrase('select_subteam')."</option>";
 	
-    $options .= "<option value='1'>Entire Department</option>";
+    $options .= "<option value='0'>Entire Department</option>";
 
     foreach ($managers as $manager_id => $team_label) {
       $options .= "<option value='".$manager_id."'>".$team_label."</option>";

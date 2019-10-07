@@ -87,10 +87,10 @@ if ( ! function_exists('select_tag_department_subteam'))
 		//Build the dropdown
 		$select_option='<select class="form-control subteam" id="subteam_'.$category.'" '.$disabled.' >';
 		
-		$select_option .='<option value="0">'.get_phrase('select_subteam').' </option>';
+		$select_option .='<option value="no_subteam">'.get_phrase('select_subteam').' </option>';
 		
 		if($department_id>0){
-	 		$select_option .= "<option value='1'>Entire Department</option>";
+	 		$select_option .= "<option value='0'>Entire Department</option>";
 			
              $selected="";
 			 

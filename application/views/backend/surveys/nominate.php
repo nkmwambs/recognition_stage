@@ -127,11 +127,20 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 												<tr style="font-style: italic;">
 													<th><?=get_phrase("category");?></th>
 													<th><?=get_phrase("visibility");?></th>
-													<th><?=get_phrase("nominate_unit");?></th>
+													<?php if($grouping_id==1){?>
+													 <th><?=get_phrase("nominate_staff");?></th>	
+													<?php 
+													}
+													elseif($grouping_id==3){?>
+														<th><?=get_phrase("nominate_special_team");?></th>
+													<?php }?>
+													
+													
 													<?php
 														if($grouping_id == 4){
 													?>
-														<th><?=get_phrase('sub_team');?></th>
+													    <th><?=get_phrase("nominate_department");?></th>
+														<th><?=get_phrase('nominate_sub_team');?></th>
 													<?php
 														}
 													?>
@@ -412,15 +421,20 @@ $(".subteam").change(function(){
 				
 		var data = {"category_id": category_id, "subteam_manager_id":$(this).val(),"user_id":user_id};
 		
+		if($(this).val()=='no_subteam')
+		{
+			
+			return false;
+		}
 		var url = '<?=base_url();?>surveys/post_subteam_manager_id/'+$(this).val();
-		alert(url);
+		//alert(url);
 		$.ajax({
 			url:url,
 			type:'POST',
 			data:data,
 			success:function(msg){
 				
-              //alert(msg);
+              alert(msg);
 			},
 			error:function(oberr,msg){
 				
