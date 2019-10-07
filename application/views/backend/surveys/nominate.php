@@ -361,12 +361,13 @@ $(document).ready(function(){
 
 
 	$(".nominate").change(function(ev){
+		
+		//Variables
 		var category_id = $(this).attr('id');
-		var nominee_id = $(this).val();
-				
+		var nominee_id = $(this).val();		
 		var user_id = '<?=$this->session->login_user_id;?>';
-		//alert(user_id);
-
+		
+        //url to post to
 		var url = "<?=base_url();?>surveys/post_nomination_choice/" + category_id + '/' + nominee_id + '/' + user_id;
 
 		if($(this).val() !== "0"){
@@ -383,8 +384,8 @@ $(document).ready(function(){
 			$("#subteam_"+category_id).removeAttr("disabled");
 			
 		}else{
-			//Toggle sub team to disenable
-			//$("#subteam_"+category_id).prop('disabled','disabled');
+			//Toggle sub team to disable and comment text area to readonly
+			$("#subteam_"+category_id).prop('disabled','disabled');
 
 			$("#comment_"+category_id).prop("readOnly",'readOnly');
 			$("#comment_"+category_id).val("<?=get_phrase('no_viable_option');?>");

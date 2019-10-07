@@ -904,7 +904,7 @@ class Surveys extends CI_Controller
     //Get the all managers
     $managers = $this->crud_model->get_managers()[$department_id];
 
-    $options = "<option value='0'>".get_phrase('no_viable_option')."</option>";
+    $options = "<option value='0'>".get_phrase('select_subteam')."</option>";
 	
     $options .= "<option value='1'>Entire Department</option>";
 
