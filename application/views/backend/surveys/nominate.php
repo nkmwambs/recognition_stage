@@ -15,6 +15,8 @@
  */
 $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id,'two_way'=>1));
 
+//echo $this->post_subteam_manager_id();
+
 ?>
 
 <div class="row">
@@ -138,7 +140,8 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 											</thead>
 											<tbody>
 												<?php
-													/** Populate nominating Units Select form control. Derived from the static table Unit**/
+												    
+											        /** Populate nominating Units Select form control. Derived from the static table Unit**/
 													foreach($categories as $category){
 														//Get the table name of the units to nominate Ex. User/ Staff, Department, Team or Country
 														$unit_table_name = $this->db->get_where("unit",array("unit_id"=>$category->unit))->row()->name;
@@ -194,10 +197,10 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 																	}
 															?>
 																<td>
-																	<!-- <input type="text" <?=$disabled;?> class="form-control subteam" value="<?=$subteam;?>" name="" id="subteam_<?=$category->category_id;?>" placeholder="<?=get_phrase('specify_a_sub_team,_if_any');?>"/> -->
-																	<select class="form-control subteam" id="subteam_<?=$category->category_id;?>">
-																			<option value=""><?=get_phrase('no_viable_option');?></option>
-																	</select>
+																	<?php 
+																	 //Populate the dropdown of subteams 
+																	 echo select_tag_department_subteam($category->category_id,$nominee->nominee_id,$this->session->login_user_id);
+																	?>
 																</td>
 															<?php
 																//print_r($controller_nominees);
@@ -303,14 +306,22 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 	</div>
 
 <script>
-
+// Make the subteams and comments readonly until you select a function teams
+//
 $(document).ready(function(){
 
 	$.each($(".nominate"),function(i,el){
 			if($(el).val() == "0"){
 				$("#comment_"+$(el).attr("id")).val("<?=get_phrase('no_viable_option');?>");
+				
+				$("#subteam_"+$(el).attr("id")).val("<?=get_phrase('no_viable_option');?>");
+				
+				$("#subteam_"+$(el).attr("id")).val("<?=get_phrase('no_viable_option');?>");
+				
 			}else{
 				$("#comment_"+$(el).attr("id")).removeAttr("readOnly");
+				
+				$("#subteam_"+$(el).attr("id")).removeAttr("disabled");
 			}
 	});
 });
@@ -352,6 +363,10 @@ $(document).ready(function(){
 	$(".nominate").change(function(ev){
 		var category_id = $(this).attr('id');
 		var nominee_id = $(this).val();
+		
+		alert(nominee_id) ;
+		
+		
 		var user_id = '<?=$this->session->login_user_id;?>';
 		//alert(user_id);
 
@@ -368,14 +383,14 @@ $(document).ready(function(){
 
 			$("#comment_"+category_id).removeAttr("readOnly");
 			$("#comment_"+category_id).val("");
-			$("#subteam_"+category_id).val("");
+			$("#subteam_"+category_id).removeAttr("disabled");
+			
 		}else{
 			//Toggle sub team to disenable
 			//$("#subteam_"+category_id).prop('disabled','disabled');
 
 			$("#comment_"+category_id).prop("readOnly",'readOnly');
 			$("#comment_"+category_id).val("<?=get_phrase('no_viable_option');?>");
-			//$("#subteam_"+category_id).val("");
 		}
 
 
@@ -394,20 +409,26 @@ $(document).ready(function(){
 	});
 
 $(".subteam").change(function(){
-		alert($(this).val());
+		//alert($(this).val());
 		var id = $(this).attr("id");
 		var category_id = id.split("_")[1];
 		var user_id = '<?=$this->session->login_user_id;?>';
-		var data = {"category_id":category_id,"manager_id":$(this).val(),"user_id":user_id}
+				
+		var data = {"category_id": category_id, "subteam_manager_id":$(this).val(),"user_id":user_id};
+		
 		var url = '<?=base_url();?>surveys/post_subteam_manager_id/'+$(this).val();
+		alert(url);
 		$.ajax({
 			url:url,
 			type:'POST',
 			data:data,
-			success:function(){
-
+			success:function(msg){
+				
+              //alert(msg);
 			},
-			error:function(){
+			error:function(oberr,msg){
+				
+				//alert(msg);
 
 			}
 		});

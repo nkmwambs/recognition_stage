@@ -753,18 +753,23 @@ class Surveys extends CI_Controller
 	}
 
   function post_subteam_manager_id(){
+  	
+	//$test=$this->db->get_where("tabulate",array("result_id"=>$result->result_id,"category_id"=>$category_id))->num_rows();
+	
     $category_id = $_POST['category_id'];
-		$user_id = $_POST['user_id'];
-    $manager_id = $_POST['manager_id'];
-
-
-		$data['subteam_manager_id'] = $manager_id;
+	$user_id = $_POST['user_id'];
+    $manager_id = $_POST['subteam_manager_id'];
+    
+    $data['subteam_manager_id'] = $manager_id; 
 
     $this->db->join('survey','survey.survey_id=result.survey_id');
-    $result = $this->db->get_where("result",array("user_id"=>$voting_user_id,"survey.status"=>1))->row();
-		$category = $this->db->get_where("category",array("category_id"=>$category_id))->row();
-
-		if($this->db->get_where("tabulate",array("result_id"=>$result->result_id,"category_id"=>$category_id))->num_rows() > 0){
+    $result = $this->db->get_where("result",array("user_id"=>$user_id,"survey.status"=>1))->row();
+	
+	$category = $this->db->get_where("category",array("category_id"=>$category_id))->row();
+     
+	 
+	 
+	if($this->db->get_where("tabulate",array("result_id"=>$result->result_id,"category_id"=>$category_id))->num_rows() > 0){
 			$this->db->where(array("result_id"=>$result->result_id,"category_id"=>$category_id));
 			$this->db->update("tabulate",$data);
 		}else{
@@ -772,7 +777,8 @@ class Surveys extends CI_Controller
 			$this->db->where(array("result_id"=>$result->result_id,"category_id"=>$category_id));
 			$this->db->update("tabulate",$data);
 		}
-
+		
+		echo $user_id;
   }
 
 	function post_nomination_comment(){
@@ -902,6 +908,6 @@ class Surveys extends CI_Controller
 
     echo $options;
   }
-
+  
 
 }
