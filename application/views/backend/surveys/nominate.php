@@ -316,21 +316,28 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 
 <script>
 // Make the subteams and comments readonly until you select a function teams
-//
 $(document).ready(function(){
 
+   
 	$.each($(".nominate"),function(i,el){
-			if($(el).val() == "0"){
-				$("#comment_"+$(el).attr("id")).val("<?=get_phrase('no_viable_option');?>");
+			if($(el).val() != 0){
 				
-				$("#subteam_"+$(el).attr("id")).val("<?=get_phrase('no_viable_option');?>");
-				
-				$("#subteam_"+$(el).attr("id")).val("<?=get_phrase('no_viable_option');?>");
-				
-			}else{
 				$("#comment_"+$(el).attr("id")).removeAttr("readOnly");
 				
 				$("#subteam_"+$(el).attr("id")).removeAttr("disabled");
+				//Check if the comment textbox has 'No Viable Option' text and then clear it
+				if($("#comment_"+$(el).attr("id")).val()=='No Viable Option'){
+					
+					$("#comment_"+$(el).attr("id")).val('');
+				}
+				
+				
+				//$("#subteam_"+$(el).attr("id")).val("<?=get_phrase('select_subteam');?>");
+				
+			}else{
+				//$("#comment_"+$(el).attr("id")).removeAttr("readOnly");
+				
+				//$("#subteam_"+$(el).attr("id")).removeAttr("disabled");
 			}
 	});
 });
@@ -400,7 +407,7 @@ $(document).ready(function(){
 			});
 
 			$("#comment_"+category_id).removeAttr("readOnly");
-			$("#comment_"+category_id).val("");
+			$("#comment_"+category_id).val('');
 			$("#subteam_"+category_id).removeAttr("disabled");
 			
 		}else{
@@ -428,17 +435,17 @@ $(".subteam").change(function(){
 		var id = $(this).attr("id");
 		var category_id = id.split("_")[1];
 		var user_id = '<?=$this->session->login_user_id;?>';
+		
+		//Remove the Css style once the user selects a value in the subteam
+		$.each($(this),function(index,element){
+         
+			$(element).removeAttr('style');
+         
+       });
 				
 		var data = {"category_id": category_id, "subteam_manager_id":$(this).val(),"user_id":user_id};
-		
-		if($(this).val()=='no_subteam')
-		{
-			
-			return false;
-		}
-		
 		var url = '<?=base_url();?>surveys/post_subteam_manager_id/'+$(this).val();
-		//alert(url);
+		
 		$.ajax({
 			url:url,
 			type:'POST',
