@@ -394,6 +394,8 @@ $(document).ready(function(){
 		var nominee_id = $(this).val();		
 		var user_id = '<?=$this->session->login_user_id;?>';
 		
+		
+		
         //url to post to
 		var url = "<?=base_url();?>surveys/post_nomination_choice/" + category_id + '/' + nominee_id + '/' + user_id;
 
@@ -415,6 +417,13 @@ $(document).ready(function(){
 			$("#subteam_"+category_id).prop('disabled','disabled');
 			$("#comment_"+category_id).prop("readOnly",'readOnly');
 			$("#comment_"+category_id).val("<?=get_phrase('no_viable_option');?>");
+			
+			//When user selects 'No Viable Option' after selecting a value > 0 e.g. partnership department
+			//Rebuild the dropdown for subteams by repopulating it. This action also 
+			//disables the subteam dropdown since the department dropdown value=0
+			$.get('<?=base_url();?>surveys/get_managers_in_a_department/'+$(this).val(),function(resp){
+					$("#subteam_"+category_id).html(resp);
+			});
 		}
 
 		$.ajax({
@@ -438,9 +447,7 @@ $(".subteam").change(function(){
 		
 		//Remove the Css style once the user selects a value in the subteam
 		$.each($(this),function(index,element){
-         
 			$(element).removeAttr('style');
-         
        });
 				
 		var data = {"category_id": category_id, "subteam_manager_id":$(this).val(),"user_id":user_id};
