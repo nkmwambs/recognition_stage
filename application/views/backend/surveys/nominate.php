@@ -351,7 +351,7 @@ $(document).ready(function(){
 	  //Get all the subteams dropdown and loop all of them checking if they are empty
        var validate_subteam_dropdown=$(".subteam");
        $.each(validate_subteam_dropdown,function(index,element){
-         if($(element).val()=='no_subteam'){
+         if($(element).val()=='no_subteam' && !$(element).prop('disabled')){
          	cnt++;
 			$(element).css("border","1px solid red");
          }
@@ -406,7 +406,6 @@ $(document).ready(function(){
 		}else{
 			//Toggle sub team to disable and comment text area to readonly
 			$("#subteam_"+category_id).prop('disabled','disabled');
-
 			$("#comment_"+category_id).prop("readOnly",'readOnly');
 			$("#comment_"+category_id).val("<?=get_phrase('no_viable_option');?>");
 		}
