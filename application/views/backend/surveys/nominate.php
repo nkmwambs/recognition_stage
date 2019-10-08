@@ -349,7 +349,7 @@ $(document).ready(function(){
 		var cnt = 0;
 
 		$.each(req_validate,function(i,el){
-			if($(el).val() === ""){
+			if($(el).val() === "" && !$(el).prop('readonly')){
 				cnt++;
 				$(el).css("border","1px solid red");
 			}
