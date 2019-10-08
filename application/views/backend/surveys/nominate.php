@@ -335,9 +335,9 @@ $(document).ready(function(){
 	});
 });
 
-
+//Before submit check if comment and subteam dropdown is <> 'select subteam'
 	$("#submit_vote").click(function(ev){
-
+        //Get all the comments textboxes and loop all of them checking if they are empty
 		var req_validate = $(".comment");
 		var cnt = 0;
 
@@ -347,9 +347,20 @@ $(document).ready(function(){
 				$(el).css("border","1px solid red");
 			}
 		});
-
+	  
+	  //Get all the subteams dropdown and loop all of them checking if they are empty
+       var validate_subteam_dropdown=$(".subteam");
+       $.each(validate_subteam_dropdown,function(index,element){
+         if($(element).val()=='no_subteam'){
+         	cnt++;
+			$(element).css("border","1px solid red");
+         }
+       });
+	
+		//If cnt> 0 return a message otherwise
 		if(cnt > 0){
 			alert("<?=get_phrase("you_have_missing_fields");?>");
+			
 		}else{
 			var url = "<?=base_url();?>surveys/nominate/submit_vote/<?=$this->session->login_user_id;?>";
 			$.ajax({
@@ -426,6 +437,7 @@ $(".subteam").change(function(){
 			
 			return false;
 		}
+		
 		var url = '<?=base_url();?>surveys/post_subteam_manager_id/'+$(this).val();
 		//alert(url);
 		$.ajax({
