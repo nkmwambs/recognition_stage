@@ -547,13 +547,22 @@ class Crud_model extends CI_Model {
 
 				$result = $this -> staff_hierachy($this -> session -> login_user_id);
 
-			} else {
+			} 
+			else {
 				/** List all staff for the country and those with scope to the country for voting **/
+				
 				$cond2 = "user.user_id <> " . $this -> session -> login_user_id;
 				if ($category -> visibility === '1') {
+					
+					// if($this->session->is_bt_role)
+				// {
+					   // $this->db->where(array('user.role_id'=>$this->session->role_id));
+					// }
+					
+					
 					$user_ids_query = $this -> crud_model -> users_with_country_scope_for_voting($this -> session -> country_id);
 					if ($user_ids_query !== "") {
-						$cond2 = $user_ids_query . " or " . $cond2;
+						$cond2= '('.$user_ids_query . " or " . $cond2.')';
 					}
 				}
 
@@ -563,8 +572,15 @@ class Crud_model extends CI_Model {
 				if ($scope -> num_rows() > 0) {
 					$cond = $this -> crud_model -> country_scope_where($this -> session -> login_user_id, $scope -> row() -> type);
 					$this -> db -> where($cond);
-				} else {
+				} 
+				else 
+				{
 					$this -> db -> where(array("country_id" => $this -> session -> country_id));
+				}
+				//Adds users of BT not that in that country
+				if($this->session->is_bt_role)
+				{
+					$this -> db -> or_where(array("role_id" => $this -> session -> role_id));
 				}
 
 				$result = $this -> db -> get($unit_table_name) -> result_object();
@@ -826,12 +842,12 @@ class Crud_model extends CI_Model {
 
 	}
 
-   /*This a private method gets user_ids of managers in country of logged in user
-   * Pamerater: takes no parameters
-   * Return value: result_object 
-   * Authors: Karisa & Onduso
-   * 
-   */
+	/*This a private method gets user_ids of managers in country of logged in user
+	 * Pamerater: takes no parameters
+	 * Return value: result_object
+	 * Authors: Karisa & Onduso
+	 *
+	 */
 
 	private function country_user_manager() {
 
@@ -839,13 +855,13 @@ class Crud_model extends CI_Model {
 
 		return $this -> db -> select('distinct(manager_id)') -> get_where('user', array('country_id' => $this -> session -> country_id, 'manager_id<>' => 0)) -> result_object();
 	}
-	
-  /*This a public method gets all managers
-   * Pamerater: takes no parameters
-   * Return value: array
-   * Authors: Karisa & Onduso
-   * 
-   */
+
+	/*This a public method gets all managers
+	 * Pamerater: takes no parameters
+	 * Return value: array
+	 * Authors: Karisa & Onduso
+	 *
+	 */
 	function get_managers() {
 
 		//Get all users in the country

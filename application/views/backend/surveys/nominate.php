@@ -15,7 +15,7 @@
  */
 $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id,'two_way'=>1));
 
-//print_r($this->crud_model->get_managers()[8]);
+//print_r($this->crud_model->users_with_voters_bt_role($this->session->role_id));
 
 ?>
 

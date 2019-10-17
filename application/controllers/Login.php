@@ -109,7 +109,7 @@ public $auth;
 			$this->session->set_userdata('manage_staff_in_your_country', $row->manage_staff_in_your_country);
 			//$this->session->set_userdata('vote_all_in_user_scope',$role->vote_all_in_user_scope);
 			$this->session->set_userdata('last_line_manager',$role->last_line_manager);
-			//$this->session->set_userdata('is_bt_role', $row->is_bt_role);
+			$this->session->set_userdata('is_bt_role', $role->is_bt_role==2?true:false);
 
 			$this->session->set_userdata('first_login_attempt',$first_login_attempt);
 
