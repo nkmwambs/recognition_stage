@@ -759,7 +759,9 @@ class Surveys extends CI_Controller
     $category_id = $_POST['category_id'];
 	$user_id = $_POST['user_id'];
     $manager_id = $_POST['subteam_manager_id'];
-   echo $manager_id;
+   
+    $nominee_id = $_POST['nominee_id']; 
+	
     $data['subteam_manager_id'] = $manager_id; 
 
     $this->db->join('survey','survey.survey_id=result.survey_id');
@@ -773,7 +775,7 @@ class Surveys extends CI_Controller
 			$this->db->where(array("result_id"=>$result->result_id,"category_id"=>$category_id));
 			$this->db->update("tabulate",$data);
 		}else{
-			$this->post_nomination_choice($category_id,0,$user_id);
+			$this->post_nomination_choice($category_id,$nominee_id,$user_id);
 			$this->db->where(array("result_id"=>$result->result_id,"category_id"=>$category_id));
 			$this->db->update("tabulate",$data);
 		}
@@ -787,20 +789,24 @@ class Surveys extends CI_Controller
 		$user_id = $_POST['user_id'];
 
 		$data['comment'] = $comment;
-
+	//Update the comment in tabulate table for a given user and category  
+    $this->db->trans_start();
     $this->db->join('survey','survey.survey_id=result.survey_id');
-    $result = $this->db->get_where("result",array("user_id"=>$voting_user_id,"survey.status"=>1))->row();
+    $result = $this->db->get_where("result",array("user_id"=>$user_id,"survey.status"=>1))->row();
 		$category = $this->db->get_where("category",array("category_id"=>$category_id))->row();
-
+        
 		if($this->db->get_where("tabulate",array("result_id"=>$result->result_id,"category_id"=>$category_id))->num_rows() > 0){
-			$this->db->where(array("result_id"=>$result->result_id,"category_id"=>$category_id));
-			$this->db->update("tabulate",$data);
-		}else{
-			$this->post_nomination_choice($category_id,0,$user_id);
+				
 			$this->db->where(array("result_id"=>$result->result_id,"category_id"=>$category_id));
 			$this->db->update("tabulate",$data);
 		}
+		$this->db->trans_complete();
 
+        if ($this->db->trans_status() === FALSE)
+        {
+        		// generate an error... or use the log_message() function to log your error
+        }
+		
 	}
 
 	public function survey_results($survey_id="",$param2=""){

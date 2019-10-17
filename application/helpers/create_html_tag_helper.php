@@ -90,7 +90,9 @@ if ( ! function_exists('select_tag_department_subteam'))
 		$select_option .='<option value="no_subteam">'.get_phrase('select_subteam').' </option>';
 		
 		if($department_id>0){
-	 		$select_option .= "<option value='0'>Entire Department</option>";
+			$entire_department_selected='selected = "selected"';
+			
+	 		$select_option .= "<option value='0' ".$entire_department_selected.">Entire Department</option>";
 			
              $selected="";
 			 
@@ -104,7 +106,9 @@ if ( ! function_exists('select_tag_department_subteam'))
 			  
 			  //Set selected if the tabulate_rows > 0 other than reset to $selected=''
 		      if($tabulate_rows->num_rows()>0){
-		      	
+		      		
+		      	$entire_department_selected='';
+				
 		      	$selected='selected = "selected"';
 								
 		      }

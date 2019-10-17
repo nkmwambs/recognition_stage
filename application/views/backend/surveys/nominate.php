@@ -15,7 +15,7 @@
  */
 $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id,'two_way'=>1));
 
-//echo $this->post_subteam_manager_id();
+//print_r($this->crud_model->get_managers()[8]);
 
 ?>
 
@@ -425,7 +425,7 @@ $(document).ready(function(){
 					$("#subteam_"+category_id).html(resp);
 			});
 		}
-
+        
 		$.ajax({
 			url:url,
 			success:function(resp){
@@ -459,7 +459,7 @@ $(".subteam").change(function(){
 			data:data,
 			success:function(msg){
 				
-              alert(msg);
+              //alert(msg);
 			},
 			error:function(oberr,msg){
 				
@@ -479,6 +479,11 @@ $(".comment").change(function(ev){
 
 
 		var user_id = '<?=$this->session->login_user_id;?>';
+		
+		//Remove the Css style once the user selects a value in the comments
+		
+		$(this).removeAttr('style');
+      
 
 		var data = {"category_id":category_id,"comment":appended_comment,"user_id":user_id}
 
