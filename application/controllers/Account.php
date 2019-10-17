@@ -339,16 +339,18 @@ class Account extends CI_Controller
 		/** Related Tables to Category **/
 		$crud->set_relation('contribution','contribution','name');
 		$crud->set_relation('department_id','department','name');
+		$crud->field_type('is_bt_role','dropdown',array('1' => get_phrase('no'), '2' => get_phrase('yes')));
 		//$crud->set_relation_n_n("members", "user", "role_id","role_id","email");
 		//$crud->set_relation_n_n("members", "teamset", "user", "team_id", "user_id", "email");
 		/**Select Fields to Show in the Grid **/
-		$crud->columns(array("name","contribution","department_id",'last_line_manager'));
+		$crud->columns(array("name","contribution","department_id",'last_line_manager','is_bt_role'));
 
 		//dropdown for vote_all_in_user_scope and last_line_manager
 		$crud->set_relation('last_line_manager','yes_no_option','name');
 
 		/**Give columns user friendly labels**/
 		$crud->display_as('contribution_id',get_phrase('contribution'))
+		        ->display_as('is_bt_role',get_phrase('is_transnational_role?'))
 				->display_as('department_id',get_phrase('department'));
 
 		/**Callbacks**/
@@ -357,8 +359,8 @@ class Account extends CI_Controller
 		//$crud->callback_insert(array($this,'catch_invalid_last_line_manager_and_vote_all_in_scope_choice'));
 
 		/** Hide fields from add and edit forms**/
-		$crud->add_fields(array("name","contribution","department_id",'last_line_manager'));
-		$crud->edit_fields(array("name","contribution","department_id",'last_line_manager'));
+		$crud->add_fields(array("name","contribution","department_id",'last_line_manager','is_bt_role'));
+		$crud->edit_fields(array("name","contribution","department_id",'last_line_manager','is_bt_role'));
 
 		/** Assign Privileges **/
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_role")) $crud->unset_add();
