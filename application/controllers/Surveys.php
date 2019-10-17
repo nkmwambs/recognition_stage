@@ -738,6 +738,16 @@ class Surveys extends CI_Controller
 		$data['category_id'] = $category_id;
 		$data['nominated_unit'] = $category->unit;
 		$data['nominee_id'] = $nominee_id;
+		$data['nominee_country_id']=$this->session->country_id;
+		
+		if($category->unit==4){
+			
+		  $user=$this->db->get_where('user',array('user_id'=>$nominee_id));
+			
+		  if($user->num_rows()>0){
+		  	$data['nominee_country_id']=$user->row()->country_id;
+		  }
+		}
 		$data['created_by'] = $voting_user_id;
 		$data['created_date'] = date("Y-m-d h:i:s");
 		$data['last_modified_by'] = $voting_user_id;
@@ -831,18 +841,24 @@ class Surveys extends CI_Controller
 			if($this->input->post('country_id')){
 
 				$set_default_country = $this->input->post('country_id');
-
-				$this->db->where(array("survey_id"=>$survey_id,"result.country_id"=>$set_default_country));
+                 
+				 //$this->db->where(array("tabulate.nominated_unit<>"=>4));
+				$this->db->where(array("survey_id"=>$survey_id,"tabulate.nominee_country_id"=>$set_default_country));
 
 			}else{
-				$this->db->where(array("survey_id"=>$survey_id,"result.country_id"=>$set_default_country));
+				//$this->db->where(array("tabulate.nominated_unit<>"=>4));
+				$this->db->where(array("survey_id"=>$survey_id,"tabulate.nominee_country_id"=>$set_default_country));
+				
 			}
 
 			if($this->input->post('unit_id')){
 				$set_default_unit_id = $this->input->post('unit_id');
 
-				if ($this->input->post('unit_id') != 0) $this->db->where(
-				array("tabulate.nominated_unit "=>$set_default_unit_id));
+				if ($this->input->post('unit_id') != 0) {
+					//$this->db->where(array("tabulate.nominated_unit<>"=>4));
+					$this->db->where(array("tabulate.nominated_unit "=>$set_default_unit_id));
+				}
+				
 
 			}
 
