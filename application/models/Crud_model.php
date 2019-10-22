@@ -520,7 +520,7 @@ class Crud_model extends CI_Model {
 		 * The below if block sets the where conditions to determine the users to be
 		 * listed in  the dropdown in the GUI
 		 * **/
-		$result = "";
+		$result = array();
 		if ($unit_table_name === "user") {
 			$this -> db -> select(array('user.user_id', 'user.firstname', 'user.lastname', 'user.role_id', 'user.country_id', 'user.email', 'user.manager_id'));
 			/** User Filters Set here

@@ -771,7 +771,7 @@ class Surveys extends CI_Controller
     $manager_id = $_POST['subteam_manager_id'];
    
     $nominee_id = $_POST['nominee_id']; 
-	
+	echo $manager_id;
     $data['subteam_manager_id'] = $manager_id; 
 
     $this->db->join('survey','survey.survey_id=result.survey_id');

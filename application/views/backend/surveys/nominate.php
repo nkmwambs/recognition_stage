@@ -15,7 +15,21 @@
  */
 $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id,'two_way'=>1));
 
-//print_r($this->crud_model->users_with_voters_bt_role($this->session->role_id));
+$a=array("<option  value='0'>Entire Department</option>","<option  value='0'>Entire Department</option>","<option  value='0'>Entire Department</option>");
+array_push($a,"<option  value='0'>Entire Department</option>");
+$b=array_flip($a);
+print_r($b);
+
+//print_r($this->crud_model->get_managers());
+// 
+// $category_id_arr=array_column($controller_nominees, 'category_id');
+// 
+// $nominee_id_arr=array_column($controller_nominees, 'nominee_id');
+// 
+// $combine_arr=array_combine($category_id_arr, $nominee_id_arr);
+// 
+// print_r($combine_arr);
+
 
 ?>
 
@@ -168,54 +182,51 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 
 												?>
 														<tr>
-															<td>
+															<td class='td_category'>
 																<a href="#" data-html="true" data-toggle="tooltip" title="<?=$category->description;?>">
 																	<?=$category->name;?>
 																</a>
 															</td>
-															<td><?=$this->crud_model->get_type_name_by_id("country",$category->visibility);?></td>
+															<td class='td_visibility'><?=$this->crud_model->get_type_name_by_id("country",$category->visibility);?></td>
 
-															<td><?=$units_select_tag;?></td>
+															<td class='td_nominate'><?=$units_select_tag;?></td>
 															<?php
 																/**
 																 * Loops $controller_nominees as it populates the comments of the nominees
 																 */
 																$comment = "";
-																$subteam = "";
-																if(count($controller_nominees) > 0){
+																
+																 if(count($controller_nominees) > 0){
+// 																	
 																	foreach($controller_nominees as $nominee){
+																		
 																		if($nominee->category_id === $category->category_id){
-																			$comment_subteam = explode("|", $nominee->comment);
-																			if(count($comment_subteam) > 1){
-																				$comment = $comment_subteam[1];
-																				$subteam = $comment_subteam[0];
-																			}else{
-																				$comment = $comment_subteam[0];
-																			}
-
-																			break;
+																			$comment=$nominee->comment;
+																			//break;
 																		}
 
 																	}
-																}
+																	// //print_r($test_arr);
+																 }
 
 																if($grouping_id == 4){
-																	$disabled = "disabled = 'disabled'";
-																	if($category->category_id == $nominee->category_id && $nominee->nominee_id != 0){
-																		$disabled = "";
-																	}
+																	// $disabled = "disabled = 'disabled'";
+																	// if($category->category_id == $nominee->category_id && $nominee->nominee_id != 0){
+																		// $disabled = "";
+																	// }
 															?>
-																<td>
+																<td class='td_subteam'>
 																	<?php 
 																	 //Populate the dropdown of subteams 
-																	 echo select_tag_department_subteam($category->category_id,$nominee->nominee_id,$this->session->login_user_id);
+																	 
+																	 echo select_tag_department_subteam($category->category_id,$controller_nominees);
 																	?>
 																</td>
 															<?php
 																//print_r($controller_nominees);
 																}
 															?>
-															<td>
+															<td class='td_comment'>
 																<textarea readonly="readonly" id="comment_<?=$category->category_id;?>"
 																	class="form-control validate comment"
 																placeholder="<?=get_phrase("comment_here")?>"><?=$comment;?></textarea>
@@ -407,6 +418,26 @@ $(document).ready(function(){
 			$.get('<?=base_url();?>surveys/get_managers_in_a_department/'+$(this).val(),function(resp){
 					$("#subteam_"+category_id).html(resp);
 			});
+			
+			// var td_comment=$("#comment_"+category_id).parent();
+// 			
+			// var td_subteam='';
+			// if(td_comment.closest('.td_subteam').length>0){
+// 				
+				// td_subteam=td_comment.closest('.td_subteam');
+// 				
+				// var subteam_dropdown=td_subteam.find('#subteam_'+category_id);
+// 				
+				// if(subteam_dropdown.val()!='no_subteam'){
+// 					
+					// $("#comment_"+category_id).removeAttr("readOnly");
+				// }
+// 				
+			// }
+			// else{
+				// $("#comment_"+category_id).removeAttr("readOnly");
+			// }
+			
 
 			$("#comment_"+category_id).removeAttr("readOnly");
 			$("#comment_"+category_id).val('');
@@ -459,7 +490,7 @@ $(".subteam").change(function(){
 			data:data,
 			success:function(msg){
 				
-              //alert(msg);
+              alert(msg);
 			},
 			error:function(oberr,msg){
 				

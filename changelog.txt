@@ -1,0 +1,20 @@
+625f961 Changed the setting of roles form by adding the becoming transnational staff role
+04e6eed Implemented the Becoming transnational staff to be able to vote one another the peer catagories irrespective of countries
+fdbbed1 Fixing the problem of a nominee voted in another not appearing in the result in their country
+12ea957 The entire departement in the subteam dropdown to be selected
+2fd0408 Comment textbox to subteam dropdown to only be put a style of red border when it is not in readyonly and or disabled
+3b55da0 Repopulate the subteams dropdown after a user selects "No Viable Option" after selecting a value other than 0
+b020ed4 Remove style "the red border" once the user selects a value other than "0"
+f43be3d Implemented the submit vote button when clicked to only mark subteam dropdown that are enabled and ignore disabled
+fd17892 Restrict the form to submit when "submit vote" button is clicked whenthe selected value="select subteam"
+cdd0e7b Renamed the nominate unit to describing the grouping vividly as "nominate staff or department or subteam or special team"
+de47282 Changed the "no viable option" to "select subteam"
+a3a3d9b Make no viable option to have value of "0" and "Entire Department" to have value "1"
+62d3a47 Make "no viable option" as first option in the subteam dropdown
+bcdbbc6 Populate the subteam dropdown and implemented selected value of the dropdown
+03525b9 Set first login attempt to 0 when reseting password
+da5db63 In the password_reset method of email model update table name users to user
+e963ce2 Changed reset password method to password_reset in model
+f569221 Reduced the rand function to use integer in password reset
+cd81172 Implemented Okta authentication with SAML
+cc9f092 Remove cron sent email logs - Remove the log method
