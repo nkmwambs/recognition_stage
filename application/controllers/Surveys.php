@@ -921,12 +921,12 @@ class Surveys extends CI_Controller
    * Authors: Karisa & Onduso
    * 
    */
-  function get_managers_in_a_department($department_id = ""){
+  public function get_managers_in_a_department($department_id = ""){
     	
     //Get the all managers
     $managers = $this->crud_model->get_managers()[$department_id];
 
-    $options = "<option value='no_subteam'>".get_phrase('select_subteam')."</option>";
+    $options = "<option value='-1'>".get_phrase('select_subteam')."</option>";
 	
     $options .= "<option value='0'>Entire Department</option>";
 

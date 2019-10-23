@@ -343,8 +343,6 @@ $(document).ready(function(){
 				}
 				
 				
-				//$("#subteam_"+$(el).attr("id")).val("<?=get_phrase('select_subteam');?>");
-				
 			}else{
 				//$("#comment_"+$(el).attr("id")).removeAttr("readOnly");
 				
@@ -369,7 +367,7 @@ $(document).ready(function(){
 	  //Get all the subteams dropdown and loop all of them checking if they are empty
        var validate_subteam_dropdown=$(".subteam");
        $.each(validate_subteam_dropdown,function(index,element){
-         if($(element).val()=='no_subteam' && !$(element).prop('disabled')){
+         if($(element).val()=='-1' && !$(element).prop('disabled')){
          	cnt++;
 			$(element).css("border","1px solid red");
          }
@@ -413,35 +411,19 @@ $(document).ready(function(){
 		if($(this).val() !== "0"){
 			//Toggle sub team to enable
 			//$("#subteam_"+category_id).removeAttr('disabled');
+			
+			$("#subteam_"+category_id).removeAttr("disabled");
 
 			//Invoke ajax to get list of managers/ sub functional teams in the department (Enhancement)
 			$.get('<?=base_url();?>surveys/get_managers_in_a_department/'+$(this).val(),function(resp){
 					$("#subteam_"+category_id).html(resp);
 			});
-			
-			// var td_comment=$("#comment_"+category_id).parent();
-// 			
-			// var td_subteam='';
-			// if(td_comment.closest('.td_subteam').length>0){
-// 				
-				// td_subteam=td_comment.closest('.td_subteam');
-// 				
-				// var subteam_dropdown=td_subteam.find('#subteam_'+category_id);
-// 				
-				// if(subteam_dropdown.val()!='no_subteam'){
-// 					
-					// $("#comment_"+category_id).removeAttr("readOnly");
-				// }
-// 				
-			// }
-			// else{
-				// $("#comment_"+category_id).removeAttr("readOnly");
-			// }
+	
 			
 
-			$("#comment_"+category_id).removeAttr("readOnly");
-			$("#comment_"+category_id).val('');
-			$("#subteam_"+category_id).removeAttr("disabled");
+			//$("#comment_"+category_id).removeAttr("readOnly");
+			//$("#comment_"+category_id).val('');
+			
 			
 		}else{
 			//Toggle sub team to disable and comment text area to readonly
@@ -471,16 +453,27 @@ $(document).ready(function(){
 	});
 
 $(".subteam").change(function(){
-		//alert($(this).val());
+		
+		//Extract the id of the select/dropdown control
 		var id = $(this).attr("id");
 		var category_id = id.split("_")[1];
+		
+		//assign user_id from the session
 		var user_id = '<?=$this->session->login_user_id;?>';
 		
-		//Remove the Css style once the user selects a value in the subteam
-		$.each($(this),function(index,element){
-			$(element).removeAttr('style');
-       });
-				
+		//Get the slected option and check if its > -1 if so enable the comment field otherwise disable it
+		var option_value_selected=$('#subteam_'+category_id).val();
+		
+		if(option_value_selected!=-1)
+		{
+			$("#comment_"+category_id).removeAttr("readOnly");
+		}
+		else
+		{
+			$("#comment_"+category_id).prop("readOnly","readOnly");
+		}
+		
+		//Post the data to the post_subteam_manager_id	using ajax	
 		var data = {"category_id": category_id, "subteam_manager_id":$(this).val(),"user_id":user_id};
 		var url = '<?=base_url();?>surveys/post_subteam_manager_id/'+$(this).val();
 		
@@ -490,14 +483,50 @@ $(".subteam").change(function(){
 			data:data,
 			success:function(msg){
 				
-              alert(msg);
+              //alert(msg);
 			},
 			error:function(oberr,msg){
 				
 				//alert(msg);
 
 			}
-		});
+		});		
+		//Remove the Css style once the user selects a value in the subteam
+		// $.each($(this),function(index,element){
+			// $(element).removeAttr('style');
+       // });
+       
+       		
+		    //var td_comment=$("#comment_"+category_id).parent();
+			
+			//var td_subteam='';
+			
+			//Check if this td_comment.closest('.td_subteam') return TRUE
+			//if(td_comment.closest('.td_subteam')){
+				
+				//td_subteam=td_comment.closest('.td_subteam');
+				
+				//var subteam_dropdown=td_subteam.find('#subteam_'+category_id);
+				//Check if the subteam dropdown is not of value -1 or select subteam
+				
+				//alert(c);
+				
+// 				
+				// if(option_value_selected!=-1){
+// 				
+// 				
+				// //alert($(this).children("option:selected").val());
+				// $("#comment_"+category_id).removeAttr("readOnly");
+				// //td_subteam.find($("#comment_"+category_id)).prop("readOnly","readOnly");
+				// }
+				// else{
+					// //alert('No');
+					// $("#comment_"+category_id).prop("readOnly","readOnly");
+			// }
+				
+			//}
+			
+		
 });
 
 $(".comment").change(function(ev){
