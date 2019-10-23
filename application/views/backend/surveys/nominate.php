@@ -328,23 +328,42 @@ print_r($b);
 <script>
 // Make the subteams and comments readonly until you select a function teams
 $(document).ready(function(){
-
-   
 	$.each($(".nominate"),function(i,el){
 			if($(el).val() != 0){
 				
 				$("#comment_"+$(el).attr("id")).removeAttr("readOnly");
-				
-				$("#subteam_"+$(el).attr("id")).removeAttr("disabled");
-				//Check if the comment textbox has 'No Viable Option' text and then clear it
-				if($("#comment_"+$(el).attr("id")).val()=='No Viable Option'){
-					
-					$("#comment_"+$(el).attr("id")).val('');
+				if($("#subteam_"+$(el).attr("id")).length>0 && $("#subteam_"+$(el).attr("id")).val()==-1){
+				  
+				  $("#comment_"+$(el).attr("id")).prop("readOnly",true);
+				  $("#subteam_"+$(el).attr("id")).removeAttr("disabled");
 				}
+				
+			}else{
+				
+				$("#subteam_"+$(el).attr("id")).prop("disabled" ,"disabled");
+			}
+	});
+	
+	//Subteam
+	
+	$.each($(".subteam"),function(i,el){
+		
+			if($(el).val() == -1){
+				
+				//$("#comment_"+$(el).attr("id")).removeAttr("readOnly");
+				alert($(el).val());
+				
+				$("#comment_"+$(el).attr("id")).prop("readonly" ,"readonly");
+				//Check if the comment textbox has 'No Viable Option' text and then clear it
+				//if($("#comment_"+$(el).attr("id")).val()=='No Viable Option'){
+					
+					//$("#comment_"+$(el).attr("id")).val('');
+				//}
 				
 				
 			}else{
-				//$("#comment_"+$(el).attr("id")).removeAttr("readOnly");
+				alert($(el).val());
+				$("#comment_"+$(el).attr("id")).prop("readOnly",false);
 				
 				//$("#subteam_"+$(el).attr("id")).removeAttr("disabled");
 			}
@@ -429,7 +448,7 @@ $(document).ready(function(){
 			//Toggle sub team to disable and comment text area to readonly
 			$("#subteam_"+category_id).prop('disabled','disabled');
 			$("#comment_"+category_id).prop("readOnly",'readOnly');
-			$("#comment_"+category_id).val("<?=get_phrase('no_viable_option');?>");
+			$("#comment_"+category_id).prop("placeholder","<?=get_phrase('no_viable_option');?>");
 			
 			//When user selects 'No Viable Option' after selecting a value > 0 e.g. partnership department
 			//Rebuild the dropdown for subteams by repopulating it. This action also 
