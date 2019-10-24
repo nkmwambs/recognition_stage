@@ -15,11 +15,6 @@
  */
 $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id,'two_way'=>1));
 
-$a=array("<option  value='0'>Entire Department</option>","<option  value='0'>Entire Department</option>","<option  value='0'>Entire Department</option>");
-array_push($a,"<option  value='0'>Entire Department</option>");
-$b=array_flip($a);
-print_r($b);
-
 //print_r($this->crud_model->get_managers());
 // 
 // $category_id_arr=array_column($controller_nominees, 'category_id');
@@ -350,9 +345,6 @@ $(document).ready(function(){
 		
 			if($(el).val() == -1){
 				
-				//$("#comment_"+$(el).attr("id")).removeAttr("readOnly");
-				alert($(el).val());
-				
 				$("#comment_"+$(el).attr("id")).prop("readonly" ,"readonly");
 				//Check if the comment textbox has 'No Viable Option' text and then clear it
 				//if($("#comment_"+$(el).attr("id")).val()=='No Viable Option'){
@@ -362,7 +354,6 @@ $(document).ready(function(){
 				
 				
 			}else{
-				alert($(el).val());
 				$("#comment_"+$(el).attr("id")).prop("readOnly",false);
 				
 				//$("#subteam_"+$(el).attr("id")).removeAttr("disabled");
@@ -448,7 +439,7 @@ $(document).ready(function(){
 			//Toggle sub team to disable and comment text area to readonly
 			$("#subteam_"+category_id).prop('disabled','disabled');
 			$("#comment_"+category_id).prop("readOnly",'readOnly');
-			$("#comment_"+category_id).prop("placeholder","<?=get_phrase('no_viable_option');?>");
+			$("#comment_"+category_id).prop("placeholder","<?=get_phrase('comment_here');?>");
 			
 			//When user selects 'No Viable Option' after selecting a value > 0 e.g. partnership department
 			//Rebuild the dropdown for subteams by repopulating it. This action also 
@@ -486,6 +477,8 @@ $(".subteam").change(function(){
 		if(option_value_selected!=-1)
 		{
 			$("#comment_"+category_id).removeAttr("readOnly");
+			
+			$("#comment_"+category_id).val('');
 		}
 		else
 		{
