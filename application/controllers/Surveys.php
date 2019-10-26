@@ -774,14 +774,18 @@ class Surveys extends CI_Controller
     $nominee_id = $_POST['nominee_id']; 
 	//echo $manager_id;
     $data['subteam_manager_id'] = $manager_id; 
-
+	
+	//We only a comment to posted when the department and subteam dropdowns have a value. 
+	//Which also all previously inserted comment
+	if($manager_id>-1){
+	 $data['comment']='';	
+	}
+	
+    //Gets the result of a user for the active survey. This tells the system if the user has began nomination and voting 
     $this->db->join('survey','survey.survey_id=result.survey_id');
     $result = $this->db->get_where("result",array("user_id"=>$user_id,"survey.status"=>1))->row();
-	
-	$category = $this->db->get_where("category",array("category_id"=>$category_id))->row();
-     
 	 
-	 
+	//Update the subteam for that particular category the user is voting on an exiting vote record in tabulate table 
 	if($this->db->get_where("tabulate",array("result_id"=>$result->result_id,"category_id"=>$category_id))->num_rows() > 0){
 			$this->db->where(array("result_id"=>$result->result_id,"category_id"=>$category_id));
 			$this->db->update("tabulate",$data);
@@ -790,8 +794,6 @@ class Surveys extends CI_Controller
 			$this->db->where(array("result_id"=>$result->result_id,"category_id"=>$category_id));
 			$this->db->update("tabulate",$data);
 		}
-		
-		//echo $user_id;
   }
 
 	function post_nomination_comment(){
