@@ -552,18 +552,21 @@ class Crud_model extends CI_Model {
 				/** List all staff for the country and those with scope to the country for voting **/
 				
 				$cond2 = "user.user_id <> " . $this -> session -> login_user_id;
+				
+				//Adds users of BT not that in that country
+				if($this->session->is_bt_role)
+				{
+					$cond2 .=" OR ( role_id=".$this -> session -> role_id.' AND user.user_id<>'.$this -> session -> login_user_id.")";
+				}
+				
 				if ($category -> visibility === '1') {
 					
-					// if($this->session->is_bt_role)
-				// {
-					   // $this->db->where(array('user.role_id'=>$this->session->role_id));
-					// }
-					
-					
 					$user_ids_query = $this -> crud_model -> users_with_country_scope_for_voting($this -> session -> country_id);
+					//print_r($user_ids_query);
 					if ($user_ids_query !== "") {
-						$cond2= '('.$user_ids_query . " or " . $cond2.')';
+						$cond2= '('.$user_ids_query . " OR " . $cond2.')';
 					}
+					//echo $cond2;
 				}
 
 				$this -> db -> order_by("user.country_id,user.firstname");
@@ -577,11 +580,7 @@ class Crud_model extends CI_Model {
 				{
 					$this -> db -> where(array("country_id" => $this -> session -> country_id));
 				}
-				//Adds users of BT not that in that country
-				if($this->session->is_bt_role)
-				{
-					$this -> db -> or_where(array("role_id" => $this -> session -> role_id));
-				}
+				
 
 				$result = $this -> db -> get($unit_table_name) -> result_object();
 

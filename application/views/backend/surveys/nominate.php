@@ -169,8 +169,10 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 
 														//Create a potential nominees select tag
 														$units_select_tag = select_tag($unit_table_name,$category,$potential_nominees,$controller_nominees);
-
-														if(count($potential_nominees[0]) == 0) {
+                                                        
+                                                        //print_r($potential_nominees);
+														
+														if(!isset($potential_nominees[0])) {
 															$units_select_tag = get_phrase("missing_".$unit_table_name."s_for_nomination");
 														}
 
