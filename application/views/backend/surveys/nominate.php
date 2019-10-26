@@ -336,6 +336,7 @@ $(document).ready(function(){
 			}else{
 				
 				$("#subteam_"+$(el).attr("id")).prop("disabled" ,"disabled");
+				
 			}
 	});
 	
@@ -428,11 +429,9 @@ $(document).ready(function(){
 			$.get('<?=base_url();?>surveys/get_managers_in_a_department/'+$(this).val(),function(resp){
 					$("#subteam_"+category_id).html(resp);
 			});
-	
-			
 
-			//$("#comment_"+category_id).removeAttr("readOnly");
-			//$("#comment_"+category_id).val('');
+			$("#comment_"+category_id).removeAttr("readOnly");
+			$("#comment_"+category_id).val('');
 			
 			
 		}else{
@@ -440,6 +439,7 @@ $(document).ready(function(){
 			$("#subteam_"+category_id).prop('disabled','disabled');
 			$("#comment_"+category_id).prop("readOnly",'readOnly');
 			$("#comment_"+category_id).prop("placeholder","<?=get_phrase('comment_here');?>");
+		    $("#comment_"+category_id).val('');
 			
 			//When user selects 'No Viable Option' after selecting a value > 0 e.g. partnership department
 			//Rebuild the dropdown for subteams by repopulating it. This action also 
