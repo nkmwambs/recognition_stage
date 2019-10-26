@@ -489,6 +489,8 @@ $(".subteam").change(function(){
 		var data = {"category_id": category_id, "subteam_manager_id":$(this).val(),"user_id":user_id};
 		var url = '<?=base_url();?>surveys/post_subteam_manager_id/'+$(this).val();
 		
+		//alert($(this).val());
+		
 		$.ajax({
 			url:url,
 			type:'POST',

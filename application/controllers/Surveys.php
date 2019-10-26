@@ -739,6 +739,7 @@ class Surveys extends CI_Controller
 		$data['nominated_unit'] = $category->unit;
 		$data['nominee_id'] = $nominee_id;
 		$data['nominee_country_id']=$this->session->country_id;
+		$data['subteam_manager_id']=-1;
 		
 		if($category->unit==4){
 			
@@ -771,7 +772,7 @@ class Surveys extends CI_Controller
     $manager_id = $_POST['subteam_manager_id'];
    
     $nominee_id = $_POST['nominee_id']; 
-	echo $manager_id;
+	//echo $manager_id;
     $data['subteam_manager_id'] = $manager_id; 
 
     $this->db->join('survey','survey.survey_id=result.survey_id');

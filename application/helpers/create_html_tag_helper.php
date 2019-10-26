@@ -111,19 +111,23 @@ if ( ! function_exists('select_tag_department_subteam'))
 				
 		if($department_id>=0){
 			
-            $selected="";
+			//Query the tabulate to check if the particular category has it subteam manager id =-1
+		     
+			 $CI->db->select(array('subteam_manager_id'));
+		     $num_rows_of_not_selected_subteam=$CI->db->get_where('tabulate',array('nominated_unit'=>2, 'subteam_manager_id'=>-1,'created_by'=>$CI->session->login_user_id,'category_id'=>$category))->num_rows();
+		    			    	
 			
-			$count=0;
+			$selected="";
+			//Only select entire department Id=0 and tabulate record for subteam_manager_id!=-1
+			if($department_id>0 && $num_rows_of_not_selected_subteam==0){
+				$selected='selected="selected"';
+			}
+			$select_option .= "<option  value='0' ".$selected.">Entire Department</option>";
+			
 			
 			//Loop to build the dropdown of subteams  based on the selected manager_id in nominate dropdown
 		    foreach ($managers as $manager_id => $team_label) 
 		    {
-		    		
-		     //Query the manager id zero record	
-		     $query_manager_id_zero=array();
-			 $CI->db->select(array('subteam_manager_id'));
-		     $query_manager_id_zero=$CI->db->get_where('tabulate',array('nominated_unit'=>2, 'subteam_manager_id'=>0,'created_by'=>$CI->session->login_user_id,'category_id'=>$category))->result_array();
-		    			    	
 		     //Get the selected subteam_manager_ids that is in tabulate table
 		      $CI->db->join('result','result.result_id=tabulate.result_id');
 		      $CI->db->join('survey','survey.survey_id=result.survey_id');
@@ -131,20 +135,8 @@ if ( ! function_exists('select_tag_department_subteam'))
 		      'nominated_unit'=>2,'subteam_manager_id'=>$manager_id, 'survey.status'=>1, 'result.user_id'=>$CI->session->login_user_id));
 			  
 			  //Set selected if the tabulate_rows > 0 other than reset to $selected=''
-			  $selected=$tabulate_rows->num_rows()>0?'selected = "selected"':'';		  
-		
-		      //Create Entire_department option of the dropdown either selected or not
-			  if(!empty($query_manager_id_zero) && $query_manager_id_zero[0]['subteam_manager_id']==0 && $count==0){
+			  $selected=$tabulate_rows->num_rows()>0?'selected = "selected"':'';
 			  	
-			  	$count++;
-			  	$select_option .= "<option  selected='selected' value='".$query_manager_id_zero[0]['subteam_manager_id']."'>Entire Department</option>";
-			  }
-			  else if($count==0){
-			  	
-				$count++;
-			  	$select_option .= "<option  value='0'>Entire Department</option>";
-			  }	
-			  		
 			  $select_option .= "<option  value='".$manager_id."' ".$selected." >".$team_label."</option>";
 			 
 		    }
