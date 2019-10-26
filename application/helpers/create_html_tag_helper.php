@@ -98,16 +98,18 @@ if ( ! function_exists('select_tag_department_subteam'))
 		$department_id=$nominees_per_category[$category];
 		
 		//Get all the Managers in a country
-        $managers = $CI->crud_model->get_managers()[$department_id];
+        $managers = isset($CI->crud_model->get_managers()[$department_id])?$CI->crud_model->get_managers()[$department_id]:array();
 	}
 	
 		//Disable the subteam_manager_id dropdown when the department/functional team is not selected
 		$disabled=$department_id==0?"disabled='disabled'":"";
 		
+		$selected="";
+		
 		//Build the dropdown
 		$select_option='<select class="form-control subteam" id="subteam_'.$category.'" '.$disabled.' >';
 		
-		$select_option .="<option value='-1' ".$subteam_selected.">".get_phrase('select_subteam')." </option>";
+		$select_option .="<option value='-1' ".$selected.">".get_phrase('select_subteam')." </option>";
 				
 		if($department_id>=0){
 			
@@ -117,7 +119,7 @@ if ( ! function_exists('select_tag_department_subteam'))
 		     $num_rows_of_not_selected_subteam=$CI->db->get_where('tabulate',array('nominated_unit'=>2, 'subteam_manager_id'=>-1,'created_by'=>$CI->session->login_user_id,'category_id'=>$category))->num_rows();
 		    			    	
 			
-			$selected="";
+			
 			//Only select entire department Id=0 and tabulate record for subteam_manager_id!=-1
 			if($department_id>0 && $num_rows_of_not_selected_subteam==0){
 				$selected='selected="selected"';
