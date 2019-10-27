@@ -219,16 +219,32 @@ class Email_model extends CI_Model {
 	/***custom email sender****/
 	function do_email()
 	{
-			$config = array();
+			/**$config = array();
 	        $config['useragent']	= "CodeIgniter";
 	        $config['mailpath']		= "/usr/bin/sendmail"; // or "/usr/sbin/sendmail"
 	        $config['protocol']		= "smtp";
-	        $config['smtp_host']	= "localhost";
+	        $config['smtp_host']	= "10.8.1.127";
 	        $config['smtp_port']	= "25";
+					$config['smtp_user']	= "RecognitionScheme@us.ci.org";
+					$config['smtp_pass']	= "@Compassion2019";
 	        $config['mailtype']		= 'html';
 	        $config['charset']		= 'utf-8';
 	        $config['newline']		= "\r\n";
-	        $config['wordwrap']		= TRUE;
+	        $config['wordwrap']		= TRUE;**/
+			
+			$config = array();
+
+			$config['mailpath'] = '/usr/sbin/sendmail';
+			$config['protocol']='smtp';
+			$config['smtp_host']='mail.compassionkenya.com';
+			$config['smtp_port']='587';
+			$config['smtp_timeout']='30';
+			$config['smtp_user']='recognitionscheme@compassionkenya.com';
+			$config['smtp_pass']='@Compassion123';
+			$config['charset']='utf-8';
+			$config['newline']="\r\n";
+			$config['wordwrap'] = TRUE;
+			$config['mailtype'] = 'html';
 
 	        $this->load->library('email');
 
