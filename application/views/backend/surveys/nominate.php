@@ -480,15 +480,17 @@ $(".subteam").change(function(){
 		//Get the slected option and check if its > -1 if so enable the comment field otherwise disable it
 		var option_value_selected=$('#subteam_'+category_id).val();
 		
+		$("#comment_"+category_id).val('');
+		
 		if(option_value_selected!=-1)
 		{
-			$("#comment_"+category_id).removeAttr("readOnly");
+			$("#comment_"+category_id).removeAttr("readOnly");	
 			
-			$("#comment_"+category_id).val('');
 		}
 		else
 		{
 			$("#comment_"+category_id).prop("readOnly","readOnly");
+			
 		}
 		
 		//Post the data to the post_subteam_manager_id	using ajax	

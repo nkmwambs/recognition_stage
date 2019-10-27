@@ -815,15 +815,10 @@ class Surveys extends CI_Controller
     $manager_id = $_POST['subteam_manager_id'];
    
     $nominee_id = $_POST['nominee_id']; 
-	//echo $manager_id;
+	
     $data['subteam_manager_id'] = $manager_id; 
-	
-	//We only a comment to posted when the department and subteam dropdowns have a value. 
-	//Which also all previously inserted comment
-	if($manager_id>-1){
-	 $data['comment']='';	
-	}
-	
+	$data['comment']='';
+	 
     //Gets the result of a user for the active survey. This tells the system if the user has began nomination and voting 
     $this->db->join('survey','survey.survey_id=result.survey_id');
     $result = $this->db->get_where("result",array("user_id"=>$user_id,"survey.status"=>1))->row();
