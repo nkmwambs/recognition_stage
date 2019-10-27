@@ -91,7 +91,7 @@
 							
 							 <div class="form-group">
 	                            <div class="col-sm-offset-3 col-sm-5">
-	                                <div class="btn btn-info btn-icon submit"><i class="fa fa-save"></i><?php echo get_phrase('save');?></div>
+	                                <div class="btn btn-info btn-icon save"><i class="fa fa-save"></i><?php echo get_phrase('save');?></div>
 	                            </div>
 	                        </div>
 							
@@ -165,7 +165,7 @@
 							
 							 <div class="form-group">
 	                            <div class="col-sm-offset-3 col-sm-5">
-	                                <div class="btn btn-info btn-icon"><i class="fa fa-save"></i><?php echo get_phrase('save');?></div>
+	                                <div class="btn btn-info btn-icon save"><i class="fa fa-save"></i><?php echo get_phrase('save');?></div>
 	                            </div>
 	                        </div>
 							
@@ -177,4 +177,40 @@
 			</div>
 		</div>
 	</div>
-</div>			
+</div>	
+
+<script>
+	
+	$(".save").click(function(ev){ 
+		var action  = $(this).closest("form").attr("action");
+		var data = $(this).closest("form").serializeArray();
+		$(".inner-progress").html('');
+		$.ajax({
+			url:action,
+			data:data,
+			type:"POST",
+			beforeSend:function(){
+				$(".inner-progress").html('<div style="text-align:center;margin-top:0px;"><img src="assets/images/preloader.gif" /></div>');
+			},
+			success:function(response){
+				$(".inner-progress").html('');
+				jQuery('#modal_ajax').modal('hide');		
+				//$(".page-content").html(response);
+				var msg_div=$('#response_message');
+				
+				//msg_div.removeClass('hidden');
+				msg_div.html(response);
+			
+			   datatable.ajax.reload(null,false);
+			   
+			  
+				
+			},
+			error:function(){
+				
+			}
+		});		
+		
+		ev.preventDefault();
+	});	
+</script>		

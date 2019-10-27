@@ -15,6 +15,17 @@
  */
 $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id,'two_way'=>1));
 
+//print_r($this->crud_model->get_managers());
+// 
+// $category_id_arr=array_column($controller_nominees, 'category_id');
+// 
+// $nominee_id_arr=array_column($controller_nominees, 'nominee_id');
+// 
+// $combine_arr=array_combine($category_id_arr, $nominee_id_arr);
+// 
+// print_r($combine_arr);
+
+
 ?>
 
 <div class="row">
@@ -125,11 +136,20 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 												<tr style="font-style: italic;">
 													<th><?=get_phrase("category");?></th>
 													<th><?=get_phrase("visibility");?></th>
-													<th><?=get_phrase("nominate_unit");?></th>
+													<?php if($grouping_id==1){?>
+													 <th><?=get_phrase("nominate_staff");?></th>	
+													<?php 
+													}
+													elseif($grouping_id==3){?>
+														<th><?=get_phrase("nominate_special_team");?></th>
+													<?php }?>
+													
+													
 													<?php
 														if($grouping_id == 4){
 													?>
-														<th><?=get_phrase('sub_team');?></th>
+													    <th><?=get_phrase("nominate_department");?></th>
+														<th><?=get_phrase('nominate_sub_team');?></th>
 													<?php
 														}
 													?>
@@ -138,7 +158,8 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 											</thead>
 											<tbody>
 												<?php
-													/** Populate nominating Units Select form control. Derived from the static table Unit**/
+												    
+											        /** Populate nominating Units Select form control. Derived from the static table Unit**/
 													foreach($categories as $category){
 														//Get the table name of the units to nominate Ex. User/ Staff, Department, Team or Country
 														$unit_table_name = $this->db->get_where("unit",array("unit_id"=>$category->unit))->row()->name;
@@ -148,62 +169,61 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 
 														//Create a potential nominees select tag
 														$units_select_tag = select_tag($unit_table_name,$category,$potential_nominees,$controller_nominees);
-
-														if(is_array($potential_nominees) || is_object($potential_nominees)) {
-															
-															if(sizeof($potential_nominees[0]) == 0){
-																	$units_select_tag = get_phrase("missing_".$unit_table_name."s_for_nomination");
-																}
-														}else{
+                                                        
+                                                        //print_r($potential_nominees);
+														
+														if(!isset($potential_nominees[0])) {
 															$units_select_tag = get_phrase("missing_".$unit_table_name."s_for_nomination");
 														}
 
 
 												?>
 														<tr>
-															<td>
+															<td class='td_category'>
 																<a href="#" data-html="true" data-toggle="tooltip" title="<?=$category->description;?>">
 																	<?=$category->name;?>
 																</a>
 															</td>
-															<td><?=$this->crud_model->get_type_name_by_id("country",$category->visibility);?></td>
+															<td class='td_visibility'><?=$this->crud_model->get_type_name_by_id("country",$category->visibility);?></td>
 
-															<td><?=$units_select_tag;?></td>
+															<td class='td_nominate'><?=$units_select_tag;?></td>
 															<?php
 																/**
 																 * Loops $controller_nominees as it populates the comments of the nominees
 																 */
 																$comment = "";
-																$subteam = "";
-																if(count($controller_nominees) > 0){
+																
+																 if(count($controller_nominees) > 0){
+// 																	
 																	foreach($controller_nominees as $nominee){
+																		
 																		if($nominee->category_id === $category->category_id){
-																			$comment_subteam = explode("|", $nominee->comment);
-																			if(count($comment_subteam) > 1){
-																				$comment = $comment_subteam[1];
-																				$subteam = $comment_subteam[0];
-																			}else{
-																				$comment = $comment_subteam[0];
-																			}
-
-																			break;
+																			$comment=$nominee->comment;
+																			//break;
 																		}
 
 																	}
-																}
+																	// //print_r($test_arr);
+																 }
 
 																if($grouping_id == 4){
-																	$disabled = "disabled = 'disabled'";
-																	if($category->category_id == $nominee->category_id && $nominee->nominee_id != 0){
-																		$disabled = "";
-																	}
+																	// $disabled = "disabled = 'disabled'";
+																	// if($category->category_id == $nominee->category_id && $nominee->nominee_id != 0){
+																		// $disabled = "";
+																	// }
 															?>
-																<td><input type="text" <?=$disabled;?> class="form-control subteam" value="<?=$subteam;?>" name="" id="subteam_<?=$category->category_id;?>" placeholder="<?=get_phrase('specify_a_sub_team,_if_any');?>"/></td>
+																<td class='td_subteam'>
+																	<?php 
+																	 //Populate the dropdown of subteams 
+																	 
+																	 echo select_tag_department_subteam($category->category_id,$controller_nominees);
+																	?>
+																</td>
 															<?php
 																//print_r($controller_nominees);
 																}
 															?>
-															<td>
+															<td class='td_comment'>
 																<textarea readonly="readonly" id="comment_<?=$category->category_id;?>"
 																	class="form-control validate comment"
 																placeholder="<?=get_phrase("comment_here")?>"><?=$comment;?></textarea>
@@ -303,33 +323,73 @@ $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_use
 	</div>
 
 <script>
-
+// Make the subteams and comments readonly until you select a function teams
 $(document).ready(function(){
-
 	$.each($(".nominate"),function(i,el){
-			if($(el).val() == "0"){
-				$("#comment_"+$(el).attr("id")).val("<?=get_phrase('no_viable_option');?>");
-			}else{
+			if($(el).val() != 0){
+				
 				$("#comment_"+$(el).attr("id")).removeAttr("readOnly");
+				if($("#subteam_"+$(el).attr("id")).length>0 && $("#subteam_"+$(el).attr("id")).val()==-1){
+				  
+				  $("#comment_"+$(el).attr("id")).prop("readOnly",true);
+				  $("#subteam_"+$(el).attr("id")).removeAttr("disabled");
+				}
+				
+			}else{
+				
+				$("#subteam_"+$(el).attr("id")).prop("disabled" ,"disabled");
+				
+			}
+	});
+	
+	//Subteam
+	
+	$.each($(".subteam"),function(i,el){
+		
+			if($(el).val() == -1){
+				
+				$("#comment_"+$(el).attr("id")).prop("readonly" ,"readonly");
+				//Check if the comment textbox has 'No Viable Option' text and then clear it
+				//if($("#comment_"+$(el).attr("id")).val()=='No Viable Option'){
+					
+					//$("#comment_"+$(el).attr("id")).val('');
+				//}
+				
+				
+			}else{
+				$("#comment_"+$(el).attr("id")).prop("readOnly",false);
+				
+				//$("#subteam_"+$(el).attr("id")).removeAttr("disabled");
 			}
 	});
 });
 
-
+//Before submit check if comment and subteam dropdown is <> 'select subteam'
 	$("#submit_vote").click(function(ev){
-
+        //Get all the comments textboxes and loop all of them checking if they are empty
 		var req_validate = $(".comment");
 		var cnt = 0;
 
 		$.each(req_validate,function(i,el){
-			if($(el).val() === ""){
+			if($(el).val() === "" && !$(el).prop('readonly')){
 				cnt++;
 				$(el).css("border","1px solid red");
 			}
 		});
-
+	  
+	  //Get all the subteams dropdown and loop all of them checking if they are empty
+       var validate_subteam_dropdown=$(".subteam");
+       $.each(validate_subteam_dropdown,function(index,element){
+         if($(element).val()=='-1' && !$(element).prop('disabled')){
+         	cnt++;
+			$(element).css("border","1px solid red");
+         }
+       });
+	
+		//If cnt> 0 return a message otherwise
 		if(cnt > 0){
 			alert("<?=get_phrase("you_have_missing_fields");?>");
+			
 		}else{
 			var url = "<?=base_url();?>surveys/nominate/submit_vote/<?=$this->session->login_user_id;?>";
 			$.ajax({
@@ -350,31 +410,47 @@ $(document).ready(function(){
 
 
 	$(".nominate").change(function(ev){
+		
+		//Variables
 		var category_id = $(this).attr('id');
-		var nominee_id = $(this).val();
+		var nominee_id = $(this).val();		
 		var user_id = '<?=$this->session->login_user_id;?>';
-		//alert(user_id);
-
+		
+		
+		
+        //url to post to
 		var url = "<?=base_url();?>surveys/post_nomination_choice/" + category_id + '/' + nominee_id + '/' + user_id;
 
 		if($(this).val() !== "0"){
 			//Toggle sub team to enable
-			$("#subteam_"+category_id).removeAttr('disabled');
+			//$("#subteam_"+category_id).removeAttr('disabled');
+			
+			$("#subteam_"+category_id).removeAttr("disabled");
+
+			//Invoke ajax to get list of managers/ sub functional teams in the department (Enhancement)
+			$.get('<?=base_url();?>surveys/get_managers_in_a_department/'+$(this).val(),function(resp){
+					$("#subteam_"+category_id).html(resp);
+			});
 
 			$("#comment_"+category_id).removeAttr("readOnly");
-			$("#comment_"+category_id).val("");
-			$("#subteam_"+category_id).val("");
+			$("#comment_"+category_id).val('');
+			
+			
 		}else{
-			//Toggle sub team to disenable
+			//Toggle sub team to disable and comment text area to readonly
 			$("#subteam_"+category_id).prop('disabled','disabled');
-
 			$("#comment_"+category_id).prop("readOnly",'readOnly');
-			$("#comment_"+category_id).val("<?=get_phrase('no_viable_option');?>");
-			$("#subteam_"+category_id).val("");
+			$("#comment_"+category_id).prop("placeholder","<?=get_phrase('comment_here');?>");
+		    $("#comment_"+category_id).val('');
+			
+			//When user selects 'No Viable Option' after selecting a value > 0 e.g. partnership department
+			//Rebuild the dropdown for subteams by repopulating it. This action also 
+			//disables the subteam dropdown since the department dropdown value=0
+			$.get('<?=base_url();?>surveys/get_managers_in_a_department/'+$(this).val(),function(resp){
+					$("#subteam_"+category_id).html(resp);
+			});
 		}
-
-
-
+        
 		$.ajax({
 			url:url,
 			success:function(resp){
@@ -388,9 +464,88 @@ $(document).ready(function(){
 		ev.preventDefault();
 	});
 
+$(".subteam").change(function(){
+		
+		//Extract the id of the select/dropdown control
+		var id = $(this).attr("id");
+		var category_id = id.split("_")[1];
+		
+		//assign user_id from the session
+		var user_id = '<?=$this->session->login_user_id;?>';
+		
+		//Get the slected option and check if its > -1 if so enable the comment field otherwise disable it
+		var option_value_selected=$('#subteam_'+category_id).val();
+		
+		if(option_value_selected!=-1)
+		{
+			$("#comment_"+category_id).removeAttr("readOnly");
+			
+			$("#comment_"+category_id).val('');
+		}
+		else
+		{
+			$("#comment_"+category_id).prop("readOnly","readOnly");
+		}
+		
+		//Post the data to the post_subteam_manager_id	using ajax	
+		var data = {"category_id": category_id, "subteam_manager_id":$(this).val(),"user_id":user_id};
+		var url = '<?=base_url();?>surveys/post_subteam_manager_id/'+$(this).val();
+		
+		//alert($(this).val());
+		
+		$.ajax({
+			url:url,
+			type:'POST',
+			data:data,
+			success:function(msg){
+				
+              //alert(msg);
+			},
+			error:function(oberr,msg){
+				
+				//alert(msg);
 
+			}
+		});		
+		//Remove the Css style once the user selects a value in the subteam
+		// $.each($(this),function(index,element){
+			// $(element).removeAttr('style');
+       // });
+       
+       		
+		    //var td_comment=$("#comment_"+category_id).parent();
+			
+			//var td_subteam='';
+			
+			//Check if this td_comment.closest('.td_subteam') return TRUE
+			//if(td_comment.closest('.td_subteam')){
+				
+				//td_subteam=td_comment.closest('.td_subteam');
+				
+				//var subteam_dropdown=td_subteam.find('#subteam_'+category_id);
+				//Check if the subteam dropdown is not of value -1 or select subteam
+				
+				//alert(c);
+				
+// 				
+				// if(option_value_selected!=-1){
+// 				
+// 				
+				// //alert($(this).children("option:selected").val());
+				// $("#comment_"+category_id).removeAttr("readOnly");
+				// //td_subteam.find($("#comment_"+category_id)).prop("readOnly","readOnly");
+				// }
+				// else{
+					// //alert('No');
+					// $("#comment_"+category_id).prop("readOnly","readOnly");
+			// }
+				
+			//}
+			
+		
+});
 
-$(".comment, .subteam").change(function(ev){
+$(".comment").change(function(ev){
 		var id = $(this).attr("id");
 		var category_id = id.split("_")[1];
 
@@ -398,17 +553,13 @@ $(".comment, .subteam").change(function(ev){
 
 		var appended_comment = comment;
 
-		if($("#subteam_"+category_id).length > 0){
-			var subteam = $("#subteam_"+category_id).val();
-
-			if(subteam!==""){
-				appended_comment = subteam+"|"+comment;
-			}
-		}
 
 		var user_id = '<?=$this->session->login_user_id;?>';
-
-		//alert(appended_comment);
+		
+		//Remove the Css style once the user selects a value in the comments
+		
+		$(this).removeAttr('style');
+      
 
 		var data = {"category_id":category_id,"comment":appended_comment,"user_id":user_id}
 
@@ -431,8 +582,5 @@ $(".comment, .subteam").change(function(ev){
 		ev.preventDefault();
 
 	});
-
-
-
     //$('select').trigger('change');
 </script>

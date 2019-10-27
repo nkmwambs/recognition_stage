@@ -112,7 +112,7 @@ class Login extends CI_Controller {
 			$this->session->set_userdata('manage_staff_in_your_country', $row->manage_staff_in_your_country);
 			//$this->session->set_userdata('vote_all_in_user_scope',$role->vote_all_in_user_scope);
 			$this->session->set_userdata('last_line_manager',$role->last_line_manager);
-			//$this->session->set_userdata('is_bt_role', $row->is_bt_role);
+			$this->session->set_userdata('is_bt_role', $role->is_bt_role==2?true:false);
 
 			$this->session->set_userdata('first_login_attempt',$first_login_attempt);
 
@@ -179,9 +179,15 @@ class Login extends CI_Controller {
         $query = $this->db->get_where('user' , array('email' => $email));
         if ($query->num_rows() > 0)
         {
+
+            //Set the first_login_attempt to 0 when the user requests for a password reset
+            //Update the password
+
             $this->db->where('email' , $email);
-            $this->db->update('user' , array('password' => md5($new_password)));
+            $this->db->update('user' , array('password' => md5($new_password),'first_login_attempt'=>0));
             $resp['status']         = 'true';
+
+
         }
 
 
