@@ -64,12 +64,13 @@ class Surveys extends CI_Controller
 		/** Related Tables to Category **/
 		$crud->set_relation('created_by','user','firstname');
 		$crud->set_relation('last_modified_by','user','firstname');
+		$crud->set_relation('unit_id','unit','name',array('is_active'=>1));
 
 		/** Set required fields **/
-		$crud->required_fields(array("name","description","status"));
+		$crud->required_fields(array("name","description",'unit_id',"status"));
 
 		/**Select Fields to Show in the Grid **/
-		$crud->columns('name','description','categories','status');
+		$crud->columns('name','description','unit_id','categories','status');
 
 		/** Populate User Type **/
 		$crud->field_type('status', 'dropdown',array('0'=>"inactive","1"=>"active"));
@@ -86,8 +87,10 @@ class Surveys extends CI_Controller
 
 
 		/** Hide fields from add and edit forms**/
-		$crud->add_fields(array('name','description','status'));
-		$crud->edit_fields(array('name','description','status'));
+		$crud->add_fields(array('name','description','unit_id','status'));
+		$crud->edit_fields(array('name','description','unit_id','status'));
+		
+		$crud->display_as('unit_id',get_phrase('nominee_type'));
 
 
 		$output = $crud->render();
@@ -197,6 +200,8 @@ class Surveys extends CI_Controller
     	$crud->unset_texteditor(array('description','full_text'));
 
 		/**Callbacks**/
+		$crud->callback_before_update(array($this,'validate_if_category_is_updatable'));
+		$crud->callback_before_insert(array($this,'insert_unit_id'));
 		$crud->callback_after_insert(array($this,'insert_audit_parameters'));
 		$crud->callback_after_update(array($this,'update_audit_parameters'));
 		$crud->callback_column("has_votes",function ($value,$row){
@@ -213,8 +218,8 @@ class Surveys extends CI_Controller
 
 		/** Hide fields from add and edit forms**/
 		$crud->fields('name','grouping_id','visibility','assignment','status','created_by','created_date','last_modified_by');
-		$crud->add_fields('name','description','grouping_id','visibility','assignment','unit','status');
-		$crud->edit_fields('name','description','grouping_id','visibility','assignment','unit','status');
+		$crud->add_fields('name','description','grouping_id','visibility','assignment','status');
+		$crud->edit_fields('name','description','grouping_id','visibility','assignment','status');
 
 		/** Assign Privileges **/
 		if(!$this->crud_model->check_profile_privilege($this->session->profile_id,"add_category")) $crud->unset_add();
@@ -242,7 +247,47 @@ class Surveys extends CI_Controller
       return false;
     }
   }
-
+  
+  /**
+   * insert_unit_id
+   * 
+   * This method inserts the unit_id of the catgegory based on group is associated to
+   * This is a call_back_method
+   * 
+   * @param $post_array array : This variable carries the post array of new category post array
+   * @return array
+   * 
+   */
+	function insert_unit_id($post_array)
+	{
+		$grouping_id=$post_array['grouping_id'];
+		
+		$unit_id=$this->db->get_where('grouping',array('grouping_id'=>$grouping_id))->row()->unit_id;
+		
+		$post_array['unit']=$unit_id;
+		
+		return $post_array;
+	}
+	
+	function validate_if_category_is_updatable($post_array,$primary_key)
+	{
+		$category_record_in_tabulate=$this->db->get_where('tabulate',array('category_id'=>$primary_key))->num_rows();
+		
+		if($category_record_in_tabulate>0){
+			return false;
+		
+		}
+		else{
+			$grouping_id=$post_array['grouping_id'];
+		
+		    $unit_id=$this->db->get_where('grouping',array('grouping_id'=>$grouping_id))->row()->unit_id;
+		
+			$post_array['unit']=$unit_id;
+			print_r($post_array);
+			die();
+			return $post_array;
+		}
+	}
 	public function insert_audit_parameters($post_array,$primary_key){
 		$post_array['created_by'] = $this->session->login_user_id;
 		$post_array['created_date'] = date('Y-m-d h:i:s');

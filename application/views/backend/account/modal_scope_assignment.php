@@ -196,8 +196,14 @@
 				$(".inner-progress").html('');
 				jQuery('#modal_ajax').modal('hide');		
 				//$(".page-content").html(response);
+				var msg_div=$('#response_message');
 				
+				//msg_div.removeClass('hidden');
+				msg_div.html(response);
+			
 			   datatable.ajax.reload(null,false);
+			   
+			  
 				
 			},
 			error:function(){

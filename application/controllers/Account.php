@@ -740,8 +740,10 @@ public function insert_role_audit_parameters($post_array,$primary_key){
 			}
 
 
-			$this->session->set_flashdata('flash_message',get_phrase("success"));
-			redirect(base_url()."account/manage_users/","refresh");
+			//$this->session->set_flashdata('flash_message',get_phrase("success"));
+			//redirect(base_url()."account/manage_users/","refresh");
+			echo 'success';
+			exit();
 		}
 
 

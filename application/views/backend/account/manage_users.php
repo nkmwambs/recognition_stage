@@ -115,6 +115,11 @@
 					</a>
 				</div>
 				<br><hr>
+				<div class='row'>
+					<div class='col-xs-12'>
+						<div id='response_message'></div>
+					</div>
+				</div>
 				<?php echo form_open('' , array('id'=>'form-filter','class' => 'form-vertical form-groups-bordered validate', 'enctype' => 'multipart/form-data'));?>
 
 				<table class="table table-striped" id="table_export">
@@ -141,7 +146,11 @@
 </div>
 
 <script>
+
+    
 	$(document).ready(function(){
+		
+		   
 
 		    if (location.hash) {
 			        $("a[href='" + location.hash + "']").tab("show");
@@ -189,6 +198,8 @@
 		   });
 
 
-
+   
 	});
+	
+	
 </script>

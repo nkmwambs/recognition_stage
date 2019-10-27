@@ -193,6 +193,8 @@
 			    $("a[href='" + anchor + "']").tab("show");
 		
 		});
-	});	
+	});
+	
+		
    </script> 
 	
