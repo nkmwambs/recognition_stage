@@ -144,7 +144,7 @@ class Surveys extends CI_Controller
 		$crud->set_relation('grouping_id','grouping','name');
 		$crud->set_relation('assignment','contribution','name');
 		//$crud->set_relation('visibility','country','name');
-		$crud->set_relation('unit','unit','name');
+		//$crud->set_relation('unit','unit','name');
 
 
 		/**Change Visibility Drop down field Based on Scope - Add Form**/
@@ -283,8 +283,6 @@ class Surveys extends CI_Controller
 		    $unit_id=$this->db->get_where('grouping',array('grouping_id'=>$grouping_id))->row()->unit_id;
 		
 			$post_array['unit']=$unit_id;
-			print_r($post_array);
-			die();
 			return $post_array;
 		}
 	}

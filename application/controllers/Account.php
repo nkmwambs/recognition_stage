@@ -293,9 +293,11 @@ class Account extends CI_Controller
 		$crud->required_fields(array("name","description","privileges"));
 
 		/** Set relationship n_n **/
-		$crud->set_relation_n_n(get_phrase("privileges"), 'access', 'entitlement', 'profile_id', 'entitlement_id', 'name','access_id');
+		$crud->set_relation_n_n(get_phrase("privileges"), 'access', 'entitlement', 'profile_id', 
+		'entitlement_id', 'name','access_id');
 
-		$crud->set_relation_n_n(get_phrase("members"), 'assign_profile', 'user', 'profile_id','user_id', '{firstname} {lastname}');
+		//$crud->set_relation_n_n(get_phrase("members"), 'assign_profile', 'user', 'profile_id',
+		//'user_id', '{firstname} {lastname}');
 
 		/** Set drop down fields**/
 
