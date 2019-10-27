@@ -1,4 +1,5 @@
 <?php
+
 //$this->db->select(array('user_id','firstname','lastname'));
 //print_r($this->db->get_where('user',array('manager_id'=>169))->result_object());
 /**
@@ -13,7 +14,10 @@
  * you can only be voted by other country users but you can't vote for them.
  *
  */
+//echo $this->crud_model->users_with_country_scope_for_voting(25);
+
 $scope = $this->db->get_where("scope",array("user_id"=>$this->session->login_user_id,'two_way'=>1));
+
 
 //print_r($this->crud_model->get_managers());
 // 

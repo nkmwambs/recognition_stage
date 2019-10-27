@@ -549,38 +549,50 @@ class Crud_model extends CI_Model {
 
 			} 
 			else {
-				/** List all staff for the country and those with scope to the country for voting **/
 				
-				$cond2 = "user.user_id <> " . $this -> session -> login_user_id;
+				// List all the query condition strings to be used to build the $query_condition_string variable
+				
+				// String for select other users other than the logged one
+				$not_user_cond = "user.user_id <> " . $this -> session -> login_user_id;
+				
+				// String for selecting users of the same role
+				$bt_users_cond = "role_id = ".$this -> session -> role_id;
+				
+				// String to select users who have a scope to be voted for in the logged user country
+				$user_with_user_country_scope_cond = $this -> crud_model -> users_with_country_scope_for_voting($this -> session -> country_id);
+				
+				// String for selecting countries that the logged user has scope for to vote its staff
+				$country_scope_for_user_cond = " country_id = ".$this->session->country_id;
+				
+				// Get countries the users can see staff to vote for if has scope to it and it's of type voting or both
+				if ($scope -> num_rows() > 0) {
+					$country_scope_for_user_cond = $this -> crud_model -> country_scope_where($this -> session -> login_user_id, $scope -> row() -> type);
+				} 
+				
+				// Start building the query condition variables
+				$query_condition_string = $not_user_cond." AND (".$country_scope_for_user_cond." ";
+				
 				
 				//Adds users of BT not that in that country
 				if($this->session->is_bt_role)
 				{
-					$cond2 .=" OR ( role_id=".$this -> session -> role_id.' AND user.user_id<>'.$this -> session -> login_user_id.")";
-				}
-				
-				if ($category -> visibility === '1') {
+					$query_condition_string.= " OR ".$bt_users_cond;
 					
-					$user_ids_query = $this -> crud_model -> users_with_country_scope_for_voting($this -> session -> country_id);
-					//print_r($user_ids_query);
-					if ($user_ids_query !== "") {
-						$cond2= '('.$user_ids_query . " OR " . $cond2.')';
-					}
-					//echo $cond2;
-				}
-
-				$this -> db -> order_by("user.country_id,user.firstname");
-				$this -> db -> where($cond2);
-
-				if ($scope -> num_rows() > 0) {
-					$cond = $this -> crud_model -> country_scope_where($this -> session -> login_user_id, $scope -> row() -> type);
-					$this -> db -> where($cond);
-				} 
-				else 
-				{
-					$this -> db -> where(array("country_id" => $this -> session -> country_id));
+					
 				}
 				
+				if ($category -> visibility === '1' && $user_with_user_country_scope_cond !== "" ) {
+					$query_condition_string .= ' OR '.$user_with_user_country_scope_cond;
+				}
+				
+				
+				
+				$query_condition_string .= ")";
+				
+				//echo $query_condition_string;
+				
+				$this -> db -> order_by("user.country_id,user.firstname");
+				$this -> db -> where($query_condition_string);
 
 				$result = $this -> db -> get($unit_table_name) -> result_object();
 
