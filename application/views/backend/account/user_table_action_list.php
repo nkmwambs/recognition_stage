@@ -50,14 +50,14 @@
 			                 </a>
 			       </li>
 
-			      <li class="divider suspend_user"></li>
+			      <!-- <li class="divider suspend_user"></li> -->
 
 			      <!-- USER DELETION  -->
-			      <li class="delete_user" >
-			          <a href="#users" onclick="confirm_dialog('<?php echo base_url();?>account/manage_users/user_delete/<?php echo $user->user_id;?>');">
-			               <i class="entypo-trash"></i>
-			                    <?php echo get_phrase('delete');?>
-			          </a>
-			      </li>
+			      <!-- <li class="delete_user" > -->
+			          <!-- <a href="#users" onclick="confirm_dialog('<?php echo base_url();?>account/manage_users/user_delete/<?php echo $user->user_id;?>');"> -->
+			               <!-- <i class="entypo-trash"></i> -->
+			                    <!-- <?php echo get_phrase('delete');?> -->
+			          <!-- </a> -->
+			      <!-- </li> -->
 		</ul>
 </div>
